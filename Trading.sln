@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.PriceActionParts", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.FxBrokers.Fxcm", "Trading.FxBrokers.Fxcm\Trading.FxBrokers.Fxcm.csproj", "{9B7F44B3-1D1B-49AE-A105-C48A9EA3AE69}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.Common.Data", "Trading.Common.Data\Trading.Common.Data.csproj", "{0655B3C3-4B5B-4D2F-B721-8EBA6C74BE2F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{9B7F44B3-1D1B-49AE-A105-C48A9EA3AE69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B7F44B3-1D1B-49AE-A105-C48A9EA3AE69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B7F44B3-1D1B-49AE-A105-C48A9EA3AE69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0655B3C3-4B5B-4D2F-B721-8EBA6C74BE2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0655B3C3-4B5B-4D2F-B721-8EBA6C74BE2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0655B3C3-4B5B-4D2F-B721-8EBA6C74BE2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0655B3C3-4B5B-4D2F-B721-8EBA6C74BE2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

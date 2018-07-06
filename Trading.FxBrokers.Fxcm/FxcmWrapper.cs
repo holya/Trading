@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Trading.PriceActionParts;
+using Trading.Common.Data;
 
 namespace Trading.FxBrokers.Fxcm
 {
@@ -62,7 +63,7 @@ namespace Trading.FxBrokers.Fxcm
         }
         #endregion
 
-        public List<FxBar> GetHistoricalData(string instrument, string timeFrame, DateTime startDateTime, DateTime endDateTime, int maxBars = 500)
+        public List<FxBar> GetHistoricalData(string instrument, string timeFrame, DateTime startDateTime, DateTime endDateTime, int maxBars = 1000)
         {
             GetHistoricalDataResponseListener responseListener = new GetHistoricalDataResponseListener(session);
             session.subscribeResponse(responseListener);
@@ -77,6 +78,11 @@ namespace Trading.FxBrokers.Fxcm
             }
 
             return barList;
+        }
+
+        public List<FxBar> GetHistoricalData(string instrument, TimeFrame timeFrame, DateTime startDateTime, DateTime endDateTime, int maxBars = 1000)
+        {
+            return new List<FxBar>();
         }
 
         private List<FxBar> GetHistoryPrices(O2GSession session, string instrument, string timeFrame, DateTime startDateTime, DateTime endDateTime, int maxBars, GetHistoricalDataResponseListener responseListener)
@@ -134,6 +140,11 @@ namespace Trading.FxBrokers.Fxcm
             }
 
             return barList;
+        }
+
+        private TimeFrame ConvertTimeFrameEnumToString(TimeFrame timeFrame)
+        {
+            return TimeFrame.Daily;
         }
     }
 }
