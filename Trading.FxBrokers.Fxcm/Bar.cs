@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Trading.FxBrokers.Fxcm
+namespace Trading.Brokers.Fxcm
 {
     public class Bar
     {

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Trading.FxBrokers.Fxcm
+namespace Trading.Brokers.Fxcm
 {
     class SessionStatusResponseListener : IO2GSessionStatus
     {

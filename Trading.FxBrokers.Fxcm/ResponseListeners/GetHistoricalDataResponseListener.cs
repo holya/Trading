@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using fxcore2;
 
-namespace Trading.FxBrokers.Fxcm
+namespace Trading.Brokers.Fxcm
 {
     class GetHistoricalDataResponseListener : IO2GResponseListener
     {

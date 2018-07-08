@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Trading.PriceActionParts;
-using Trading.Common.Data;
+using Trading.Common;
+using Trading.DataProviders;
 
-namespace Trading.FxBrokers.Fxcm
+namespace Trading.Brokers.Fxcm
 {
-    public class FxcmWrapper
+    public class FxcmWrapper : IDataProvider
     {
         private O2GSession session;
 
