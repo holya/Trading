@@ -3,13 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Trading.PriceActionParts;
 using Trading.Common;
 using Trading.DataProviders;
 
 namespace Trading.Brokers.Fxcm
 {
-    public class FxcmWrapper : IDataProvider
+    public class FxcmWrapper
     {
         private O2GSession session;
 
@@ -64,14 +63,15 @@ namespace Trading.Brokers.Fxcm
         }
         #endregion
 
-        public List<FxBar> GetHistoricalData(string instrument, string timeFrame, DateTime startDateTime, DateTime endDateTime, int maxBars = 1000)
+        
+        public List<FxBar> GetHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
         {
             GetHistoricalDataResponseListener responseListener = new GetHistoricalDataResponseListener(session);
             session.subscribeResponse(responseListener);
             List<FxBar> barList;
             try
             {
-                barList = GetHistoryPrices(session, instrument, timeFrame, startDateTime, endDateTime, maxBars, responseListener);
+                barList = GetHistoryPrices(session, symbol, "D1", startDateTime, endDateTime, 1000, responseListener);
             }
             catch(Exception e)
             {
@@ -79,11 +79,6 @@ namespace Trading.Brokers.Fxcm
             }
 
             return barList;
-        }
-
-        public List<FxBar> GetHistoricalData(string instrument, TimeFrame timeFrame, DateTime startDateTime, DateTime endDateTime, int maxBars = 1000)
-        {
-            return new List<FxBar>();
         }
 
         private List<FxBar> GetHistoryPrices(O2GSession session, string instrument, string timeFrame, DateTime startDateTime, DateTime endDateTime, int maxBars, GetHistoricalDataResponseListener responseListener)
@@ -143,9 +138,10 @@ namespace Trading.Brokers.Fxcm
             return barList;
         }
 
-        private TimeFrame ConvertTimeFrameEnumToString(TimeFrame timeFrame)
+        private string ConvertTimeFrameEnumToString(TimeFrame timeFrame)
         {
-            return TimeFrame.Daily;
+            return string.Empty;
         }
+
     }
 }
