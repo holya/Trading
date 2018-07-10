@@ -8,13 +8,13 @@ using Trading.DataProviders;
 
 namespace Trading.Brokers.Fxcm
 {
-    public class FxcmWrapper
+    public class FxcmWrapper : IDataProvider
     {
-        private O2GSession session;
+        public event EventHandler<SessionStatusEnum> SessionStatusChanged = delegate { };
+        public SessionStatusEnum SessionStatusEnum { get; private set; } = SessionStatusEnum.Disconnected;
 
-        public event EventHandler<O2GSessionStatusCode> SessionStatusChanged = delegate { };
-        SessionStatusResponseListener sessionStatusResponseListener;
-        public O2GSessionStatusCode SessionStatusCode { get; private set; } = O2GSessionStatusCode.Disconnected;
+        private O2GSession session;
+        private SessionStatusResponseListener sessionStatusResponseListener;
 
         public FxcmWrapper()
         {
@@ -51,8 +51,8 @@ namespace Trading.Brokers.Fxcm
         }
         private void Session_SessionStatusChanged(object sender, SessionStatusEventArgs e)
         {
-            SessionStatusCode = e.SessionStatus;
-            SessionStatusChanged?.Invoke(this, e.SessionStatus);
+            SessionStatusEnum = (SessionStatusEnum)e.SessionStatus;
+            SessionStatusChanged?.Invoke(this, SessionStatusEnum);
         }
 
         public void Logout()
@@ -64,7 +64,7 @@ namespace Trading.Brokers.Fxcm
         #endregion
 
         
-        public List<FxBar> GetHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
+        public IEnumerable<Bar> GetHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
         {
             GetHistoricalDataResponseListener responseListener = new GetHistoricalDataResponseListener(session);
             session.subscribeResponse(responseListener);
@@ -77,7 +77,6 @@ namespace Trading.Brokers.Fxcm
             {
                 throw e;
             }
-
             return barList;
         }
 
@@ -138,9 +137,14 @@ namespace Trading.Brokers.Fxcm
             return barList;
         }
 
-        private string ConvertTimeFrameEnumToString(TimeFrame timeFrame)
+        private string convertTimeFrameEnumToString(TimeFrame timeFrame)
         {
             return string.Empty;
+        }
+
+        private SessionStatusEnum convert_O2GSessionStatusCode_To_SessionStatusEnum(O2GSessionStatusCode statusCode)
+        {
+            return (SessionStatusEnum)statusCode;
         }
 
     }

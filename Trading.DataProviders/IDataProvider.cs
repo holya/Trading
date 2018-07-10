@@ -9,7 +9,7 @@ namespace Trading.DataProviders
 {
     public interface IDataProvider
     {
-        List<Bar> GetHistoricalData(string symbol, Resolution resolution,
+        IEnumerable<Bar> GetHistoricalData(string symbol, Resolution resolution,
             DateTime beginDateTime, DateTime endDateTime);
     }
 }

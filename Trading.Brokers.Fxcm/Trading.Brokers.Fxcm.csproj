@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9B7F44B3-1D1B-49AE-A105-C48A9EA3AE69}</ProjectGuid>
+    <ProjectGuid>{5F3C14B5-6661-45FF-81FE-5DFB21F3B1A4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Trading.FxBrokers.Fxcm</RootNamespace>
-    <AssemblyName>Trading.FxBrokers.Fxcm</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <RootNamespace>Trading.Brokers.Fxcm</RootNamespace>
+    <AssemblyName>Trading.Brokers.Fxcm</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -48,6 +50,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseListeners\GetHistoricalDataResponseListener.cs" />
     <Compile Include="ResponseListeners\SessionStatusResponseListener.cs" />
+    <Compile Include="SessionStatusEnum.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trading.Common.Data\Trading.Common.csproj">
