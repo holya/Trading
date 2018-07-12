@@ -1,7 +1,8 @@
 ﻿using fxcore2;
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
 using Trading.DataProviders;
@@ -44,7 +45,7 @@ namespace Trading.Brokers.Fxcm
             {
                 throw e;
             }
-            if(sessionStatusResponseListener.Error)
+            if (sessionStatusResponseListener.Error)
             {
                 throw new Exception(sessionStatusResponseListener.ErrorMessage);
             }
@@ -63,7 +64,7 @@ namespace Trading.Brokers.Fxcm
         }
         #endregion
 
-        
+
         public IEnumerable<Bar> GetHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
         {
             GetHistoricalDataResponseListener responseListener = new GetHistoricalDataResponseListener(session);
@@ -73,7 +74,7 @@ namespace Trading.Brokers.Fxcm
             {
                 barList = GetHistoryPrices(session, symbol, "D1", startDateTime, endDateTime, 1000, responseListener);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }
@@ -101,7 +102,7 @@ namespace Trading.Brokers.Fxcm
 
             if (!responseListener.WaitEvents())
             {
-                throw new  Exception($"{responseListener.Error}");
+                throw new Exception($"{responseListener.Error}");
             }
 
             O2GResponse response = responseListener.GetResponse();

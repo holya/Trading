@@ -69,7 +69,7 @@ namespace Trading.Brokers.Fxcm
                         break;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }
@@ -82,5 +82,4 @@ namespace Trading.Brokers.Fxcm
             waitHandle.Set();
         }
     }
-
 }

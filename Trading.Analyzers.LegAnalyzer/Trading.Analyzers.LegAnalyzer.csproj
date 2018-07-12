@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{756173F5-2A8E-4B00-9A11-512954A2AED3}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>ConsoleApp1</RootNamespace>
-    <AssemblyName>ConsoleApp1</AssemblyName>
+    <ProjectGuid>{28108A74-5D38-4C8D-8389-4C0561C7FD93}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Trading.Analyzers.LegAnalyzer</RootNamespace>
+    <AssemblyName>Trading.Analyzers.LegAnalyzer</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,10 +20,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -44,24 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="LegAnalyzer.cs" />
+    <Compile Include="LegAnalyzerEvents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trading.Analyzers.Common\Trading.Analyzers.Common.csproj">
       <Project>{bb95d2e4-9158-43f9-8e25-19483333175c}</Project>
       <Name>Trading.Analyzers.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trading.Analyzers.LegAnalyzer\Trading.Analyzers.LegAnalyzer.csproj">
-      <Project>{28108a74-5d38-4c8d-8389-4c0561c7fd93}</Project>
-      <Name>Trading.Analyzers.LegAnalyzer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trading.Brokers.Fxcm\Trading.Brokers.Fxcm.csproj">
-      <Project>{38995aff-7180-4f8c-a902-a68d268138bf}</Project>
-      <Name>Trading.Brokers.Fxcm</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trading.Common\Trading.Common.csproj">
       <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>

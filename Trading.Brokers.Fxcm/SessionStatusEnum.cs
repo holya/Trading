@@ -16,6 +16,6 @@ namespace Trading.Brokers.Fxcm
         PriceSessionReconnecting,
         TradingSessionRequested,
         SessionLost,
-        Unknown        
+        Unknown
     }
 }

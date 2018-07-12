@@ -1,8 +1,10 @@
+﻿using fxcore2;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
-using fxcore2;
+using System.Threading.Tasks;
 
 namespace Trading.Brokers.Fxcm
 {
@@ -71,4 +73,3 @@ namespace Trading.Brokers.Fxcm
 
     }
 }
-

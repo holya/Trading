@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Trading.Brokers.Fxcm;
 using Trading.Common;
-
+using Trading.Brokers.Fxcm;
+using Trading.Analyzers.LegAnalyzer;
+using System.Linq;
 
 namespace ConsoleApp1
 {
@@ -13,7 +11,6 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-
             FxcmWrapper f = new FxcmWrapper();
 
             f.SessionStatusChanged += (sender, sessionStatusEnum) =>
@@ -32,8 +29,8 @@ namespace ConsoleApp1
             }
 
             DateTime dailyStartDateTime = new DateTime(2018, 4, 1);
-            DateTime dailyEndDateTime = new DateTime(2018, 5, 12);
-            List<FxBar> dailyBarList = new List<FxBar>();
+            DateTime dailyEndDateTime = DateTime.Now;
+            List<FxBar> dailyBarList = null;
             try
             {
                 dailyBarList = (List<FxBar>)f.GetHistoricalData("USD/CAD", new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime);
@@ -45,15 +42,15 @@ namespace ConsoleApp1
             }
 
 
-            //var dailyAnalyzer = new LegAnalyzer();
-            //dailyAnalyzer.AddBarList(dailyBarList);
-            //Console.WriteLine("Daily-----------------------------");
-            //Console.WriteLine($"dailyBarList.Count: {dailyBarList.Count}");
-            //Console.WriteLine($"dailyBarList.Last().DateTime: {dailyBarList.Last().DateTime}");
-            //Console.WriteLine($"Daily StartDateTime: {dailyStartDateTime}");
-            //Console.WriteLine($"Daily EndDateTime: {dailyEndDateTime}");
-            //Console.WriteLine($"Close: {dailyAnalyzer.Close}");
-            //Console.WriteLine("-----------------------------");
+            var dailyAnalyzer = new LegAnalyzer();
+            dailyAnalyzer.AddBarList(dailyBarList);
+            Console.WriteLine("Daily-----------------------------");
+            Console.WriteLine($"dailyBarList.Count: {dailyBarList.Count}");
+            Console.WriteLine($"dailyBarList.Last().DateTime: {dailyBarList.Last().DateTime}");
+            Console.WriteLine($"Daily StartDateTime: {dailyStartDateTime}");
+            Console.WriteLine($"Daily EndDateTime: {dailyEndDateTime}");
+            Console.WriteLine($"Close: {dailyAnalyzer.Close}");
+            Console.WriteLine("-----------------------------");
 
 
 
@@ -114,9 +111,9 @@ namespace ConsoleApp1
 
             //Console.WriteLine($"Bar Count: {h6anal.LastLeg.BarCount}");
 
-            Console.WriteLine(f.GetServerTime());
+            //Console.WriteLine(f.GetServerTime());
 
-            //Console.ReadLine();
+            Console.ReadLine();
             f.Logout();
         }
     }
