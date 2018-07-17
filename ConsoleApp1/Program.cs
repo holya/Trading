@@ -35,7 +35,7 @@ namespace ConsoleApp1
             List<FxBar> dailyBarList = null;
             try
             {
-                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime);
+                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, new Resolution(TimeFrame.Minute, 1), dailyStartDateTime, dailyEndDateTime);
             }
             catch (Exception e)
             {
@@ -49,6 +49,7 @@ namespace ConsoleApp1
             Console.WriteLine("Daily-----------------------------");
             Console.WriteLine($"dailyBarList.Count: {dailyBarList.Count}");
             Console.WriteLine($"dailyBarList.Last().DateTime: {dailyBarList.Last().DateTime}");
+            Console.WriteLine($"First bar time: { dailyBarList.First().DateTime}");
             Console.WriteLine($"Daily StartDateTime: {dailyStartDateTime}");
             Console.WriteLine($"Daily EndDateTime: {dailyEndDateTime}");
             Console.WriteLine($"Close: {dailyAnalyzer.Close}");
