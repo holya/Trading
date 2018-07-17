@@ -64,7 +64,6 @@ namespace Trading.Common
                 if(Close >= Open)
                     return BarDirection.OutsideUp;
                 return BarDirection.OutsideDown;
-
             }
         }
 

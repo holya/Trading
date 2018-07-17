@@ -13,6 +13,8 @@ namespace ConsoleApp1
         {
             FxcmWrapper f = new FxcmWrapper();
 
+            string symbol = "USD/JPY";
+
             f.SessionStatusChanged += (sender, sessionStatusEnum) =>
             {
                 Console.WriteLine(f.SessionStatusEnum + "");
@@ -28,19 +30,19 @@ namespace ConsoleApp1
                 Environment.Exit(0);
             }
 
-            DateTime dailyStartDateTime = new DateTime(2018, 4, 1);
+            DateTime dailyStartDateTime = new DateTime(2018, 6, 1);
             DateTime dailyEndDateTime = DateTime.Now;
             List<FxBar> dailyBarList = null;
             try
             {
-                dailyBarList = (List<FxBar>)f.GetHistoricalData("USD/CAD", new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime);
+                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                Environment.Exit(0);
+                //Environment.Exit(0);
+              
             }
-
 
             var dailyAnalyzer = new LegAnalyzer();
             dailyAnalyzer.AddBarList(dailyBarList);
@@ -54,27 +56,27 @@ namespace ConsoleApp1
 
 
 
-            //var lastDailyAnalyzerLeg = dailyAnalyzer.LastLeg;
-            //DateTime h6startDateTime = lastDailyAnalyzerLeg.StartDateTime;
-            //DateTime h6EndDateTime = lastDailyAnalyzerLeg.LastBar.DateTime.AddDays(1);
-            //List<FxBar> h6BarList = new List<FxBar>();
-            //try
-            //{
-            //    h6BarList = f.GetHistoricalData("USD/CAD", "H6", h6startDateTime, h6EndDateTime);
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //    Environment.Exit(0);
-            //}
-            //var h6Analyzer = new LegAnalyzer();
-            //h6Analyzer.AddBarList(h6BarList);
-            //Console.WriteLine("h6-----------------------------");
-            //Console.WriteLine($"h6.BarList.Count: {h6BarList.Count}\nh6BarList.Last().DateTime: {h6BarList.Last().DateTime}");
-            //Console.WriteLine($"H6 StartDateTime: {h6startDateTime}");
-            //Console.WriteLine($"H6 EndDateTime: {h6EndDateTime}");
-            //Console.WriteLine($"Close: {h6Analyzer.Close}");
-            //Console.WriteLine("-----------------------------");
+            var lastDailyAnalyzerLeg = dailyAnalyzer.LastLeg;
+            DateTime h6startDateTime = lastDailyAnalyzerLeg.StartDateTime;
+            DateTime h6EndDateTime = lastDailyAnalyzerLeg.LastBar.DateTime.AddDays(1);
+            List<FxBar> h6BarList = new List<FxBar>();
+            try
+            {
+                h6BarList = (List<FxBar>)f.GetHistoricalData(symbol, new Resolution(TimeFrame.Hourly, 6), h6startDateTime, h6EndDateTime);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Environment.Exit(0);
+            }
+            var h6Analyzer = new LegAnalyzer();
+            h6Analyzer.AddBarList(h6BarList);
+            Console.WriteLine("h6-----------------------------");
+            Console.WriteLine($"h6.BarList.Count: {h6BarList.Count}\nh6BarList.Last().DateTime: {h6BarList.Last().DateTime}");
+            Console.WriteLine($"H6 StartDateTime: {h6startDateTime}");
+            Console.WriteLine($"H6 EndDateTime: {h6EndDateTime}");
+            Console.WriteLine($"Close: {h6Analyzer.Close}");
+            Console.WriteLine("-----------------------------");
 
 
             //var lasth6AnalyzerLeg = h6Analyzer.LastLeg;
@@ -113,7 +115,7 @@ namespace ConsoleApp1
 
             //Console.WriteLine(f.GetServerTime());
 
-            Console.ReadLine();
+            //Console.ReadLine();
             f.Logout();
         }
     }

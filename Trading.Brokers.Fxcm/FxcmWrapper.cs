@@ -72,7 +72,7 @@ namespace Trading.Brokers.Fxcm
             List<FxBar> barList;
             try
             {
-                barList = GetHistoryPrices(session, symbol, "D1", startDateTime, endDateTime, 1000, responseListener);
+                barList = GetHistoryPrices(session, symbol, convert_Resolution_To_string(resolution), startDateTime, endDateTime, 1000, responseListener);
             }
             catch (Exception e)
             {
@@ -138,9 +138,43 @@ namespace Trading.Brokers.Fxcm
             return barList;
         }
 
-        private string convertTimeFrameEnumToString(TimeFrame timeFrame)
+        private string convert_Resolution_To_string(Resolution resolution)
         {
-            return string.Empty;
+            var str = "";
+            switch (resolution.TimeFrame)
+            {
+                case TimeFrame.Yearly:
+                    if (resolution.Size == 1)
+                        str = $"Y{resolution.Size}";
+                    break;
+                case TimeFrame.Quarterly:
+                    break;
+                case TimeFrame.Monthly:
+                    if (resolution.Size == 1)
+                        str = $"M{resolution.Size}";
+                    break;
+                case TimeFrame.Weekly:
+                    if (resolution.Size == 1)
+                        str = $"W{resolution.Size}";
+                    break;
+                case TimeFrame.Daily:
+                    if (resolution.Size == 1)
+                        str = $"D{resolution.Size}";
+                    break;
+                case TimeFrame.Hourly:
+                    if (resolution.Size == 1 || resolution.Size == 2 || resolution.Size == 3 || resolution.Size == 4 
+                        || resolution.Size == 6)
+                        str = $"H{resolution.Size}";
+                    break;
+                case TimeFrame.Minute:
+                    if(resolution.Size == 1 || resolution.Size == 5 || resolution.Size == 15 || resolution.Size == 30)
+                        str = $"m{resolution.Size}"; 
+                    break;
+                default:
+                    break;
+            }
+
+            return str;
         }
 
         private SessionStatusEnum convert_O2GSessionStatusCode_To_SessionStatusEnum(O2GSessionStatusCode statusCode)
