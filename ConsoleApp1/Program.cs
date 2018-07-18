@@ -30,12 +30,13 @@ namespace ConsoleApp1
                 Environment.Exit(0);
             }
 
-            DateTime dailyStartDateTime = new DateTime(2018, 6, 1);
-            DateTime dailyEndDateTime = DateTime.Now;
+            DateTime dailyStartDateTime = new DateTime(2018, 1, 1, 0, 0, 0);
+            var dailyEndDateTime = new DateTime(2018, 7, 31, 23, 59, 59); // DateTime.Now;
+            //DateTime dailyEndDateTime = new DateTime(now.Year, now.Month, , 0, 0, 0);
             List<FxBar> dailyBarList = null;
             try
             {
-                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, new Resolution(TimeFrame.Minute, 1), dailyStartDateTime, dailyEndDateTime);
+                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, new Resolution(TimeFrame.Quarterly, 1), dailyStartDateTime, dailyEndDateTime);
             }
             catch (Exception e)
             {

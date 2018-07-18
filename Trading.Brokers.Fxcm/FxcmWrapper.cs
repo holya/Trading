@@ -78,6 +78,58 @@ namespace Trading.Brokers.Fxcm
             {
                 throw e;
             }
+
+            if(resolution.TimeFrame == TimeFrame.Quarterly)
+            {
+                List<FxBar> quarterlyBarList = new List<FxBar>();
+
+                var index = 0;
+
+                List<FxBar> tempList; 
+
+                while(index < barList.Count)
+                {
+                    int count = 3 - ((barList[index].DateTime.Month - 1) % 3);
+
+                    tempList = barList.GetRange(index, count);
+
+                    index = index + count;
+
+                    var open = tempList.First().Open;
+                    var askOpen = tempList.First().AskOpen;
+
+                    var close = tempList.Last().Close;
+                    var askClose = tempList.Last().AskClose;
+
+                    var high = tempList.Max(p => p.High);
+                    var askHigh = tempList.Max(p => p.AskHigh);
+
+                    var low = tempList.Min(p => p.Low);
+                    var askLow = tempList.Min((p) => p.AskLow);
+
+                    var volume = tempList.Sum(p => p.Volume);
+
+                    var dateTime = tempList.Last().DateTime;
+
+                    FxBar bar = new FxBar()
+                    {
+                        Open = open,
+                        AskOpen = askOpen,
+                        High = high,
+                        AskHigh = askHigh,
+                        Low = low,
+                        AskLow = askLow,
+                        Close = close,
+                        AskClose = askClose,
+                        Volume = volume,
+                        DateTime = dateTime
+                    };
+
+                    quarterlyBarList.Add(bar);
+                }
+                return quarterlyBarList;
+            }
+
             return barList;
         }
 
@@ -148,6 +200,8 @@ namespace Trading.Brokers.Fxcm
                         str = $"Y{resolution.Size}";
                     break;
                 case TimeFrame.Quarterly:
+                    if (resolution.Size == 1)
+                        str = $"M{resolution.Size}";
                     break;
                 case TimeFrame.Monthly:
                     if (resolution.Size == 1)

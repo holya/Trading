@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Trading.Brokers.Fxcm
 {
-    class GetHistoricalDataResponseListener : IO2GResponseListener
+    class GetHistoricalDataResponseListener : IO2GResponseListener, IDisposable
     {
         private O2GSession session;
         private string requestId;
@@ -67,6 +67,11 @@ namespace Trading.Brokers.Fxcm
 
         public void onTablesUpdates(O2GResponse data)
         {
+        }
+
+        public void Dispose()
+        {
+            eventWaitHandle.Dispose();
         }
 
         #endregion

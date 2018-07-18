@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Trading.Brokers.Fxcm
 {
-    class SessionStatusResponseListener : IO2GSessionStatus
+    class SessionStatusResponseListener : IO2GSessionStatus, IDisposable
     {
         private string sessionId;
         private string pin;
@@ -69,9 +69,9 @@ namespace Trading.Brokers.Fxcm
                         break;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
         }
 
@@ -80,6 +80,11 @@ namespace Trading.Brokers.Fxcm
             Error = true;
             ErrorMessage = error;
             waitHandle.Set();
+        }
+
+        public void Dispose()
+        {
+            waitHandle.Dispose();
         }
     }
 }
