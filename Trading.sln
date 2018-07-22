@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.Analyzers.LegAnalyz
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{4BABB8E1-17EE-48F3-B64A-E671C1E17CE4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApp", "WindowsFormsApp\WindowsFormsApp.csproj", "{AD4AF80D-9089-400A-BC0C-BCB0B86C7F5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{4BABB8E1-17EE-48F3-B64A-E671C1E17CE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BABB8E1-17EE-48F3-B64A-E671C1E17CE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BABB8E1-17EE-48F3-B64A-E671C1E17CE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD4AF80D-9089-400A-BC0C-BCB0B86C7F5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD4AF80D-9089-400A-BC0C-BCB0B86C7F5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD4AF80D-9089-400A-BC0C-BCB0B86C7F5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD4AF80D-9089-400A-BC0C-BCB0B86C7F5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

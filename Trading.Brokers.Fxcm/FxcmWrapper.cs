@@ -167,7 +167,22 @@ namespace Trading.Brokers.Fxcm
                     O2GMarketDataSnapshotResponseReader reader = readerFactory.createMarketDataSnapshotReader(response);
                     if (reader.Count > 0)
                     {
-                        for (int i = 0; i < reader.Count; i++)
+                        barList.Add(new FxBar
+                        {
+                            Open = reader.getBidOpen(0),
+                            High = reader.getBidHigh(0),
+                            Low = reader.getBidLow(0),
+                            Close = reader.getBidClose(0),
+                            AskOpen = reader.getAskOpen(0),
+                            AskHigh = reader.getAskHigh(0),
+                            AskLow = reader.getAskLow(0),
+                            AskClose = reader.getAskClose(0),
+                            Volume = reader.getVolume(0),
+                            DateTime = reader.getDate(0),
+                            PreviousBar = null
+                        });
+
+                        for (int i = 1; i < reader.Count; i++)
                         {
                             barList.Add(new FxBar
                             {
@@ -180,7 +195,8 @@ namespace Trading.Brokers.Fxcm
                                 AskLow = reader.getAskLow(i),
                                 AskClose = reader.getAskClose(i),
                                 Volume = reader.getVolume(i),
-                                DateTime = reader.getDate(i)
+                                DateTime = reader.getDate(i),
+                                PreviousBar = barList[i-1]
                             });
                         }
                     }

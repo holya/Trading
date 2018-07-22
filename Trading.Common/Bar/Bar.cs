@@ -29,13 +29,25 @@ namespace Trading.Common
             this.Close = close;
             this.Volume = volume;
             this.DateTime = dateTime;
-            //this.PreviousBar = previousBar;
         }
 
-        public Bar(double open, double high, double low, double close, double volume, DateTime dateTime, Bar previousBar)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="open"></param>
+        /// <param name="high"></param>
+        /// <param name="low"></param>
+        /// <param name="close"></param>
+        /// <param name="volume"></param>
+        /// <param name="dateTime"></param>
+        /// <param name="previousBar">If null open is used to create a bar as open, high, low and close.</param>
+        public Bar(double open, double high, double low, double close, double volume, DateTime dateTime, Bar previousBar = null)
             : this(open, high, low, close, volume, dateTime)
         {
-            PreviousBar = previousBar;
+            if(previousBar == null)
+                PreviousBar = previousBar;
+            else
+                this.PreviousBar = new Bar(open, open, open, open, 0, dateTime);
         }
 
 
