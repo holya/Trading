@@ -45,7 +45,6 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.winChartViewer1);
-            this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel2_Paint);
             this.splitContainer1.Size = new System.Drawing.Size(968, 462);
             this.splitContainer1.SplitterDistance = 259;
             this.splitContainer1.SplitterWidth = 5;
