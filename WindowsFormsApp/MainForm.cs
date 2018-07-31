@@ -129,7 +129,7 @@ namespace WindowsFormsApp
             // Add a HLOC layer to the chart using green (008000) for up days and red (ff0000) for
             // down days
        //     HLOCLayer hlocLayer = c.addHLOCLayer3(highData, lowData, openData, closeData, 0x008000,
-                0xff0000);
+              //  0xff0000);
             // Set the line width to 2 pixels
       //      hlocLayer.setLineWidth(2);
       //      hlocLayer.setDataWidth(20);
