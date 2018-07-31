@@ -20,7 +20,7 @@ namespace WindowsFormsApp
 
             var chart = createXyChart();
             this.winChartViewer1.Chart = chart;
-
+            
             //include tool tip for the chart
             winChartViewer1.ImageMap = chart.getHTMLImageMap("clickable", "",
                 "title='{xLabel} Jan 2001\nHigh:{high}\nOpen:{open}\nClose:{close}\nLow:{low}'");
@@ -83,10 +83,7 @@ namespace WindowsFormsApp
             // Set the line width to 2 pixels
             hlocLayer.setLineWidth(2);
             hlocLayer.setDataWidth(20);
-
-            var lineLayer = c.addLineLayer2();
-            lineLayer.addDataSet(highData, Color.LightBlue.ToArgb());
-
+            int test = 0;
             return c;
         }
     }
