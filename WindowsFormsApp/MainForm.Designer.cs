@@ -39,34 +39,30 @@
             // splitContainer1
             // 
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.winChartViewer1);
-            this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel2_Paint);
-            this.splitContainer1.Size = new System.Drawing.Size(968, 462);
-            this.splitContainer1.SplitterDistance = 259;
-            this.splitContainer1.SplitterWidth = 5;
+            this.splitContainer1.Size = new System.Drawing.Size(1080, 630);
+            this.splitContainer1.SplitterDistance = 290;
+            this.splitContainer1.SplitterWidth = 8;
             this.splitContainer1.TabIndex = 0;
             // 
             // winChartViewer1
             // 
-            this.winChartViewer1.Location = new System.Drawing.Point(16, 11);
-            this.winChartViewer1.Margin = new System.Windows.Forms.Padding(2);
+            this.winChartViewer1.Location = new System.Drawing.Point(57, 84);
             this.winChartViewer1.Name = "winChartViewer1";
-            this.winChartViewer1.Size = new System.Drawing.Size(482, 309);
+            this.winChartViewer1.Size = new System.Drawing.Size(640, 373);
             this.winChartViewer1.TabIndex = 0;
             this.winChartViewer1.TabStop = false;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(968, 464);
+            this.ClientSize = new System.Drawing.Size(1080, 630);
             this.Controls.Add(this.splitContainer1);
-            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Text = "Form1";
             this.splitContainer1.Panel2.ResumeLayout(false);
