@@ -20,6 +20,8 @@ namespace WindowsFormsApp
 
             HLOCandLineChart chart = new HLOCandLineChart();
             this.winChartViewer1.Chart = chart.createChart();
+            
+            int redundantInt = 10;
 
 
             //var chart = createXyChart();
