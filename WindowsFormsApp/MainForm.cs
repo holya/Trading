@@ -18,6 +18,7 @@ namespace WindowsFormsApp
         {
             InitializeComponent();
 
+
             HLOCandLineChart chart = new HLOCandLineChart();
             this.winChartViewer1.Chart = chart.createChart();
             
@@ -26,7 +27,6 @@ namespace WindowsFormsApp
 
             //var chart = createXyChart();
             //this.winChartViewer1.Chart = chart;
-
             //include tool tip for the chart
             //winChartViewer1.ImageMap = chart.getHTMLImageMap("clickable", "",
             //    "title='{xLabel} Jan 2001\nHigh:{high}\nOpen:{open}\nClose:{close}\nLow:{low}'");
@@ -125,6 +125,16 @@ namespace WindowsFormsApp
         //    lineLayer.addDataSet(highData, Color.LightBlue.ToArgb());
 
         //    return c;
-        //}
+        //
+            // Add a HLOC layer to the chart using green (008000) for up days and red (ff0000) for
+            // down days
+       //     HLOCLayer hlocLayer = c.addHLOCLayer3(highData, lowData, openData, closeData, 0x008000,
+                0xff0000);
+            // Set the line width to 2 pixels
+      //      hlocLayer.setLineWidth(2);
+      //      hlocLayer.setDataWidth(20);
+      //      int test = 0;
+     //       return c;
+      //  }
     }
 }
