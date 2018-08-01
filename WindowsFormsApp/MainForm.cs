@@ -48,18 +48,30 @@ namespace WindowsFormsApp
                 2016, 1996, 1985, 2006, 2113, 2142, 2167, 2158, 2201, 2188, 2231, 2242 };
 
 
-                double[] lineData = { 1950, 1991, 2026, 2029, 2004, 2053, 2011, 1962, 1987, 2019, 2040,
-                2016, 1996, 1985, 2006, 2113, 2142, 2167, 2158, 2201, 2188, 2231, 2242 };
+                //double[] lineData = { 1950, 1991, 2026, 2029, 2004, 2053, 2011, 1962, 1987, 2019, 2040,
+                //2016, 1996, 1985, 2006, 2113, 2142, 2167, 2158, 2201, 2188, 2231, 2242 };
 
                 XYChart myChart = new XYChart(800, 300);
-
+                
                 myChart.setYAxisOnRight(true);
                 myChart.setPlotArea(50, 25, 500, 250);
 
                 HLOCLayer firstLayer = myChart.addHLOCLayer3(barDataHigh, barDataLow, barDataOpen, barDataClose, 0x008000, 0xff0000);
                 firstLayer.setLineWidth(1);
 
-                LineLayer secondLayer = myChart.addLineLayer(lineData, 0x008800, "the line");
+                //var barX = firstLayer.getXCoor(2043);
+                //var barY = firstLayer.getYCoor(2043);
+                var x = myChart.getXCoor(2043);
+                var y = myChart.getYCoor(2043);
+
+                var dc = myChart.getDrawArea();
+                var height = dc.getHeight();
+                var width = dc.getWidth();
+                dc.hline(20, 200, -100, Color.Black.ToArgb());
+
+                //dc.hline(barX, right, barY, Color.Blue.ToArgb());
+
+                //LineLayer secondLayer = myChart.addLineLayer(lineData, 0x008800, "the line");
 
                 return myChart;
             }

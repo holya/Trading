@@ -43,6 +43,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.Control;
             this.splitContainer1.Panel2.Controls.Add(this.winChartViewer1);
             this.splitContainer1.Size = new System.Drawing.Size(1080, 630);
             this.splitContainer1.SplitterDistance = 290;
@@ -51,9 +52,10 @@
             // 
             // winChartViewer1
             // 
+            this.winChartViewer1.BackColor = System.Drawing.SystemColors.Control;
             this.winChartViewer1.Location = new System.Drawing.Point(57, 84);
             this.winChartViewer1.Name = "winChartViewer1";
-            this.winChartViewer1.Size = new System.Drawing.Size(640, 373);
+            this.winChartViewer1.Size = new System.Drawing.Size(598, 373);
             this.winChartViewer1.TabIndex = 0;
             this.winChartViewer1.TabStop = false;
             // 
