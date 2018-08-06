@@ -129,13 +129,19 @@ namespace WindowsFormsApp
             // down days
             HLOCLayer hlocLayer = c.addHLOCLayer3(highData, lowData, openData, closeData, 0x008000,
                 0xff0000);
-            // Set the line width to 2 pixels
-            hlocLayer.setLineWidth(2);
-            hlocLayer.setDataWidth(20);
 
-            var lineLayer = c.addLineLayer2();
-            lineLayer.addDataSet(highData, Color.LightBlue.ToArgb());
+            var dc = c.getDrawArea();
+            var height = dc.getHeight();
+            var width = dc.getWidth();
 
+            var pa = c.getPlotArea();
+            var leftX = pa.getLeftX();
+            var rightX = pa.getRightX();
+            var topY = pa.getTopY();
+            var bottomY = pa.getBottomY();
+            //dc.hline(leftX, Right, 200, Color.Blue.ToArgb());
+            //dc.line(0, 0, 100, 100, Color.Blue.ToArgb());
+            c.addLine(leftX + 50, 100, rightX, 100); 
             return c;
 
          //   Add a HLOC layer to the chart using green(008000) for up days and red(ff0000) for
