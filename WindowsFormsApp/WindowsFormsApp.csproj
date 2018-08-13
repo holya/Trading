@@ -11,6 +11,7 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -21,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,10 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="netchartdir, Version=6.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\netchartdir.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
@@ -69,6 +67,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -85,6 +84,28 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Symbols.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Trading.Analyzers.Common\Trading.Analyzers.Common.csproj">
+      <Project>{bb95d2e4-9158-43f9-8e25-19483333175c}</Project>
+      <Name>Trading.Analyzers.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trading.Analyzers.LegAnalyzer\Trading.Analyzers.LegAnalyzer.csproj">
+      <Project>{28108a74-5d38-4c8d-8389-4c0561c7fd93}</Project>
+      <Name>Trading.Analyzers.LegAnalyzer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trading.Brokers.Fxcm\Trading.Brokers.Fxcm.csproj">
+      <Project>{38995aff-7180-4f8c-a902-a68d268138bf}</Project>
+      <Name>Trading.Brokers.Fxcm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trading.Common\Trading.Common.csproj">
+      <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
+      <Name>Trading.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trading.DataProviders\Trading.DataProviders.csproj">
+      <Project>{f56906e6-e201-4c15-bfb1-980d99bb3884}</Project>
+      <Name>Trading.DataProviders</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -6,9 +6,13 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ChartDirector;
 
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
+using Trading.Analyzers.Common;
+using Trading.Analyzers.LegAnalyzer;
+using Trading.Brokers.Fxcm;
+using Trading.Common;
 
 namespace WindowsFormsApp
 {
@@ -18,143 +22,86 @@ namespace WindowsFormsApp
         {
             InitializeComponent();
 
+            FxcmWrapper f = new FxcmWrapper();
 
-            //HLOCandLineChart chart = new HLOCandLineChart();
-            //this.winChartViewer1.Chart = chart.createChart();
+            string symbol = "USD/JPY";
 
-            //int redundantInt = 10;
+            f.SessionStatusChanged += (sender, sessionStatusEnum) =>
+            {
+                //Console.WriteLine(f.SessionStatusEnum + "");
+                Txt_loginStat.Text = f.SessionStatusEnum.ToString();
+            };
 
+            try
+            {
+                f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Environment.Exit(0);
+            }
 
-            var chart = createXyChart();
-            this.winChartViewer1.Chart = chart;
-            //include tool tip for the chart
-            winChartViewer1.ImageMap = chart.getHTMLImageMap("clickable", "",
-                "title='{xLabel} Jan 2001\nHigh:{high}\nOpen:{open}\nClose:{close}\nLow:{low}'");
+            DateTime dailyStartDateTime = new DateTime(2018, 1, 1, 0, 0, 0);
+            var dailyEndDateTime = new DateTime(2018, 7, 31, 23, 59, 59); // DateTime.Now;
+            //DateTime dailyEndDateTime = new DateTime(now.Year, now.Month, , 0, 0, 0);
+            List<FxBar> dailyBarList = null;
+            try
+            {
+                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                //Environment.Exit(0);
+
+            }
+
+            var dailyAnalyzer = new LegAnalyzer();
+            dailyAnalyzer.AddBarList(dailyBarList);
+            populateChart(dailyAnalyzer);
+
+            f.Logout();
         }
 
-        //public class HLOCandLineChart
-        //{
-        //    public int getNumberofCharts() { return 2; }
-
-        //    public XYChart createChart()
-        //    {
-        //        double[] barDataHigh = { 2043, 2039, 2076, 2064, 2048, 2058, 2070, 2033, 2027, 2029, 2071,
-        //        2085, 2034, 2031, 2056, 2128, 2180, 2183, 2192, 2213, 2230, 2281, 2272 };
-        //        double[] barDataLow = { 1931, 1921, 1985, 2028, 1986, 1994, 1999, 1958, 1943, 1944, 1962,
-        //        2011, 1975, 1962, 1928, 2059, 2112, 2103, 2151, 2127, 2123, 2152, 2212 };
-        //        double[] barDataOpen = { 2000, 1957, 1993, 2037, 2018, 2021, 2045, 2009, 1959, 1985, 2008,
-        //        2048, 2006, 2010, 1971, 2080, 2116, 2137, 2170, 2172, 2171, 2191, 2240 };
-        //        double[] barDataClose = { 1950, 1991, 2026, 2029, 2004, 2053, 2011, 1962, 1987, 2019, 2040,
-        //        2016, 1996, 1985, 2006, 2113, 2142, 2167, 2158, 2201, 2188, 2231, 2242 };
-
-
-        //        //double[] lineData = { 1950, 1991, 2026, 2029, 2004, 2053, 2011, 1962, 1987, 2019, 2040,
-        //        //2016, 1996, 1985, 2006, 2113, 2142, 2167, 2158, 2201, 2188, 2231, 2242 };
-
-        //        XYChart myChart = new XYChart(800, 300);
-                
-        //        myChart.setYAxisOnRight(true);
-        //        myChart.setPlotArea(50, 25, 500, 250);
-
-        //        HLOCLayer firstLayer = myChart.addHLOCLayer3(barDataHigh, barDataLow, barDataOpen, barDataClose, 0x008000, 0xff0000);
-        //        firstLayer.setLineWidth(1);
-
-        //        //var barX = firstLayer.getXCoor(2043);
-        //        //var barY = firstLayer.getYCoor(2043);
-        //        var x = myChart.getXCoor(2043);
-        //        var y = myChart.getYCoor(2043);
-
-        //        var dc = myChart.getDrawArea();
-        //        var height = dc.getHeight();
-        //        var width = dc.getWidth();
-        //        dc.hline(20, 200, 100, Color.Black.ToArgb());
-
-        //        //dc.hline(barX, right, barY, Color.Blue.ToArgb());
-
-        //        //LineLayer secondLayer = myChart.addLineLayer(lineData, 0x008800, "the line");
-
-        //        return myChart;
-        //    }
-        //}
-
-
-        private XYChart createXyChart()
+        private void populateChart(LegAnalyzer la)
         {
-            double[] highData = {2043, 2039, 2076, 2064, 2048, 2058, 2070, 2033, 2027, 2029, 2071,
-                2085, 2034, 2031, 2056, 2128, 2180, 2183, 2192, 2213, 2230, 2281, 2272};
+            var chartSeries = chart1.Series[0];
+            Color barColor = Color.Green;
 
-            double[] lowData = {1931, 1921, 1985, 2028, 1986, 1994, 1999, 1958, 1943, 1944, 1962,
-                2011, 1975, 1962, 1928, 2059, 2112, 2103, 2151, 2127, 2123, 2152, 2212};
+            foreach(var leg in la.LegList)
+            {
+                barColor = leg.Direction == LegDirection.Up ? Color.Green : Color.Red; 
+                foreach(var bar in leg.BarList)
+                {
+                    chartSeries.Points.Add(createBarDataPoint(bar.High, bar.Low, bar.Open, bar.Close, bar.DateTime, barColor));
+                }
+            }
+        }
+        private DataPoint createBarDataPoint(double high, double low, double open, double close, DateTime dateTime, Color color)
+        {
+            var cs = chart1.Series[0];
+            DataPoint dp = new DataPoint();
+            dp.AxisLabel = dateTime.ToShortTimeString();
+            dp.XValue = cs.Points.Count;
+            dp.YValues = new double[] { high, low, open, close };
+            dp.Color = color;
+            return dp;
+        }
 
-            double[] openData = {2000, 1957, 1993, 2037, 2018, 2021, 2045, 2009, 1959, 1985, 2008,
-                2048, 2006, 2010, 1971, 2080, 2116, 2137, 2170, 2172, 2171, 2191, 2240};
+        private void chart1_Click(object sender, EventArgs e)
+        {
 
-            double[] closeData = {1950, 1991, 2026, 2029, 2004, 2053, 2011, 1962, 1987, 2019, 2040,
-                2016, 1996, 1985, 2006, 2113, 2142, 2167, 2158, 2201, 2188, 2231, 2242};
+        }
 
-            // The labels for the HLOC chart
-            string[] labels = {"Mon 1", "Tue 2", "Wed 3", "Thu 4", "Fri 5", "Mon 8", "Tue 9",
-                "Wed 10", "Thu 11", "Fri 12", "Mon 15", "Tue 16", "Wed 17", "Thu 18", "Fri 19",
-                "Mon 22", "Tue 23", "Wed 24", "Thu 25", "Fri 26", "Mon 29", "Tue 30", "Wed 31"};
+        private void splitContainer1_Panel1_ClientSizeChanged(object sender, EventArgs e)
+        {
+        }
 
-            // Create a XYChart object of size 600 x 350 pixels
-            XYChart c = new XYChart(600, 350);
-            //int width = splitContainer1.Panel2.Width;
-            //int height = splitContainer1.Panel2.Height;
-            //XYChart c = new XYChart(width, height);
-            // Set the plotarea at (50, 25) and of size 500 x 250 pixels. Enable both the horizontal
-            // and vertical grids by setting their colors to grey (0xc0c0c0)
-            c.setPlotArea(50, 25, 500, 250).setGridColor(0xc0c0c0, 0xc0c0c0);
-
-            // Add a title to the chart
-            c.addTitle("Mr. Alireza Olia, the greatest Software Engineer. YES.");
-
-            // Add a custom text at (50, 25) (the upper left corner of the plotarea). Use 12pt Arial
-            // Bold/blue (4040c0) as the font.
-            c.addText(50, 25, "(c) Global XYZ ABC Company", "Arial Bold", 12, 0x4040c0);
-
-            // Add a title to the x axis
-            c.xAxis().setTitle("Jan 2001");
-
-            // Set the labels on the x axis. Rotate the labels by 45 degrees.
-            c.xAxis().setLabels(labels).setFontAngle(45);
-
-            // Add a title to the y axis
-            c.yAxis().setTitle("Universal Stock Index");
-
-            // Draw the y axis on the right hand side of the plot area
-            //c.setYAxisOnRight(true);
-
-            // Add a HLOC layer to the chart using green (008000) for up days and red (ff0000) for
-            // down days
-            HLOCLayer hlocLayer = c.addHLOCLayer3(highData, lowData, openData, closeData, 0x008000,
-                0xff0000);
-
-            var dc = c.getDrawArea();
-            var height = dc.getHeight();
-            var width = dc.getWidth();
-
-            var pa = c.getPlotArea();
-            var leftX = pa.getLeftX();
-            var rightX = pa.getRightX();
-            var topY = pa.getTopY();
-            var bottomY = pa.getBottomY();
-            //dc.hline(leftX, Right, 200, Color.Blue.ToArgb());
-            //dc.line(0, 0, 100, 100, Color.Blue.ToArgb());
-            c.addLine(leftX + 50, 100, rightX, 100); 
-            return c;
-
-         //   Add a HLOC layer to the chart using green(008000) for up days and red(ff0000) for
-
-         // down days
-
-         //HLOCLayer hlocLayer = c.addHLOCLayer3(highData, lowData, openData, closeData, 0x008000,
-         //    0xff0000);
-         //   Set the line width to 2 pixels
-         //   hlocLayer.setLineWidth(2);
-         //   hlocLayer.setDataWidth(20);
-         //   int test = 0;
-         //   return c;
+        private void splitContainer1_Panel2_ClientSizeChanged(object sender, EventArgs e)
+        {
+            //chart1.Width = splitContainer1.Panel2.Width;
+            //chart1.Height = splitContainer1.Panel2.Height;
         }
     }
 }
