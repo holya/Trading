@@ -89,19 +89,5 @@ namespace WindowsFormsApp
             return dp;
         }
 
-        private void chart1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void splitContainer1_Panel1_ClientSizeChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void splitContainer1_Panel2_ClientSizeChanged(object sender, EventArgs e)
-        {
-            //chart1.Width = splitContainer1.Panel2.Width;
-            //chart1.Height = splitContainer1.Panel2.Height;
-        }
     }
 }
