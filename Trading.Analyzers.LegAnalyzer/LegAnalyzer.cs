@@ -39,6 +39,8 @@ namespace Trading.Analyzers.LegAnalyzer
 
             this.addBar = this.doFirstLeg;  
         }
+        
+        public Resolution Resolution { get; set; }
 
         public void AddBarList(IEnumerable<Tuple<double, double, double, double, double, DateTime>> barList)
         {

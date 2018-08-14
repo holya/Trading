@@ -36,7 +36,7 @@ namespace ConsoleApp1
             List<FxBar> dailyBarList = null;
             try
             {
-                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, new Resolution(TimeFrame.Quarterly, 1), dailyStartDateTime, dailyEndDateTime);
+                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime);
             }
             catch (Exception e)
             {

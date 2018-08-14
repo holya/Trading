@@ -18,18 +18,17 @@ namespace WindowsFormsApp
 {
     public partial class MainForm : Form
     {
+        FxcmWrapper f = new FxcmWrapper();
         public MainForm()
         {
             InitializeComponent();
 
-            FxcmWrapper f = new FxcmWrapper();
-
-            string symbol = "USD/JPY";
+            string symbol = "AUD/USD";
 
             f.SessionStatusChanged += (sender, sessionStatusEnum) =>
             {
                 //Console.WriteLine(f.SessionStatusEnum + "");
-                Txt_loginStat.Text = f.SessionStatusEnum.ToString();
+                //Txt_loginStat.Text = f.SessionStatusEnum.ToString();
             };
 
             try
@@ -42,13 +41,14 @@ namespace WindowsFormsApp
                 Environment.Exit(0);
             }
 
-            DateTime dailyStartDateTime = new DateTime(2018, 1, 1, 0, 0, 0);
-            var dailyEndDateTime = new DateTime(2018, 7, 31, 23, 59, 59); // DateTime.Now;
+            DateTime dailyStartDateTime = new DateTime(2018, 8, 10, 0, 0, 0);
+            var dailyEndDateTime = DateTime.Now;//new DateTime(2018, 8, 13, 23, 59, 59); 
             //DateTime dailyEndDateTime = new DateTime(now.Year, now.Month, , 0, 0, 0);
             List<FxBar> dailyBarList = null;
+            Resolution resolution = new Resolution(TimeFrame.Minute, 15);
             try
             {
-                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime);
+                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, resolution, dailyStartDateTime, dailyEndDateTime);
             }
             catch (Exception e)
             {
@@ -58,35 +58,13 @@ namespace WindowsFormsApp
             }
 
             var dailyAnalyzer = new LegAnalyzer();
+            dailyAnalyzer.Resolution = resolution;
             dailyAnalyzer.AddBarList(dailyBarList);
-            populateChart(dailyAnalyzer);
+
+            hlocChart1.LegAnalyzer = dailyAnalyzer;
+            hlocChart1.DrawAnalyzer();
 
             f.Logout();
-        }
-
-        private void populateChart(LegAnalyzer la)
-        {
-            var chartSeries = chart1.Series[0];
-            Color barColor = Color.Green;
-
-            foreach(var leg in la.LegList)
-            {
-                barColor = leg.Direction == LegDirection.Up ? Color.Green : Color.Red; 
-                foreach(var bar in leg.BarList)
-                {
-                    chartSeries.Points.Add(createBarDataPoint(bar.High, bar.Low, bar.Open, bar.Close, bar.DateTime, barColor));
-                }
-            }
-        }
-        private DataPoint createBarDataPoint(double high, double low, double open, double close, DateTime dateTime, Color color)
-        {
-            var cs = chart1.Series[0];
-            DataPoint dp = new DataPoint();
-            dp.AxisLabel = dateTime.ToShortTimeString();
-            dp.XValue = cs.Points.Count;
-            dp.YValues = new double[] { high, low, open, close };
-            dp.Color = color;
-            return dp;
         }
 
     }
