@@ -41,11 +41,11 @@ namespace WindowsFormsApp
                 Environment.Exit(0);
             }
 
-            DateTime dailyStartDateTime = new DateTime(2018, 8, 10, 0, 0, 0);
+            DateTime dailyStartDateTime = new DateTime(2018, 6, 1, 0, 0, 0);
             var dailyEndDateTime = DateTime.Now;//new DateTime(2018, 8, 13, 23, 59, 59); 
             //DateTime dailyEndDateTime = new DateTime(now.Year, now.Month, , 0, 0, 0);
             List<FxBar> dailyBarList = null;
-            Resolution resolution = new Resolution(TimeFrame.Minute, 15);
+            Resolution resolution = new Resolution(TimeFrame.Daily, 1);
             try
             {
                 dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, resolution, dailyStartDateTime, dailyEndDateTime);
@@ -57,8 +57,10 @@ namespace WindowsFormsApp
 
             }
 
-            var dailyAnalyzer = new LegAnalyzer();
-            dailyAnalyzer.Resolution = resolution;
+            var dailyAnalyzer = new LegAnalyzer
+            {
+                Resolution = resolution
+            };
             dailyAnalyzer.AddBarList(dailyBarList);
 
             hlocChart1.LegAnalyzer = dailyAnalyzer;
