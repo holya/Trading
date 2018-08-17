@@ -23,9 +23,7 @@ namespace WindowsFormsApp
         public MainForm()
         {
             InitializeComponent();
-            t = new Action<string>(setLabelText);
-            string symbol = "USD/CAD";
-
+            //t = new Action<string>(setLabelText);
             //f.SessionStatusChanged += (sender, sessionStatusEnum) =>
             //{
             //    if (label_connectionStatus.InvokeRequired)
@@ -119,15 +117,6 @@ namespace WindowsFormsApp
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             f.Logout();
-        }
-
-        private void setLabelText(string txt)
-        {
-            label_connectionStatus.Text = f.SessionStatusEnum.ToString();
-            label_connectionStatus.Text = txt;
-            label_connectionStatus.BorderStyle = BorderStyle.Fixed3D;
-            label_connectionStatus.BackColor = Color.Green;
-            label_connectionStatus.ForeColor = Color.White;
         }
 
     }
