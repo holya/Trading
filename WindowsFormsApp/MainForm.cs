@@ -13,23 +13,36 @@ using Trading.Analyzers.Common;
 using Trading.Analyzers.LegAnalyzer;
 using Trading.Brokers.Fxcm;
 using Trading.Common;
-
+using WindowsFormsApp.Custom_Views;
 namespace WindowsFormsApp
 {
     public partial class MainForm : Form
     {
+        Action<string> t;
         FxcmWrapper f = new FxcmWrapper();
         public MainForm()
         {
             InitializeComponent();
+            t = new Action<string>(setLabelText);
+            string symbol = "USD/CAD";
 
-            string symbol = "AUD/USD";
+            //f.SessionStatusChanged += (sender, sessionStatusEnum) =>
+            //{
+            //    if (label_connectionStatus.InvokeRequired)
+            //    {
+            //        this.Invoke((Action)(() =>
+            //        {
+            //            setLabelText(sessionStatusEnum.ToString());
 
-            f.SessionStatusChanged += (sender, sessionStatusEnum) =>
-            {
-                //Console.WriteLine(f.SessionStatusEnum + "");
-                //Txt_loginStat.Text = f.SessionStatusEnum.ToString();
-            };
+            //        }));
+
+            //    }
+            //    else
+            //    {
+            //        setLabelText(sessionStatusEnum.ToString());
+            //    }
+            //};
+
 
             try
             {
@@ -41,11 +54,15 @@ namespace WindowsFormsApp
                 Environment.Exit(0);
             }
 
-            DateTime dailyStartDateTime = new DateTime(2018, 6, 1, 0, 0, 0);
+        }
+
+        private LegAnalyzer GetHistoricalData(string symbol, Resolution resolution)
+        {
+            DateTime dailyStartDateTime = new DateTime(2018, 5, 12, 0, 0, 0);
             var dailyEndDateTime = DateTime.Now;//new DateTime(2018, 8, 13, 23, 59, 59); 
             //DateTime dailyEndDateTime = new DateTime(now.Year, now.Month, , 0, 0, 0);
+
             List<FxBar> dailyBarList = null;
-            Resolution resolution = new Resolution(TimeFrame.Daily, 1);
             try
             {
                 dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, resolution, dailyStartDateTime, dailyEndDateTime);
@@ -61,12 +78,54 @@ namespace WindowsFormsApp
             {
                 Resolution = resolution
             };
+
             dailyAnalyzer.AddBarList(dailyBarList);
 
-            hlocChart1.LegAnalyzer = dailyAnalyzer;
-            hlocChart1.DrawAnalyzer();
+            return dailyAnalyzer;
+        }
 
+        private void hlocChart3_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void newChartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dialogBox = new NewChartOptionsPicker())
+            {
+                var result = dialogBox.ShowDialog();
+                if(result == DialogResult.OK)
+                {
+                    //var selectedTimeFrame = dialogBox.comboBox_timeFrame.SelectedValue;
+                    //var s = (TimeFrame)dialogBox.comboBox_timeFrame.SelectedItem;
+
+                    TimeFrame t = (TimeFrame)Enum.Parse(typeof(TimeFrame), dialogBox.comboBox_timeFrame.SelectedItem.ToString());
+
+                    int size = Convert.ToInt16(dialogBox.textBox_timeFrame_size.Text);
+
+                    var la = GetHistoricalData(dialogBox.textBox_symbol.Text, new Resolution(t, size));
+
+                    var chart = new HlocChartForm();
+
+                    chart.LegAnalyzer = la;
+                    chart.DrawAnalyzer();
+                    chart.Show();
+                }
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
             f.Logout();
+        }
+
+        private void setLabelText(string txt)
+        {
+            label_connectionStatus.Text = f.SessionStatusEnum.ToString();
+            label_connectionStatus.Text = txt;
+            label_connectionStatus.BorderStyle = BorderStyle.Fixed3D;
+            label_connectionStatus.BackColor = Color.Green;
+            label_connectionStatus.ForeColor = Color.White;
         }
 
     }

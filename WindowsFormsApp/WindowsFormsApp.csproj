@@ -48,11 +48,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HlocChart.cs">
+    <Compile Include="Custom Views\HlocChart.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="HlocChart.Designer.cs">
+    <Compile Include="Custom Views\HlocChart.Designer.cs">
       <DependentUpon>HlocChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Custom Views\HlocChartForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Custom Views\HlocChartForm.Designer.cs">
+      <DependentUpon>HlocChartForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Custom Views\NewChartOptionsPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Custom Views\NewChartOptionsPicker.Designer.cs">
+      <DependentUpon>NewChartOptionsPicker.cs</DependentUpon>
     </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -62,8 +74,14 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="HlocChart.resx">
+    <EmbeddedResource Include="Custom Views\HlocChart.resx">
       <DependentUpon>HlocChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Custom Views\HlocChartForm.resx">
+      <DependentUpon>HlocChartForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Custom Views\NewChartOptionsPicker.resx">
+      <DependentUpon>NewChartOptionsPicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

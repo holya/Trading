@@ -1,63 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
+using Trading.Analyzers.Common;
 using Trading.Analyzers.LegAnalyzer;
 using Trading.Common;
-using Trading.Analyzers.Common;
-using System.Windows.Forms.DataVisualization.Charting;
 
-namespace WindowsFormsApp
+namespace WindowsFormsApp.Custom_Views
 {
-    public partial class HlocChart : UserControl
+    public partial class HlocChartForm : Form
     {
-
-        public HlocChart()
+        public HlocChartForm()
         {
             InitializeComponent();
         }
 
         public LegAnalyzer LegAnalyzer { get; set; }
 
-        private void Chart1_PostPaint(object sender, ChartPaintEventArgs e)
-        {
-            populateLines2(e.ChartGraphics.Graphics);
-        }
 
         public void DrawAnalyzer()
         {
-            populateChart();
-            //populateLines();
+            drawBars();
         }
 
-        private void populateChart()
+        private void drawBars()
         {
             var chartSeries = chart1.Series[0];
-            Color barColor = Color.Green;
-            bool isIntraday = false;
-            if (LegAnalyzer.Resolution.TimeFrame == TimeFrame.Hourly ||
-                LegAnalyzer.Resolution.TimeFrame == TimeFrame.Minute)
-                isIntraday = true;
- 
+
             foreach (var leg in LegAnalyzer.LegList)
             {
-                barColor = leg.Direction == LegDirection.Up ? Color.Green : Color.Red;
-
-                for (int i = 0; i < leg.BarCount; i++)
+                foreach (var bar in leg.BarList)
                 {
-                    var bar = leg.BarList[i];
-
                     DataPoint dp = new DataPoint
                     {
-                        AxisLabel = isIntraday ? bar.DateTime.ToShortTimeString() : bar.DateTime.ToShortDateString(),
+                        AxisLabel = bar.DateTime.ToString(),
                         XValue = chartSeries.Points.Count,
                         YValues = new double[] { bar.High, bar.Low, bar.Open, bar.Close },
-                        Color = barColor
+                        Color = leg.Direction == LegDirection.Up ? Color.Green : Color.Red
                     };
 
                     chartSeries.Points.Add(dp);
@@ -86,30 +71,45 @@ namespace WindowsFormsApp
                 cs2.Points.Add(dp);
                 var lp = chart1.Series[0].Points.Last().XValue;
                 cs2.Points.AddXY(lp, dp.YValues[0]);
-                //float x1 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(d.XValue);
-                //float x2 = chart1.Right;
-                //var y = (float)chart1.ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
+                //float x1 = (float)hlocChartControl1.ChartAreas[0].AxisX.ValueToPixelPosition(d.XValue);
+                //float x2 = hlocChartControl1.Right;
+                //var y = (float)hlocChartControl1.ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
                 //g.DrawLine(new Pen(Color.Red), x1, y, x2, y);
             }
         }
 
-        private void populateLines2(Graphics g)
+        private void drawRefLines(Graphics g)
+        {
+            foreach (var r in LegAnalyzer.RefList)
+            {
+                string dts = r.DateTime.ToString();
+                var d = chart1.Series[0].Points.FirstOrDefault(p => p.AxisLabel.Equals(dts));
+                //this.BringToFront();
+
+                float x1 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(d.XValue);
+                float x2 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(chart1.Series[0].Points.Count - 1) + 20;
+                var y = (float)chart1.ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
+                g.DrawLine(new Pen(Color.Red, 1), x1, y, x2, y);
+            }
+        }
+
+        private bool isLaIntraday()
         {
             bool isIntraday = false;
             if (LegAnalyzer.Resolution.TimeFrame == TimeFrame.Hourly ||
                 LegAnalyzer.Resolution.TimeFrame == TimeFrame.Minute)
                 isIntraday = true;
-
-            foreach (var r in LegAnalyzer.RefList)
-            {
-                string dts = isIntraday ? r.DateTime.ToShortTimeString() : r.DateTime.ToShortDateString();
-                var d = chart1.Series[0].Points.FirstOrDefault(p => p.AxisLabel.Equals(dts));
-                float x1 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(d.XValue);
-                float x2 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(chart1.Series[0].Points.Count - 1) + 20;
-                var y = (float)chart1.ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
-                g.DrawLine(new Pen(Color.Red), x1, y, x2, y);
-            }
+            return isIntraday;
         }
 
+        private void HlocChartForm_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void chart1_PostPaint(object sender, ChartPaintEventArgs e)
+        {
+            drawRefLines(e.ChartGraphics.Graphics);
+        }
     }
 }
