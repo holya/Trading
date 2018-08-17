@@ -56,9 +56,6 @@ namespace WindowsFormsApp
 
         private LegAnalyzer GetHistoricalData(string symbol, Resolution resolution, DateTime from, DateTime to)
         {
-            DateTime dailyStartDateTime = new DateTime(2018, 5, 12, 0, 0, 0);
-            var dailyEndDateTime = DateTime.Now;//new DateTime(2018, 8, 13, 23, 59, 59); 
-            //DateTime dailyEndDateTime = new DateTime(now.Year, now.Month, , 0, 0, 0);
 
             List<FxBar> dailyBarList = null;
             try
@@ -82,10 +79,6 @@ namespace WindowsFormsApp
             return dailyAnalyzer;
         }
 
-        private void hlocChart3_Load(object sender, EventArgs e)
-        {
-
-        }
 
         private void newChartToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -94,15 +87,12 @@ namespace WindowsFormsApp
                 var result = dialogBox.ShowDialog();
                 if(result == DialogResult.OK)
                 {
-                    //var selectedTimeFrame = dialogBox.comboBox_timeFrame.SelectedValue;
-                    //var s = (TimeFrame)dialogBox.comboBox_timeFrame.SelectedItem;
-
-                    TimeFrame t = (TimeFrame)Enum.Parse(typeof(TimeFrame), dialogBox.comboBox_timeFrame.SelectedItem.ToString());
+                    TimeFrame timeFrame = (TimeFrame)Enum.Parse(typeof(TimeFrame), dialogBox.comboBox_timeFrame.SelectedItem.ToString());
 
                     int size = Convert.ToInt16(dialogBox.textBox_timeFrame_size.Text);
 
                     var la = GetHistoricalData(dialogBox.textBox_symbol.Text, 
-                        new Resolution(t, size), dialogBox.dateTimePicker_from.Value,
+                        new Resolution(timeFrame, size), dialogBox.dateTimePicker_from.Value,
                         dialogBox.dateTimePicker_to.Value);
 
                     var chart = new HlocChartForm();

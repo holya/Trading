@@ -26,5 +26,11 @@ namespace WindowsFormsApp.Custom_Views
 
             comboBox_timeFrame.Items.AddRange(Enum.GetNames(typeof(TimeFrame)));
         }
+
+        private void textBox_timeFrame_size_TextChanged(object sender, EventArgs e)
+        {
+            if (!int.TryParse(textBox_timeFrame_size.Text, out int num))
+                textBox_timeFrame_size.Text = "";
+        }
     }
 }

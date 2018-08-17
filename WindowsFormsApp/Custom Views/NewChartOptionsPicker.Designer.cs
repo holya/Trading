@@ -93,6 +93,7 @@
             this.textBox_timeFrame_size.Size = new System.Drawing.Size(100, 26);
             this.textBox_timeFrame_size.TabIndex = 6;
             this.textBox_timeFrame_size.Text = "1";
+            this.textBox_timeFrame_size.TextChanged += new System.EventHandler(this.textBox_timeFrame_size_TextChanged);
             // 
             // button_ok
             // 
