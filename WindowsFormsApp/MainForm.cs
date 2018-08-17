@@ -56,7 +56,7 @@ namespace WindowsFormsApp
 
         }
 
-        private LegAnalyzer GetHistoricalData(string symbol, Resolution resolution)
+        private LegAnalyzer GetHistoricalData(string symbol, Resolution resolution, DateTime from, DateTime to)
         {
             DateTime dailyStartDateTime = new DateTime(2018, 5, 12, 0, 0, 0);
             var dailyEndDateTime = DateTime.Now;//new DateTime(2018, 8, 13, 23, 59, 59); 
@@ -65,7 +65,7 @@ namespace WindowsFormsApp
             List<FxBar> dailyBarList = null;
             try
             {
-                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, resolution, dailyStartDateTime, dailyEndDateTime);
+                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, resolution, from, to);
             }
             catch (Exception e)
             {
@@ -103,7 +103,9 @@ namespace WindowsFormsApp
 
                     int size = Convert.ToInt16(dialogBox.textBox_timeFrame_size.Text);
 
-                    var la = GetHistoricalData(dialogBox.textBox_symbol.Text, new Resolution(t, size));
+                    var la = GetHistoricalData(dialogBox.textBox_symbol.Text, 
+                        new Resolution(t, size), dialogBox.dateTimePicker_from.Value,
+                        dialogBox.dateTimePicker_to.Value);
 
                     var chart = new HlocChartForm();
 

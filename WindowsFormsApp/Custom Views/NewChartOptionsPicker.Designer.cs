@@ -36,6 +36,10 @@
             this.textBox_timeFrame_size = new System.Windows.Forms.TextBox();
             this.button_ok = new System.Windows.Forms.Button();
             this.button_cancel = new System.Windows.Forms.Button();
+            this.dateTimePicker_from = new System.Windows.Forms.DateTimePicker();
+            this.label_from = new System.Windows.Forms.Label();
+            this.label_to = new System.Windows.Forms.Label();
+            this.dateTimePicker_to = new System.Windows.Forms.DateTimePicker();
             this.SuspendLayout();
             // 
             // label_symbol
@@ -53,6 +57,7 @@
             this.textBox_symbol.Name = "textBox_symbol";
             this.textBox_symbol.Size = new System.Drawing.Size(100, 26);
             this.textBox_symbol.TabIndex = 1;
+            this.textBox_symbol.Text = "USD/CAD";
             // 
             // label_timeFrame
             // 
@@ -92,7 +97,7 @@
             // button_ok
             // 
             this.button_ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button_ok.Location = new System.Drawing.Point(126, 161);
+            this.button_ok.Location = new System.Drawing.Point(126, 374);
             this.button_ok.Name = "button_ok";
             this.button_ok.Size = new System.Drawing.Size(75, 69);
             this.button_ok.TabIndex = 7;
@@ -102,18 +107,56 @@
             // button_cancel
             // 
             this.button_cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button_cancel.Location = new System.Drawing.Point(279, 161);
+            this.button_cancel.Location = new System.Drawing.Point(279, 374);
             this.button_cancel.Name = "button_cancel";
             this.button_cancel.Size = new System.Drawing.Size(75, 69);
             this.button_cancel.TabIndex = 8;
             this.button_cancel.Text = "Cancel";
             this.button_cancel.UseVisualStyleBackColor = true;
             // 
+            // dateTimePicker_from
+            // 
+            this.dateTimePicker_from.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.dateTimePicker_from.Location = new System.Drawing.Point(94, 162);
+            this.dateTimePicker_from.Name = "dateTimePicker_from";
+            this.dateTimePicker_from.Size = new System.Drawing.Size(200, 26);
+            this.dateTimePicker_from.TabIndex = 9;
+            // 
+            // label_from
+            // 
+            this.label_from.AutoSize = true;
+            this.label_from.Location = new System.Drawing.Point(38, 162);
+            this.label_from.Name = "label_from";
+            this.label_from.Size = new System.Drawing.Size(50, 20);
+            this.label_from.TabIndex = 10;
+            this.label_from.Text = "From:";
+            // 
+            // label_to
+            // 
+            this.label_to.AutoSize = true;
+            this.label_to.Location = new System.Drawing.Point(38, 218);
+            this.label_to.Name = "label_to";
+            this.label_to.Size = new System.Drawing.Size(31, 20);
+            this.label_to.TabIndex = 11;
+            this.label_to.Text = "To:";
+            // 
+            // dateTimePicker_to
+            // 
+            this.dateTimePicker_to.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.dateTimePicker_to.Location = new System.Drawing.Point(94, 218);
+            this.dateTimePicker_to.Name = "dateTimePicker_to";
+            this.dateTimePicker_to.Size = new System.Drawing.Size(200, 26);
+            this.dateTimePicker_to.TabIndex = 12;
+            // 
             // NewChartOptionsPicker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(487, 268);
+            this.ClientSize = new System.Drawing.Size(682, 552);
+            this.Controls.Add(this.dateTimePicker_to);
+            this.Controls.Add(this.label_to);
+            this.Controls.Add(this.label_from);
+            this.Controls.Add(this.dateTimePicker_from);
             this.Controls.Add(this.button_cancel);
             this.Controls.Add(this.button_ok);
             this.Controls.Add(this.textBox_timeFrame_size);
@@ -139,5 +182,9 @@
         public System.Windows.Forms.TextBox textBox_symbol;
         public System.Windows.Forms.ComboBox comboBox_timeFrame;
         public System.Windows.Forms.TextBox textBox_timeFrame_size;
+        private System.Windows.Forms.Label label_from;
+        private System.Windows.Forms.Label label_to;
+        public System.Windows.Forms.DateTimePicker dateTimePicker_from;
+        public System.Windows.Forms.DateTimePicker dateTimePicker_to;
     }
 }
