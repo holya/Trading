@@ -26,32 +26,38 @@ namespace WindowsFormsApp
 
         private void Chart1_PostPaint(object sender, ChartPaintEventArgs e)
         {
-            if (!DesignMode)
-            {
-                drawRefLines(e.ChartGraphics.Graphics);
-            }
+            populateLines2(e.ChartGraphics.Graphics);
         }
 
         public void DrawAnalyzer()
         {
-            drawBars();
+            populateChart();
             //populateLines();
         }
 
-        private void drawBars()
+        private void populateChart()
         {
             var chartSeries = chart1.Series[0];
+            Color barColor = Color.Green;
+            bool isIntraday = false;
+            if (LegAnalyzer.Resolution.TimeFrame == TimeFrame.Hourly ||
+                LegAnalyzer.Resolution.TimeFrame == TimeFrame.Minute)
+                isIntraday = true;
  
             foreach (var leg in LegAnalyzer.LegList)
             {
-                foreach (var bar in leg.BarList)
+                barColor = leg.Direction == LegDirection.Up ? Color.Green : Color.Red;
+
+                for (int i = 0; i < leg.BarCount; i++)
                 {
+                    var bar = leg.BarList[i];
+
                     DataPoint dp = new DataPoint
                     {
-                        AxisLabel = bar.DateTime.ToString(),
+                        AxisLabel = isIntraday ? bar.DateTime.ToShortTimeString() : bar.DateTime.ToShortDateString(),
                         XValue = chartSeries.Points.Count,
                         YValues = new double[] { bar.High, bar.Low, bar.Open, bar.Close },
-                        Color = leg.Direction == LegDirection.Up ? Color.Green : Color.Red
+                        Color = barColor
                     };
 
                     chartSeries.Points.Add(dp);
@@ -87,12 +93,16 @@ namespace WindowsFormsApp
             }
         }
 
-        private void drawRefLines(Graphics g)
+        private void populateLines2(Graphics g)
         {
+            bool isIntraday = false;
+            if (LegAnalyzer.Resolution.TimeFrame == TimeFrame.Hourly ||
+                LegAnalyzer.Resolution.TimeFrame == TimeFrame.Minute)
+                isIntraday = true;
+
             foreach (var r in LegAnalyzer.RefList)
             {
-                //string dts = isLaIntraday() ? r.DateTime.ToShortTimeString() : r.DateTime.ToShortDateString();
-                string dts = r.DateTime.ToString();
+                string dts = isIntraday ? r.DateTime.ToShortTimeString() : r.DateTime.ToShortDateString();
                 var d = chart1.Series[0].Points.FirstOrDefault(p => p.AxisLabel.Equals(dts));
                 float x1 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(d.XValue);
                 float x2 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(chart1.Series[0].Points.Count - 1) + 20;
@@ -101,13 +111,5 @@ namespace WindowsFormsApp
             }
         }
 
-        private bool isLaIntraday()
-        {
-            bool isIntraday = false;
-            if (LegAnalyzer.Resolution.TimeFrame == TimeFrame.Hourly ||
-                LegAnalyzer.Resolution.TimeFrame == TimeFrame.Minute)
-                isIntraday = true;
-            return isIntraday;
-        }
     }
 }
