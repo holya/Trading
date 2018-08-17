@@ -23,7 +23,7 @@ namespace WindowsFormsApp
         {
             InitializeComponent();
 
-            string symbol = "AUD/USD";
+            string symbol = "USD/CAD";
 
             f.SessionStatusChanged += (sender, sessionStatusEnum) =>
             {
@@ -41,11 +41,11 @@ namespace WindowsFormsApp
                 Environment.Exit(0);
             }
 
-            DateTime dailyStartDateTime = new DateTime(2018, 6, 1, 0, 0, 0);
+            DateTime dailyStartDateTime = new DateTime(2018, 5, 12, 0, 0, 0);
             var dailyEndDateTime = DateTime.Now;//new DateTime(2018, 8, 13, 23, 59, 59); 
             //DateTime dailyEndDateTime = new DateTime(now.Year, now.Month, , 0, 0, 0);
             List<FxBar> dailyBarList = null;
-            Resolution resolution = new Resolution(TimeFrame.Daily, 1);
+            Resolution resolution = new Resolution(TimeFrame.Weekly, 1);
             try
             {
                 dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, resolution, dailyStartDateTime, dailyEndDateTime);
@@ -65,6 +65,16 @@ namespace WindowsFormsApp
 
             hlocChart1.LegAnalyzer = dailyAnalyzer;
             hlocChart1.DrawAnalyzer();
+
+            hlocChart2.LegAnalyzer = dailyAnalyzer;
+            hlocChart2.DrawAnalyzer();
+
+            hlocChart3.LegAnalyzer = dailyAnalyzer;
+            hlocChart3.DrawAnalyzer();
+
+            hlocChart4.LegAnalyzer = dailyAnalyzer;
+            hlocChart4.DrawAnalyzer();
+
 
             f.Logout();
         }

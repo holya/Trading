@@ -1,47 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
+using Trading.Analyzers.Common;
 using Trading.Analyzers.LegAnalyzer;
 using Trading.Common;
-using Trading.Analyzers.Common;
-using System.Windows.Forms.DataVisualization.Charting;
 
-namespace WindowsFormsApp
+namespace WindowsFormsApp.Custom_Views
 {
-    public partial class HlocChart : UserControl
+    public partial class HlocChartForm : Form
     {
-
-        public HlocChart()
+        public HlocChartForm()
         {
             InitializeComponent();
         }
 
         public LegAnalyzer LegAnalyzer { get; set; }
 
-        private void Chart1_PostPaint(object sender, ChartPaintEventArgs e)
-        {
-            if (!DesignMode)
-            {
-                drawRefLines(e.ChartGraphics.Graphics);
-            }
-        }
 
         public void DrawAnalyzer()
         {
             drawBars();
-            //populateLines();
         }
 
         private void drawBars()
         {
             var chartSeries = chart1.Series[0];
- 
+
             foreach (var leg in LegAnalyzer.LegList)
             {
                 foreach (var bar in leg.BarList)
@@ -80,9 +71,9 @@ namespace WindowsFormsApp
                 cs2.Points.Add(dp);
                 var lp = chart1.Series[0].Points.Last().XValue;
                 cs2.Points.AddXY(lp, dp.YValues[0]);
-                //float x1 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(d.XValue);
-                //float x2 = chart1.Right;
-                //var y = (float)chart1.ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
+                //float x1 = (float)hlocChartControl1.ChartAreas[0].AxisX.ValueToPixelPosition(d.XValue);
+                //float x2 = hlocChartControl1.Right;
+                //var y = (float)hlocChartControl1.ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
                 //g.DrawLine(new Pen(Color.Red), x1, y, x2, y);
             }
         }
@@ -91,13 +82,14 @@ namespace WindowsFormsApp
         {
             foreach (var r in LegAnalyzer.RefList)
             {
-                //string dts = isLaIntraday() ? r.DateTime.ToShortTimeString() : r.DateTime.ToShortDateString();
                 string dts = r.DateTime.ToString();
                 var d = chart1.Series[0].Points.FirstOrDefault(p => p.AxisLabel.Equals(dts));
+                //this.BringToFront();
+
                 float x1 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(d.XValue);
                 float x2 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(chart1.Series[0].Points.Count - 1) + 20;
                 var y = (float)chart1.ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
-                g.DrawLine(new Pen(Color.Red), x1, y, x2, y);
+                g.DrawLine(new Pen(Color.Red, 1), x1, y, x2, y);
             }
         }
 
@@ -108,6 +100,16 @@ namespace WindowsFormsApp
                 LegAnalyzer.Resolution.TimeFrame == TimeFrame.Minute)
                 isIntraday = true;
             return isIntraday;
+        }
+
+        private void HlocChartForm_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void chart1_PostPaint(object sender, ChartPaintEventArgs e)
+        {
+            drawRefLines(e.ChartGraphics.Graphics);
         }
     }
 }
