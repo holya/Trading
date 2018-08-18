@@ -1,8 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?> 
 <symbols>
   <list type="forex">
-    <symbol name="USDCAD" />
-    <symbol name="USDEUR" />
+    <list id="major">
+      <symbol name="EUR/USD" />
+      <symbol name="USD/JPY" />
+      <symbol name="GBP/USD" />
+      <symbol name="USD/CHF" />
+      <symbol name="AUD/USD" />
+      <symbol name="USD/CAD" />
+      <symbol name="NZD/USD" />
+    </list>
+    <list id="minor">
+      <symbol name="EUR/CHF" />
+      <symbol name="EUR/GBP" />
+      <symbol name="EUR/JPY" />
+      <symbol name="GBP/JPY" />
+      <symbol name="CHF/JPY" />
+      <symbol name="GBP/CHF" />
+      <symbol name="EUR/AUD" />
+      <symbol name="EUR/CAD" />
+      <symbol name="AUD/CAD" />
+      <symbol name="AUD/JPY" />
+      <symbol name="CAD/JPY" />
+      <symbol name="NZD/JPY" />
+      <symbol name="GBP/CAD" />
+      <symbol name="GBP/NZD" />
+      <symbol name="GBP/AUD" />
+      <symbol name="AUD/NZD" />
+      <symbol name="AUD/CHF" />
+      <symbol name="EUR/NZD" />
+      <symbol name="NZD/CHF" />
+      <symbol name="CAD/CHF" />
+      <symbol name="NZD/CAD" />
+    </list>
   </list>
   <list type="stock">
     
