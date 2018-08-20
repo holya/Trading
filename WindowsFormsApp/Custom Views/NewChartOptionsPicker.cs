@@ -22,12 +22,13 @@ namespace WindowsFormsApp.Custom_Views
             comboBox_timeFrame.SelectedIndex = 5;
 
             var sm = new SymbolsManager();
-            //comboBox_symbols.Items.Add(".....Major Pairs.....");
-            
+            comboBox_symbols.Items.Add("Major Pairs");
             comboBox_symbols.Items.AddRange(sm.GetForexPairsMajor().ToArray());
-            //comboBox_symbols.Items.Add(".....Minor Pairs.....");
+            comboBox_symbols.Items.Add("Minor Pairs");
             comboBox_symbols.Items.AddRange(sm.GetForexPairsMinor().ToArray());
-            
+            comboBox_symbols.SelectedIndex = 0;
+
+            dateTimePicker_from.Value = dateTimePicker_to.Value.Date.AddDays(-4);
         }
 
         private void textBox_timeFrame_size_TextChanged(object sender, EventArgs e)
@@ -41,5 +42,27 @@ namespace WindowsFormsApp.Custom_Views
         {
         }
 
+        private void comboBox_symbols_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index == -1)
+                return;
+            Font myFont = new Font("Aerial", 8, FontStyle.Regular);
+            Font myFont2 = new Font("Aerial", 10, FontStyle.Regular | FontStyle.Underline);
+
+            if (e.Index == 0 || e.Index == 8)
+                e.Graphics.DrawString(comboBox_symbols.Items[e.Index].ToString(), myFont2, Brushes.DarkRed, e.Bounds);
+            else
+            {
+                e.DrawBackground();
+                e.Graphics.DrawString(comboBox_symbols.Items[e.Index].ToString(), myFont, Brushes.Black, e.Bounds);
+                e.DrawFocusRectangle();
+            }
+        }
+
+        private void comboBox_symbols_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox_symbols.SelectedIndex == 0 || comboBox_symbols.SelectedIndex == 8)
+                comboBox_symbols.SelectedIndex = -1;
+        }
     }
 }

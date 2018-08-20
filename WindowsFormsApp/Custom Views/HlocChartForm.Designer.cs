@@ -45,11 +45,13 @@
             chartArea1.AxisX.MajorGrid.IntervalOffset = 0D;
             chartArea1.AxisY2.IntervalAutoMode = System.Windows.Forms.DataVisualization.Charting.IntervalAutoMode.VariableCount;
             chartArea1.AxisY2.IsStartedFromZero = false;
+            chartArea1.AxisY2.LabelStyle.Enabled = false;
+            chartArea1.AxisY2.MajorTickMark.Enabled = false;
+            chartArea1.BackColor = System.Drawing.Color.WhiteSmoke;
             chartArea1.Name = "ChartArea1";
             chartArea1.Position.Auto = false;
             chartArea1.Position.Height = 94F;
-            chartArea1.Position.Width = 94F;
-            chartArea1.Position.X = 3F;
+            chartArea1.Position.Width = 90F;
             chartArea1.Position.Y = 3F;
             this.chart1.ChartAreas.Add(chartArea1);
             this.chart1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -64,7 +66,7 @@
             series1.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
             series1.YValuesPerPoint = 4;
             this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(800, 450);
+            this.chart1.Size = new System.Drawing.Size(911, 450);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
             this.chart1.PostPaint += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ChartPaintEventArgs>(this.chart1_PostPaint);
@@ -73,7 +75,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(911, 450);
             this.Controls.Add(this.chart1);
             this.Name = "HlocChartForm";
             this.Text = "HlocChartForm";

@@ -145,13 +145,16 @@
             // 
             // comboBox_symbols
             // 
+            this.comboBox_symbols.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.comboBox_symbols.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_symbols.FormattingEnabled = true;
             this.comboBox_symbols.Location = new System.Drawing.Point(148, 36);
             this.comboBox_symbols.MaxDropDownItems = 30;
             this.comboBox_symbols.Name = "comboBox_symbols";
-            this.comboBox_symbols.Size = new System.Drawing.Size(121, 28);
+            this.comboBox_symbols.Size = new System.Drawing.Size(121, 27);
             this.comboBox_symbols.TabIndex = 13;
+            this.comboBox_symbols.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.comboBox_symbols_DrawItem);
+            this.comboBox_symbols.SelectedIndexChanged += new System.EventHandler(this.comboBox_symbols_SelectedIndexChanged);
             // 
             // NewChartOptionsPicker
             // 

@@ -32,7 +32,7 @@ namespace WindowsFormsApp.Custom_Views
         private void drawBars()
         {
             var chartSeries = chart1.Series[0];
-
+            
             foreach (var leg in LegAnalyzer.LegList)
             {
                 foreach (var bar in leg.BarList)
@@ -48,6 +48,8 @@ namespace WindowsFormsApp.Custom_Views
                     chartSeries.Points.Add(dp);
                 }
             }
+            //chart1.ChartAreas[0].AxisY2.
+
         }
 
         private void populateLines()
@@ -71,6 +73,7 @@ namespace WindowsFormsApp.Custom_Views
                 cs2.Points.Add(dp);
                 var lp = chart1.Series[0].Points.Last().XValue;
                 cs2.Points.AddXY(lp, dp.YValues[0]);
+                
                 //float x1 = (float)hlocChartControl1.ChartAreas[0].AxisX.ValueToPixelPosition(d.XValue);
                 //float x2 = hlocChartControl1.Right;
                 //var y = (float)hlocChartControl1.ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
@@ -88,10 +91,12 @@ namespace WindowsFormsApp.Custom_Views
 
                 float x1 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(d.XValue);
                 float x2 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(chart1.Series[0].Points.Count - 1) + 20;
-                //float x2 = chart1.ChartAreas[0].Position.Right - x1;
                 var y = (float)chart1.ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
-                g.DrawLine(new Pen(Color.Red, 1), x1, y, x2, y);
-                chart1.ChartAreas[0].BorderColor = Color.Red;
+                g.DrawLine(new Pen(Color.Black, 1), x1, y, x2, y);
+
+                var font = new Font(FontFamily.GenericSerif,8);
+                SolidBrush drawBrush = new SolidBrush(Color.Black);
+                g.DrawString("" + r.Price, font, drawBrush, x2 + 7, y-10);
             }
         }
 
