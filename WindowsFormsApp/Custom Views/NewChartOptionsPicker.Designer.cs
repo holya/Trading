@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.label_symbol = new System.Windows.Forms.Label();
-            this.textBox_symbol = new System.Windows.Forms.TextBox();
             this.label_timeFrame = new System.Windows.Forms.Label();
             this.comboBox_timeFrame = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -40,6 +39,7 @@
             this.label_from = new System.Windows.Forms.Label();
             this.label_to = new System.Windows.Forms.Label();
             this.dateTimePicker_to = new System.Windows.Forms.DateTimePicker();
+            this.comboBox_symbols = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // label_symbol
@@ -50,14 +50,6 @@
             this.label_symbol.Size = new System.Drawing.Size(65, 20);
             this.label_symbol.TabIndex = 0;
             this.label_symbol.Text = "Symbol:";
-            // 
-            // textBox_symbol
-            // 
-            this.textBox_symbol.Location = new System.Drawing.Point(148, 38);
-            this.textBox_symbol.Name = "textBox_symbol";
-            this.textBox_symbol.Size = new System.Drawing.Size(100, 26);
-            this.textBox_symbol.TabIndex = 1;
-            this.textBox_symbol.Text = "USD/CAD";
             // 
             // label_timeFrame
             // 
@@ -104,6 +96,7 @@
             this.button_ok.TabIndex = 7;
             this.button_ok.Text = "OK";
             this.button_ok.UseVisualStyleBackColor = true;
+            this.button_ok.Click += new System.EventHandler(this.button_ok_Click);
             // 
             // button_cancel
             // 
@@ -122,6 +115,7 @@
             this.dateTimePicker_from.Name = "dateTimePicker_from";
             this.dateTimePicker_from.Size = new System.Drawing.Size(200, 26);
             this.dateTimePicker_from.TabIndex = 9;
+            this.dateTimePicker_from.Value = new System.DateTime(2018, 8, 17, 0, 0, 0, 0);
             // 
             // label_from
             // 
@@ -149,11 +143,22 @@
             this.dateTimePicker_to.Size = new System.Drawing.Size(200, 26);
             this.dateTimePicker_to.TabIndex = 12;
             // 
+            // comboBox_symbols
+            // 
+            this.comboBox_symbols.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_symbols.FormattingEnabled = true;
+            this.comboBox_symbols.Location = new System.Drawing.Point(148, 36);
+            this.comboBox_symbols.MaxDropDownItems = 30;
+            this.comboBox_symbols.Name = "comboBox_symbols";
+            this.comboBox_symbols.Size = new System.Drawing.Size(121, 28);
+            this.comboBox_symbols.TabIndex = 13;
+            // 
             // NewChartOptionsPicker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(682, 552);
+            this.ClientSize = new System.Drawing.Size(506, 552);
+            this.Controls.Add(this.comboBox_symbols);
             this.Controls.Add(this.dateTimePicker_to);
             this.Controls.Add(this.label_to);
             this.Controls.Add(this.label_from);
@@ -164,7 +169,6 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox_timeFrame);
             this.Controls.Add(this.label_timeFrame);
-            this.Controls.Add(this.textBox_symbol);
             this.Controls.Add(this.label_symbol);
             this.Name = "NewChartOptionsPicker";
             this.Text = "NewChartOptionsPicker";
@@ -180,12 +184,12 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button_ok;
         private System.Windows.Forms.Button button_cancel;
-        public System.Windows.Forms.TextBox textBox_symbol;
         public System.Windows.Forms.ComboBox comboBox_timeFrame;
         public System.Windows.Forms.TextBox textBox_timeFrame_size;
         private System.Windows.Forms.Label label_from;
         private System.Windows.Forms.Label label_to;
         public System.Windows.Forms.DateTimePicker dateTimePicker_from;
         public System.Windows.Forms.DateTimePicker dateTimePicker_to;
+        public System.Windows.Forms.ComboBox comboBox_symbols;
     }
 }

@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8" ?> 
+﻿<!--<?xml version="1.0" encoding="utf-8" ?> -->
 <symbols>
-  <list type="forex">
-    <list id="major">
+  <forex>
+    <major>
       <symbol name="EUR/USD" />
       <symbol name="USD/JPY" />
       <symbol name="GBP/USD" />
@@ -9,8 +9,8 @@
       <symbol name="AUD/USD" />
       <symbol name="USD/CAD" />
       <symbol name="NZD/USD" />
-    </list>
-    <list id="minor">
+    </major>
+    <minor>
       <symbol name="EUR/CHF" />
       <symbol name="EUR/GBP" />
       <symbol name="EUR/JPY" />
@@ -32,9 +32,9 @@
       <symbol name="NZD/CHF" />
       <symbol name="CAD/CHF" />
       <symbol name="NZD/CAD" />
-    </list>
-  </list>
-  <list type="stock">
+    </minor>
+  </forex>
+  <stock>
     
-  </list>
+  </stock>
 </symbols>

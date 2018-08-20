@@ -91,7 +91,7 @@ namespace WindowsFormsApp
 
                     int size = Convert.ToInt16(dialogBox.textBox_timeFrame_size.Text);
 
-                    var la = GetHistoricalData(dialogBox.textBox_symbol.Text, 
+                    var la = GetHistoricalData((string)dialogBox.comboBox_symbols.SelectedItem, 
                         new Resolution(timeFrame, size), dialogBox.dateTimePicker_from.Value,
                         dialogBox.dateTimePicker_to.Value);
 

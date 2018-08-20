@@ -88,8 +88,10 @@ namespace WindowsFormsApp.Custom_Views
 
                 float x1 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(d.XValue);
                 float x2 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(chart1.Series[0].Points.Count - 1) + 20;
+                //float x2 = chart1.ChartAreas[0].Position.Right - x1;
                 var y = (float)chart1.ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
                 g.DrawLine(new Pen(Color.Red, 1), x1, y, x2, y);
+                chart1.ChartAreas[0].BorderColor = Color.Red;
             }
         }
 

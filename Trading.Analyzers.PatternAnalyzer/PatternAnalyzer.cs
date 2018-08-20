@@ -76,6 +76,11 @@ namespace Trading.Analyzers.PatternAnalyzer
             leg.PreviousLeg = leg;
             this.LegList.Add(leg);
 
+            Pattern pattern = new Pattern();
+            pattern.AddLeg(leg);
+            pattern.Type = PatternType.StartFull;
+
+
             this.RefList.Add(leg.Direction == LegDirection.Up ?
                 new Reference() { Price = leg.Low, DateTime = leg.StartDateTime, Owner = this.LastBar } :
                 new Reference() { Price = leg.High, DateTime = leg.StartDateTime, Owner = this.LastBar });

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Trading.Common;
+using Trading.Utilities;
 
 namespace WindowsFormsApp.Custom_Views
 {
@@ -16,21 +17,29 @@ namespace WindowsFormsApp.Custom_Views
         public NewChartOptionsPicker()
         {
             InitializeComponent();
-
-            //var tf = new List<string>();
-            //foreach(var t in Enum.GetNames(typeof(TimeFrame)))
-            //{
-            //    //tf.Add(t);
-            //    this.comboBox_timeFrame.Items.Add(t);
-            //}
-
+            
             comboBox_timeFrame.Items.AddRange(Enum.GetNames(typeof(TimeFrame)));
+            comboBox_timeFrame.SelectedIndex = 5;
+
+            var sm = new SymbolsManager();
+            //comboBox_symbols.Items.Add(".....Major Pairs.....");
+            
+            comboBox_symbols.Items.AddRange(sm.GetForexPairsMajor().ToArray());
+            //comboBox_symbols.Items.Add(".....Minor Pairs.....");
+            comboBox_symbols.Items.AddRange(sm.GetForexPairsMinor().ToArray());
+            
         }
 
         private void textBox_timeFrame_size_TextChanged(object sender, EventArgs e)
         {
-            if (!int.TryParse(textBox_timeFrame_size.Text, out int num))
+            int num;
+            if (!int.TryParse(textBox_timeFrame_size.Text, out num))
                 textBox_timeFrame_size.Text = "";
         }
+
+        private void button_ok_Click(object sender, EventArgs e)
+        {
+        }
+
     }
 }
