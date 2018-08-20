@@ -40,6 +40,7 @@ namespace WindowsFormsApp.Custom_Views
 
         private void button_ok_Click(object sender, EventArgs e)
         {
+
         }
 
         private void comboBox_symbols_DrawItem(object sender, DrawItemEventArgs e)
