@@ -32,16 +32,24 @@ namespace WindowsFormsApp
 
 
             var sManager = new SymbolsManager();
-            var sList = sManager.GetForexPairsMajor();
+            var majorList = sManager.GetForexPairsMajor();
 
             tableLayoutPanel1.RowStyles.RemoveAt(0);
+            createSymbolRows(majorList);
+            var minorList = sManager.GetForexPairsMinor();
+            createSymbolRows(minorList);
+
+        }
+
+        private void createSymbolRows(IEnumerable<string> sList)
+        {
             foreach (var symbol in sList)
             {
                 var l = new Label();
                 l.TextAlign = ContentAlignment.MiddleCenter;
                 l.BorderStyle = BorderStyle.FixedSingle;
                 l.Font = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold);
-                
+
                 l.Height = 40;
                 l.Dock = DockStyle.Fill;
                 l.Text = symbol;
@@ -50,13 +58,11 @@ namespace WindowsFormsApp
                 var rStyle = new RowStyle();
                 rStyle.SizeType = SizeType.Absolute;
                 rStyle.Height = 40;
-                
+
                 tableLayoutPanel1.RowStyles.Add(rStyle);
                 tableLayoutPanel1.Controls.Add(l, 0, tableLayoutPanel1.RowCount - 1);
                 tableLayoutPanel1.RowCount++;
             }
-
-            
         }
 
         private void L_Click(object sender, EventArgs e)
