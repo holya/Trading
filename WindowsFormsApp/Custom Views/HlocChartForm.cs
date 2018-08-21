@@ -119,7 +119,8 @@ namespace WindowsFormsApp.Custom_Views
 
         private void chart1_PostPaint(object sender, ChartPaintEventArgs e)
         {
-            //drawRefLines(e.ChartGraphics.Graphics);
+            if(chart1.Series[0].Points.Count > 0)
+                drawRefLines(e.ChartGraphics.Graphics);
         }
     }
 }
