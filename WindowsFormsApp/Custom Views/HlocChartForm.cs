@@ -21,8 +21,11 @@ namespace WindowsFormsApp.Custom_Views
             InitializeComponent();
         }
 
-        public LegAnalyzer LegAnalyzer { get; set; }
+        public string Symbol { get; set; }
+        public Resolution Resolution { get; set; }
+        public DateTime FromDate { get; set; }
 
+        public LegAnalyzer LegAnalyzer { get; set; }
 
         public void DrawAnalyzer()
         {
@@ -116,7 +119,7 @@ namespace WindowsFormsApp.Custom_Views
 
         private void chart1_PostPaint(object sender, ChartPaintEventArgs e)
         {
-            drawRefLines(e.ChartGraphics.Graphics);
+            //drawRefLines(e.ChartGraphics.Graphics);
         }
     }
 }

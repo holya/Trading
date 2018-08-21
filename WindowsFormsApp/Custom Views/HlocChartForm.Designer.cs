@@ -87,6 +87,6 @@
 
         #endregion
 
-        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
+        public System.Windows.Forms.DataVisualization.Charting.Chart chart1;
     }
 }

@@ -44,7 +44,7 @@ namespace Trading.Common
         public Bar(double open, double high, double low, double close, double volume, DateTime dateTime, Bar previousBar = null)
             : this(open, high, low, close, volume, dateTime)
         {
-            if(previousBar == null)
+            if(previousBar != null)
                 PreviousBar = previousBar;
             else
                 this.PreviousBar = new Bar(open, open, open, open, 0, dateTime);

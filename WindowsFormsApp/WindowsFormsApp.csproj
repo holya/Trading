@@ -48,12 +48,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Custom Views\HlocChart.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Custom Views\HlocChart.Designer.cs">
-      <DependentUpon>HlocChart.cs</DependentUpon>
-    </Compile>
     <Compile Include="Custom Views\HlocChartForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -74,9 +68,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Custom Views\HlocChart.resx">
-      <DependentUpon>HlocChart.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Custom Views\HlocChartForm.resx">
       <DependentUpon>HlocChartForm.cs</DependentUpon>
     </EmbeddedResource>

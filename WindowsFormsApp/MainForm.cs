@@ -14,34 +14,68 @@ using Trading.Analyzers.LegAnalyzer;
 using Trading.Brokers.Fxcm;
 using Trading.Common;
 using WindowsFormsApp.Custom_Views;
+using Trading.Utilities;
+
 namespace WindowsFormsApp
 {
     public partial class MainForm : Form
     {
-        Action<string> t;
         FxcmWrapper f = new FxcmWrapper();
+
+        List<HlocChartForm> chartList = new List<HlocChartForm>();
+
         public MainForm()
         {
             InitializeComponent();
-            //t = new Action<string>(setLabelText);
-            //f.SessionStatusChanged += (sender, sessionStatusEnum) =>
-            //{
-            //    if (label_connectionStatus.InvokeRequired)
-            //    {
-            //        this.Invoke((Action)(() =>
-            //        {
-            //            setLabelText(sessionStatusEnum.ToString());
 
-            //        }));
-
-            //    }
-            //    else
-            //    {
-            //        setLabelText(sessionStatusEnum.ToString());
-            //    }
-            //};
+            logIn();
 
 
+            var sManager = new SymbolsManager();
+            var sList = sManager.GetForexPairsMajor();
+
+            tableLayoutPanel1.RowStyles.RemoveAt(0);
+            foreach (var symbol in sList)
+            {
+                var l = new Label();
+                l.TextAlign = ContentAlignment.MiddleCenter;
+                l.BorderStyle = BorderStyle.FixedSingle;
+                l.Font = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold);
+                
+                l.Height = 40;
+                l.Dock = DockStyle.Fill;
+                l.Text = symbol;
+                l.Click += L_Click;
+
+                var rStyle = new RowStyle();
+                rStyle.SizeType = SizeType.Absolute;
+                rStyle.Height = 40;
+                
+                tableLayoutPanel1.RowStyles.Add(rStyle);
+                tableLayoutPanel1.Controls.Add(l, 0, tableLayoutPanel1.RowCount - 1);
+                tableLayoutPanel1.RowCount++;
+            }
+
+            
+        }
+
+        private void L_Click(object sender, EventArgs e)
+        {
+            string symbol = ((Label)sender).Text;
+            
+            foreach(var c in chartList)
+            {
+                c.chart1.Series[0].Points.Clear();
+
+                var la = GetHistoricalData(symbol, c.Resolution, c.FromDate, DateTime.Now);
+                c.LegAnalyzer = la;
+                c.DrawAnalyzer();
+                c.Invalidate();
+            }
+        }
+
+        private void logIn()
+        {
             try
             {
                 f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
@@ -51,7 +85,6 @@ namespace WindowsFormsApp
                 Console.WriteLine(e.Message);
                 Environment.Exit(0);
             }
-
         }
 
         private LegAnalyzer GetHistoricalData(string symbol, Resolution resolution, DateTime from, DateTime to)
@@ -87,15 +120,22 @@ namespace WindowsFormsApp
                 var result = dialogBox.ShowDialog();
                 if(result == DialogResult.OK)
                 {
+                    string symbol = (string)dialogBox.comboBox_symbols.SelectedItem;
+
                     TimeFrame timeFrame = (TimeFrame)Enum.Parse(typeof(TimeFrame), dialogBox.comboBox_timeFrame.SelectedItem.ToString());
-
                     int size = Convert.ToInt16(dialogBox.textBox_timeFrame_size.Text);
+                    var res = new Resolution(timeFrame, size);
 
-                    var la = GetHistoricalData((string)dialogBox.comboBox_symbols.SelectedItem, 
-                        new Resolution(timeFrame, size), dialogBox.dateTimePicker_from.Value,
-                        dialogBox.dateTimePicker_to.Value);
+                    var fromDate = dialogBox.dateTimePicker_from.Value;
+                    var toDate = dialogBox.dateTimePicker_to.Value;
+
+                    var la = GetHistoricalData(symbol, res, fromDate, toDate);
 
                     var chart = new HlocChartForm();
+                    chart.Symbol = symbol;
+                    chart.Resolution = res;
+                    chart.FromDate = fromDate;
+                    chartList.Add(chart);
 
                     chart.LegAnalyzer = la;
                     chart.DrawAnalyzer();
@@ -109,5 +149,10 @@ namespace WindowsFormsApp
             f.Logout();
         }
 
+        private void tableLayoutPanel1_MouseClick(object sender, MouseEventArgs e)
+        {
+            //for(int i = 0; i < tableLayoutPanel1.Controls.Count)
+            //    tableLayoutPanel1.Controls[i].Location.
+        }
     }
 }

@@ -158,8 +158,10 @@
             // 
             // NewChartOptionsPicker
             // 
+            this.AcceptButton = this.button_ok;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.button_cancel;
             this.ClientSize = new System.Drawing.Size(506, 552);
             this.Controls.Add(this.comboBox_symbols);
             this.Controls.Add(this.dateTimePicker_to);
