@@ -48,6 +48,7 @@ namespace WindowsFormsApp
                 var l = new Label();
                 l.TextAlign = ContentAlignment.MiddleCenter;
                 l.BorderStyle = BorderStyle.FixedSingle;
+                
                 l.Font = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold);
 
                 l.Height = 40;
