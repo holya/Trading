@@ -15,7 +15,6 @@ namespace WindowsFormsApp.Custom_Views
         {
             InitializeComponent();
 
-            var a = chart1.ChartAreas[0].AxisX.LabelStyle.Format = "MMMM dd, yyyy";
         }
 
         public string Symbol { get; set; }
@@ -26,6 +25,8 @@ namespace WindowsFormsApp.Custom_Views
 
         public void DrawAnalyzer()
         {
+            this.Text = $"{Symbol} - {Resolution.TimeFrame} {Resolution.Size}";
+
             drawBars();
         }
 
