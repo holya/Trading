@@ -60,6 +60,7 @@
     <Compile Include="Custom Views\NewChartOptionsPicker.Designer.cs">
       <DependentUpon>NewChartOptionsPicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -32,12 +32,13 @@ namespace WindowsFormsApp
 
 
             var sManager = new SymbolsManager();
-            var majorList = sManager.GetForexPairsMajor();
-
             tableLayoutPanel1.RowStyles.RemoveAt(0);
-            createSymbolRows(majorList);
-            var minorList = sManager.GetForexPairsMinor();
-            createSymbolRows(minorList);
+
+            addSymbolLabelRow(creatSymbolLabel("Majors", Color.White, Color.Red));
+            createSymbolRows(sManager.GetForexPairsMajor());
+            addSymbolLabelRow(creatSymbolLabel("Minors", Color.White, Color.Red));
+            createSymbolRows(sManager.GetForexPairsMinor());
+
 
         }
 
@@ -45,28 +46,49 @@ namespace WindowsFormsApp
         {
             foreach (var symbol in sList)
             {
-                var l = new Label();
-                l.TextAlign = ContentAlignment.MiddleCenter;
-                l.BorderStyle = BorderStyle.FixedSingle;
-                
-                l.Font = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold);
-
-                l.Height = 40;
-                l.Dock = DockStyle.Fill;
-                l.Text = symbol;
-                l.Click += L_Click;
-
-                var rStyle = new RowStyle();
-                rStyle.SizeType = SizeType.Absolute;
-                rStyle.Height = 40;
-
-                tableLayoutPanel1.RowStyles.Add(rStyle);
-                tableLayoutPanel1.Controls.Add(l, 0, tableLayoutPanel1.RowCount - 1);
-                tableLayoutPanel1.RowCount++;
+                Label l = creatSymbolLabel(symbol, Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255))))), Color.Black);
+                l.Click += symbolLabel_Click;
+                addSymbolLabelRow(l);
             }
         }
 
-        private void L_Click(object sender, EventArgs e)
+        private void addSymbolLabelRow(Label l)
+        {
+            tableLayoutPanel1.RowStyles.Add(new RowStyle
+            {
+                SizeType = SizeType.AutoSize,
+                Height = 40
+            });
+            tableLayoutPanel1.Controls.Add(l, 0, tableLayoutPanel1.RowCount - 1);
+            tableLayoutPanel1.RowCount++;
+        }
+
+        private Label creatSymbolLabel(string text, Color backColor, Color forecolor)
+        {
+            //Label l = new Label();
+            //l.TextAlign = ContentAlignment.MiddleCenter;
+            //l.BorderStyle = BorderStyle.FixedSingle;
+            //l.Font = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold);
+            //l.Height = 40;
+            //l.Dock = DockStyle.Fill;
+            //l.Text = text;
+
+            return new Label
+            {
+                TextAlign = ContentAlignment.MiddleCenter,
+                BorderStyle = BorderStyle.FixedSingle,
+
+                Font = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold),
+
+                Height = 40,
+                Dock = DockStyle.Fill,
+                Text = text,
+                BackColor = backColor,
+                ForeColor = forecolor
+            };
+        }
+
+        private void symbolLabel_Click(object sender, EventArgs e)
         {
             string symbol = ((Label)sender).Text;
             
@@ -74,8 +96,7 @@ namespace WindowsFormsApp
             {
                 c.chart1.Series[0].Points.Clear();
 
-                var la = GetHistoricalData(symbol, c.Resolution, c.FromDate, DateTime.Now);
-                c.LegAnalyzer = la;
+                c.LegAnalyzer = GetHistoricalData(symbol, c.Resolution, c.FromDate, DateTime.Now);
                 c.DrawAnalyzer();
                 c.Invalidate();
             }

@@ -79,7 +79,6 @@
             this.Controls.Add(this.chart1);
             this.Name = "HlocChartForm";
             this.Text = "HlocChartForm";
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.HlocChartForm_Paint);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
 
