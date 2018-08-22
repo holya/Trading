@@ -19,9 +19,16 @@ namespace WindowsFormsApp.Custom_Views
 
         public string Symbol { get; set; }
         public Resolution Resolution { get; set; }
-        public DateTime FromDate { get; set; }
-
+        public DateTime FromDateTime { get; set; }
         public LegAnalyzer LegAnalyzer { get; set; }
+
+        public void SetProperties(LegAnalyzer legAnalyzer, string symbol, Resolution resolution, DateTime fromDateTime)
+        {
+            this.LegAnalyzer = legAnalyzer;
+            this.Symbol = symbol;
+            this.Resolution = resolution;
+            this.FromDateTime = fromDateTime;
+        }
 
         public void DrawAnalyzer()
         {

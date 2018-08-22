@@ -96,7 +96,9 @@ namespace WindowsFormsApp
             {
                 c.chart1.Series[0].Points.Clear();
 
-                c.LegAnalyzer = GetHistoricalData(symbol, c.Resolution, c.FromDate, DateTime.Now);
+
+                var analyzer = GetHistoricalData(symbol, c.Resolution, c.FromDateTime, DateTime.Now);
+                c.SetProperties(analyzer, symbol, c.Resolution, c.FromDateTime);
                 c.DrawAnalyzer();
                 c.Invalidate();
             }
@@ -162,7 +164,7 @@ namespace WindowsFormsApp
                     var chart = new HlocChartForm();
                     chart.Symbol = symbol;
                     chart.Resolution = res;
-                    chart.FromDate = fromDate;
+                    chart.FromDateTime = fromDate;
                     chartList.Add(chart);
 
                     chart.LegAnalyzer = la;
