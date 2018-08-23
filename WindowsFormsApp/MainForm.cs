@@ -21,25 +21,45 @@ namespace WindowsFormsApp
     public partial class MainForm : Form
     {
         FxcmWrapper f = new FxcmWrapper();
-
-        List<HlocChartForm> chartList = new List<HlocChartForm>();
+        List<HlocLAForm> chartList = new List<HlocLAForm>();
+        SymbolsManager symbolsManager = new SymbolsManager();
 
         public MainForm()
         {
             InitializeComponent();
 
             logIn();
+            populateSymbols();
 
+            this.tableLayoutPanel_chartForm.RowStyles.Add(new RowStyle
+            {
+                SizeType = SizeType.AutoSize
+            });
 
-            var sManager = new SymbolsManager();
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), new DateTime(2018, 01, 01, 00, 00, 00), 0, 0);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), new DateTime(2018, 06, 01, 00, 00, 00), 0, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), new DateTime(2018, 08, 10, 00, 00, 00), 1, 0);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), new DateTime(2018, 08, 19, 00, 00, 00), 1, 1);
+
+        }
+
+        private void addNewChartFormToRightPanel(Resolution resolution, DateTime fromDateTime, int column, int row)
+        {
+            HlocLAForm c = this.createChartForm();
+            c.Resolution = resolution;
+            c.FromDateTime = fromDateTime;
+            tableLayoutPanel_chartForm.Controls.Add(c, column, row);
+            c.Show();
+        }
+
+        private void populateSymbols()
+        {
             tableLayoutPanel1.RowStyles.RemoveAt(0);
 
             addSymbolLabelRow(creatSymbolLabel("Majors", Color.White, Color.Red));
-            createSymbolRows(sManager.GetForexPairsMajor());
+            createSymbolRows(symbolsManager.GetForexPairsMajor());
             addSymbolLabelRow(creatSymbolLabel("Minors", Color.White, Color.Red));
-            createSymbolRows(sManager.GetForexPairsMinor());
-
-
+            createSymbolRows(symbolsManager.GetForexPairsMinor());
         }
 
         private void createSymbolRows(IEnumerable<string> sList)
@@ -65,21 +85,11 @@ namespace WindowsFormsApp
 
         private Label creatSymbolLabel(string text, Color backColor, Color forecolor)
         {
-            //Label l = new Label();
-            //l.TextAlign = ContentAlignment.MiddleCenter;
-            //l.BorderStyle = BorderStyle.FixedSingle;
-            //l.Font = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold);
-            //l.Height = 40;
-            //l.Dock = DockStyle.Fill;
-            //l.Text = text;
-
             return new Label
             {
                 TextAlign = ContentAlignment.MiddleCenter,
                 BorderStyle = BorderStyle.FixedSingle,
-
                 Font = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold),
-
                 Height = 40,
                 Dock = DockStyle.Fill,
                 Text = text,
@@ -94,13 +104,8 @@ namespace WindowsFormsApp
             
             foreach(var c in chartList)
             {
-                c.chart1.Series[0].Points.Clear();
-
-
                 var analyzer = GetHistoricalData(symbol, c.Resolution, c.FromDateTime, DateTime.Now);
-                c.SetProperties(analyzer, symbol, c.Resolution, c.FromDateTime);
-                c.DrawAnalyzer();
-                c.Invalidate();
+                c.ResetPropsAndReDraw(analyzer, c.Resolution, symbol, c.FromDateTime);
             }
         }
 
@@ -161,17 +166,25 @@ namespace WindowsFormsApp
 
                     var la = GetHistoricalData(symbol, res, fromDate, toDate);
 
-                    var chart = new HlocChartForm();
-                    chart.Symbol = symbol;
-                    chart.Resolution = res;
-                    chart.FromDateTime = fromDate;
-                    chartList.Add(chart);
-
-                    chart.LegAnalyzer = la;
-                    chart.DrawAnalyzer();
+                    HlocLAForm chart = createChartForm();
+                    chart.ResetPropsAndReDraw(la, res, symbol, fromDate);
                     chart.Show();
                 }
             }
+        }
+
+        private HlocLAForm createChartForm()
+        {
+            var chart = new HlocLAForm();
+            chart.Dock = DockStyle.Fill;
+            chartList.Add(chart);
+            chart.FormClosing += Chart_FormClosing;
+            return chart;
+        }
+
+        private void Chart_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            chartList.Remove((HlocLAForm)sender);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)

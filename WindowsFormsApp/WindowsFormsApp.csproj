@@ -54,6 +54,24 @@
     <Compile Include="Custom Views\HlocChartForm.Designer.cs">
       <DependentUpon>HlocChartForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Custom Views\HlocCustomChart.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Custom Views\HlocCustomChart.Designer.cs">
+      <DependentUpon>HlocCustomChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Custom Views\HlocLACustomChart.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Custom Views\HlocLACustomChart.Designer.cs">
+      <DependentUpon>HlocLACustomChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Custom Views\HlocLAForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Custom Views\HlocLAForm.Designer.cs">
+      <DependentUpon>HlocLAForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Custom Views\NewChartOptionsPicker.cs">
       <SubType>Form</SubType>
     </Compile>

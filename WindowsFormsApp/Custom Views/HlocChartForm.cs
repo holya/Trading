@@ -14,7 +14,7 @@ namespace WindowsFormsApp.Custom_Views
         public HlocChartForm()
         {
             InitializeComponent();
-
+            //chart1.ChartAreas[0].AxisX.LabelStyle.Angle = 30;
         }
 
         public string Symbol { get; set; }
@@ -111,7 +111,7 @@ namespace WindowsFormsApp.Custom_Views
                     }
                 }
 
-                float x1 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(pointIndex);
+                float x1 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(pointIndex + 1);
                 float x2 = (float)chart1.ChartAreas[0].AxisX.ValueToPixelPosition(chart1.Series[0].Points.Count - 1) + 20;
                 var y = (float)chart1.ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
                 g.DrawLine(new Pen(Color.Black, 1), x1, y, x2, y);
