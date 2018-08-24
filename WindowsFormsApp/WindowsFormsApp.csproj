@@ -72,11 +72,11 @@
     <Compile Include="Custom Views\HlocLAForm.Designer.cs">
       <DependentUpon>HlocLAForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Custom Views\NewChartOptionsPicker.cs">
+    <Compile Include="Custom Views\NewChartDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Custom Views\NewChartOptionsPicker.Designer.cs">
-      <DependentUpon>NewChartOptionsPicker.cs</DependentUpon>
+    <Compile Include="Custom Views\NewChartDialog.Designer.cs">
+      <DependentUpon>NewChartDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MainForm.cs">
@@ -90,8 +90,8 @@
     <EmbeddedResource Include="Custom Views\HlocChartForm.resx">
       <DependentUpon>HlocChartForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Custom Views\NewChartOptionsPicker.resx">
-      <DependentUpon>NewChartOptionsPicker.cs</DependentUpon>
+    <EmbeddedResource Include="Custom Views\NewChartDialog.resx">
+      <DependentUpon>NewChartDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

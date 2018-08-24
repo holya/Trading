@@ -12,9 +12,9 @@ using Trading.Utilities;
 
 namespace WindowsFormsApp.Custom_Views
 {
-    public partial class NewChartOptionsPicker : Form
+    public partial class NewChartDialog : Form
     {
-        public NewChartOptionsPicker()
+        public NewChartDialog()
         {
             InitializeComponent();
             

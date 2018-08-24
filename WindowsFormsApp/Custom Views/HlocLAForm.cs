@@ -14,7 +14,7 @@ namespace WindowsFormsApp.Custom_Views
 {
     public partial class HlocLAForm : Form
     {
-        private HlocLACustomChart chart = new HlocLACustomChart();
+        public readonly HlocLACustomChart chart = new HlocLACustomChart();
 
         public LegAnalyzer LegAnalyzer { get; set; }
         public Resolution Resolution { get; set; }
@@ -25,6 +25,7 @@ namespace WindowsFormsApp.Custom_Views
         public HlocLAForm()
         {
             InitializeComponent();
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.TopLevel = false;
             chart.Dock = System.Windows.Forms.DockStyle.Fill;
             chart.Location = new System.Drawing.Point(0, 0);
@@ -42,6 +43,16 @@ namespace WindowsFormsApp.Custom_Views
             chart.ReSetPropsAndReDraw(legAnalyzer, resolution, symbol, fromDateTime);
             this.Text = $"{symbol} - {Resolution.TimeFrame}({Resolution.Size})";
             //chart.DrawAnalyzer();
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                return;
+            }
+            base.OnFormClosing(e);
         }
     }
 }

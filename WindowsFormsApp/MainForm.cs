@@ -24,6 +24,11 @@ namespace WindowsFormsApp
         List<HlocLAForm> chartList = new List<HlocLAForm>();
         SymbolsManager symbolsManager = new SymbolsManager();
 
+        Label selectedSymbolLabel = null;
+        Color selectedSymbolLabelColor = Color.LawnGreen;
+        Color normalSymbolLabelColor = Color.FromArgb(192, 192, 255);
+
+
         public MainForm()
         {
             InitializeComponent();
@@ -36,7 +41,7 @@ namespace WindowsFormsApp
                 SizeType = SizeType.AutoSize
             });
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), new DateTime(2018, 01, 01, 00, 00, 00), 0, 0);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), new DateTime(2017, 08, 01, 00, 00, 00), 0, 0);
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), new DateTime(2018, 06, 01, 00, 00, 00), 0, 1);
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), new DateTime(2018, 08, 10, 00, 00, 00), 1, 0);
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), new DateTime(2018, 08, 19, 00, 00, 00), 1, 1);
@@ -45,12 +50,29 @@ namespace WindowsFormsApp
 
         private void addNewChartFormToRightPanel(Resolution resolution, DateTime fromDateTime, int column, int row)
         {
-            HlocLAForm c = this.createChartForm();
-            c.Resolution = resolution;
-            c.FromDateTime = fromDateTime;
-            tableLayoutPanel_chartForm.Controls.Add(c, column, row);
-            c.Show();
+            HlocLAForm chart = this.createChartForm();
+            chart.Resolution = resolution;
+            chart.FromDateTime = fromDateTime;
+            //c.FormBorderStyle = FormBorderStyle.None;
+            //chart.DoubleClick += chart_MouseDoubleClick;
+            chart.FormClosing += (sender, e) =>
+            {
+                if (e.CloseReason == CloseReason.UserClosing)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            };
+            tableLayoutPanel_chartForm.Controls.Add(chart, column, row);
+            chart.Show();
         }
+
+        //private void chart_MouseDoubleClick(object sender, EventArgs e)
+        //{
+        //    var c = (HlocLAForm)sender;
+        //    c.WindowState = c.WindowState == FormWindowState.Normal ? FormWindowState.Maximized : FormWindowState.Normal;
+
+        //}
 
         private void populateSymbols()
         {
@@ -66,7 +88,7 @@ namespace WindowsFormsApp
         {
             foreach (var symbol in sList)
             {
-                Label l = creatSymbolLabel(symbol, Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255))))), Color.Black);
+                Label l = creatSymbolLabel(symbol, normalSymbolLabelColor, Color.Black);
                 l.Click += symbolLabel_Click;
                 addSymbolLabelRow(l);
             }
@@ -100,8 +122,13 @@ namespace WindowsFormsApp
 
         private void symbolLabel_Click(object sender, EventArgs e)
         {
+            if(selectedSymbolLabel != null)
+                selectedSymbolLabel.BackColor = normalSymbolLabelColor;
+            selectedSymbolLabel = (Label)sender;
+            selectedSymbolLabel.BackColor = selectedSymbolLabelColor;
+
             string symbol = ((Label)sender).Text;
-            
+
             foreach(var c in chartList)
             {
                 var analyzer = GetHistoricalData(symbol, c.Resolution, c.FromDateTime, DateTime.Now);
@@ -150,7 +177,7 @@ namespace WindowsFormsApp
 
         private void newChartToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var dialogBox = new NewChartOptionsPicker())
+            using (var dialogBox = new NewChartDialog())
             {
                 var result = dialogBox.ShowDialog();
                 if(result == DialogResult.OK)

@@ -1,6 +1,6 @@
 ﻿namespace WindowsFormsApp.Custom_Views
 {
-    partial class NewChartOptionsPicker
+    partial class NewChartDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -175,7 +175,9 @@
             this.Controls.Add(this.comboBox_timeFrame);
             this.Controls.Add(this.label_timeFrame);
             this.Controls.Add(this.label_symbol);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "NewChartOptionsPicker";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "NewChartOptionsPicker";
             this.ResumeLayout(false);
             this.PerformLayout();
