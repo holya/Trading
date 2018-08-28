@@ -4,6 +4,7 @@ using Trading.Common;
 using Trading.Brokers.Fxcm;
 using Trading.Analyzers.LegAnalyzer;
 using System.Linq;
+using Trading.Analyzers.Common;
 
 namespace ConsoleApp1
 {
@@ -42,43 +43,65 @@ namespace ConsoleApp1
             {
                 Console.WriteLine(e.Message);
                 //Environment.Exit(0);
-              
+
             }
 
-            var dailyAnalyzer = new LegAnalyzer();
-            dailyAnalyzer.AddBarList(dailyBarList);
-            Console.WriteLine("Daily-----------------------------");
-            Console.WriteLine($"dailyBarList.Count: {dailyBarList.Count}");
-            Console.WriteLine($"dailyBarList.Last().DateTime: {dailyBarList.Last().DateTime}");
-            Console.WriteLine($"First bar time: { dailyBarList.First().DateTime}");
-            Console.WriteLine($"Daily StartDateTime: {dailyStartDateTime}");
-            Console.WriteLine($"Daily EndDateTime: {dailyEndDateTime}");
-            Console.WriteLine($"Close: {dailyAnalyzer.Close}");
-            Console.WriteLine("-----------------------------");
 
+            var d = dailyBarList.ElementAt(0);
+            d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime);
+            var LegList = new List<Leg> { new Leg(d) };
 
-
-            var lastDailyAnalyzerLeg = dailyAnalyzer.LastLeg;
-            DateTime h6startDateTime = lastDailyAnalyzerLeg.StartDateTime;
-            DateTime h6EndDateTime = lastDailyAnalyzerLeg.LastBar.DateTime.AddDays(1);
-            List<FxBar> h6BarList = new List<FxBar>();
-            try
+            for (int i = 1; i < dailyBarList.Count(); i++)
             {
-                h6BarList = (List<FxBar>)f.GetHistoricalData(symbol, new Resolution(TimeFrame.Hourly, 6), h6startDateTime, h6EndDateTime);
+                var currentBar = dailyBarList.ElementAt(i);
+                currentBar.PreviousBar = dailyBarList.ElementAt(i - 1);
+                if (currentBar.IsSameDirection(currentBar.PreviousBar))
+                {
+                    LegList.Last().AddBar(currentBar);
+                    continue;
+                }
+                LegList.Add(new Leg(currentBar) { PreviousLeg = LegList.Last() });
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                Environment.Exit(0);
-            }
-            var h6Analyzer = new LegAnalyzer();
-            h6Analyzer.AddBarList(h6BarList);
-            Console.WriteLine("h6-----------------------------");
-            Console.WriteLine($"h6.BarList.Count: {h6BarList.Count}\nh6BarList.Last().DateTime: {h6BarList.Last().DateTime}");
-            Console.WriteLine($"H6 StartDateTime: {h6startDateTime}");
-            Console.WriteLine($"H6 EndDateTime: {h6EndDateTime}");
-            Console.WriteLine($"Close: {h6Analyzer.Close}");
-            Console.WriteLine("-----------------------------");
+
+            //var dailyAnalyzer = new LegAnalyzer();
+            //dailyAnalyzer.AddBarList(dailyBarList);
+            //int k = dailyAnalyzer.BarsCount;
+
+            //int k2 = 1;
+
+
+            //Console.WriteLine("Daily-----------------------------");
+            //Console.WriteLine($"dailyBarList.Count: {dailyBarList.Count}");
+            //Console.WriteLine($"dailyBarList.Last().DateTime: {dailyBarList.Last().DateTime}");
+            //Console.WriteLine($"First bar time: { dailyBarList.First().DateTime}");
+            //Console.WriteLine($"Daily StartDateTime: {dailyStartDateTime}");
+            //Console.WriteLine($"Daily EndDateTime: {dailyEndDateTime}");
+            //Console.WriteLine($"Close: {dailyAnalyzer.Close}");
+            //Console.WriteLine("-----------------------------");
+
+
+
+            //var lastDailyAnalyzerLeg = dailyAnalyzer.LastLeg;
+            //DateTime h6startDateTime = lastDailyAnalyzerLeg.StartDateTime;
+            //DateTime h6EndDateTime = lastDailyAnalyzerLeg.LastBar.DateTime.AddDays(1);
+            //List<FxBar> h6BarList = new List<FxBar>();
+            //try
+            //{
+            //    h6BarList = (List<FxBar>)f.GetHistoricalData(symbol, new Resolution(TimeFrame.Hourly, 6), h6startDateTime, h6EndDateTime);
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e.Message);
+            //    Environment.Exit(0);
+            //}
+            //var h6Analyzer = new LegAnalyzer();
+            //h6Analyzer.AddBarList(h6BarList);
+            //Console.WriteLine("h6-----------------------------");
+            //Console.WriteLine($"h6.BarList.Count: {h6BarList.Count}\nh6BarList.Last().DateTime: {h6BarList.Last().DateTime}");
+            //Console.WriteLine($"H6 StartDateTime: {h6startDateTime}");
+            //Console.WriteLine($"H6 EndDateTime: {h6EndDateTime}");
+            //Console.WriteLine($"Close: {h6Analyzer.Close}");
+            //Console.WriteLine("-----------------------------");
 
 
             //var lasth6AnalyzerLeg = h6Analyzer.LastLeg;
@@ -117,7 +140,7 @@ namespace ConsoleApp1
 
             //Console.WriteLine(f.GetServerTime());
 
-            //Console.ReadLine();
+            Console.ReadLine();
             f.Logout();
         }
     }

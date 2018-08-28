@@ -96,11 +96,11 @@ namespace WindowsFormsApp
 
         private void addSymbolLabelRow(Label l)
         {
-            tableLayoutPanel1.RowStyles.Add(new RowStyle
-            {
-                SizeType = SizeType.AutoSize,
-                Height = 40
-            });
+            //tableLayoutPanel1.RowStyles.Add(new RowStyle
+            //{
+            //    SizeType = SizeType.AutoSize,
+            //    Height = 40
+            //});
             tableLayoutPanel1.Controls.Add(l, 0, tableLayoutPanel1.RowCount - 1);
             tableLayoutPanel1.RowCount++;
         }

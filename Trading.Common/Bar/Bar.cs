@@ -79,7 +79,12 @@ namespace Trading.Common
             }
         }
 
-
-        
+        public bool IsSameDirection(Bar bar)
+        {
+            if (bar.Direction == BarDirection.Balance) return true;
+            if (bar.Direction < BarDirection.Balance & Direction < BarDirection.Balance) return true;
+            if (bar.Direction > BarDirection.Balance & Direction > BarDirection.Balance) return true;
+            return false;
+        }
     }
 }

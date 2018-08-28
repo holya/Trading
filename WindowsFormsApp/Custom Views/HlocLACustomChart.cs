@@ -99,8 +99,16 @@ namespace WindowsFormsApp.Custom_Views
                 SolidBrush drawBrush = new SolidBrush(Color.Black);
                 g.DrawString("" + r.Price, font, drawBrush, x2 + 7, y - 10);
             }
+
+            //draw close value
+            float xCoord = (float)ChartAreas[0].AxisX.ValueToPixelPosition(Series[0].Points.Count - 1) + 20;
+            var yCoord = (float)ChartAreas[0].AxisY2.ValueToPixelPosition(LegAnalyzer.Close);
+            var f = new Font(FontFamily.GenericSerif, 8);
+            SolidBrush db = new SolidBrush(Color.OrangeRed);
+            g.DrawString("" + LegAnalyzer.Close, f, db, xCoord + 7, yCoord - 10);
+
         }
-        
+
         private bool isLAIntraday()
         {
             return (Resolution.TimeFrame == TimeFrame.Hourly ||

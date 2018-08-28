@@ -39,7 +39,7 @@ namespace Trading.Analyzers.LegAnalyzer
 
             this.addBar = this.doFirstLeg;  
         }
-        
+        public int BarsCount { get { return LegList.Sum(leg => leg.BarCount); } }
         public Resolution Resolution { get; set; }
 
         public void AddBarList(IEnumerable<Tuple<double, double, double, double, double, DateTime>> barList)
@@ -49,13 +49,32 @@ namespace Trading.Analyzers.LegAnalyzer
                 AddBar(item.Item1, item.Item2, item.Item3, item.Item4, item.Item5, item.Item6);
             }
         }
-        public void AddBarList(IEnumerable<Bar> barList)
+        public void AddBarList2(IEnumerable<Bar> barList)
         {
             foreach(var bar in barList)
             {
                 this.addBar(bar);
             }
         }
+        public void AddBarList(IEnumerable<Bar> barList)
+        {
+            var d = barList.ElementAt(0);
+            d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime);
+            LegList.Add(new Leg(d));
+
+            for (int i = 1; i < barList.Count(); i++)
+            {
+                var currentBar = barList.ElementAt(i);
+                currentBar.PreviousBar = barList.ElementAt(i - 1);
+                if (currentBar.PreviousBar.IsSameDirection(currentBar))
+                {
+                    LegList.Last().AddBar(currentBar);
+                    continue;
+                }
+                LegList.Add(new Leg(currentBar) { PreviousLeg = LegList.Last() });
+            }
+        }
+
 
         public void AddBar(double open, double high, double low, double close, double volume, DateTime time)
         {
