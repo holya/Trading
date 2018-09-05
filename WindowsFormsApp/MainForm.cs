@@ -44,7 +44,7 @@ namespace WindowsFormsApp
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), new DateTime(2017, 08, 01, 00, 00, 00), 0, 0);
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), new DateTime(2018, 06, 01, 00, 00, 00), 0, 1);
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), new DateTime(2018, 08, 10, 00, 00, 00), 1, 0);
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), new DateTime(2018, 08, 19, 00, 00, 00), 1, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), new DateTime(2018, 08, 23, 00, 00, 00), 1, 1);
 
         }
 

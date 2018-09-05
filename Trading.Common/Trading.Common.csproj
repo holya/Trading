@@ -47,6 +47,8 @@
     <Compile Include="Bar\BarDirection.cs" />
     <Compile Include="Bar\Bar.cs" />
     <Compile Include="Bar\FxBar.cs" />
+    <Compile Include="Leg\Leg.cs" />
+    <Compile Include="Leg\LegDirection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resolution.cs" />
     <Compile Include="TimeFrame.cs" />

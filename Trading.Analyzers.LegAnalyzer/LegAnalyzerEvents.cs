@@ -1,5 +1,5 @@
 ﻿using System;
-using Trading.Analyzers.Common;
+using Trading.Common;
 
 namespace Trading.Analyzers.LegAnalyzer
 {

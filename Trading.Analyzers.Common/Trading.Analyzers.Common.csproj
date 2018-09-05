@@ -41,8 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Leg\Leg.cs" />
-    <Compile Include="Leg\LegDirection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reference\Reference.cs" />
     <Compile Include="Reference\ReferenceType.cs" />

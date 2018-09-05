@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
 
-namespace Trading.Analyzers.Common
+namespace Trading.Common
 {
     public class Leg
     {
