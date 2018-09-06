@@ -31,7 +31,6 @@ namespace WindowsFormsApp.Custom_Views
             chart.Location = new System.Drawing.Point(0, 0);
             this.chart.Size = new System.Drawing.Size(911, 450);
             this.Controls.Add(chart);
-
         }
 
         public void ResetPropsAndReDraw(LegAnalyzer legAnalyzer, Resolution resolution, string symbol, DateTime fromDateTime)
@@ -47,11 +46,6 @@ namespace WindowsFormsApp.Custom_Views
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                e.Cancel = true;
-                return;
-            }
             base.OnFormClosing(e);
         }
     }

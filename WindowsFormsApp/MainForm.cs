@@ -41,6 +41,7 @@ namespace WindowsFormsApp
                 SizeType = SizeType.AutoSize
             });
 
+            
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), new DateTime(2017, 08, 01, 00, 00, 00), 0, 0);
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), new DateTime(2018, 06, 01, 00, 00, 00), 0, 1);
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), new DateTime(2018, 08, 10, 00, 00, 00), 1, 0);
@@ -66,13 +67,6 @@ namespace WindowsFormsApp
             tableLayoutPanel_chartForm.Controls.Add(chart, column, row);
             chart.Show();
         }
-
-        //private void chart_MouseDoubleClick(object sender, EventArgs e)
-        //{
-        //    var c = (HlocLAForm)sender;
-        //    c.WindowState = c.WindowState == FormWindowState.Normal ? FormWindowState.Maximized : FormWindowState.Normal;
-
-        //}
 
         private void populateSymbols()
         {
@@ -131,7 +125,7 @@ namespace WindowsFormsApp
 
             foreach(var c in chartList)
             {
-                var analyzer = GetHistoricalData(symbol, c.Resolution, c.FromDateTime, DateTime.Now);
+                var analyzer = GetHistoricalData(symbol, c.Resolution, c.FromDateTime, DateTime.Now.ToUniversalTime());
                 c.ResetPropsAndReDraw(analyzer, c.Resolution, symbol, c.FromDateTime);
             }
         }
@@ -211,7 +205,12 @@ namespace WindowsFormsApp
 
         private void Chart_FormClosing(object sender, FormClosingEventArgs e)
         {
-            chartList.Remove((HlocLAForm)sender);
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                return;
+            }
+            //chartList.Remove((HlocLAForm)sender);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)

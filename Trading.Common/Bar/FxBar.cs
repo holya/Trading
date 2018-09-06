@@ -13,6 +13,7 @@ namespace Trading.Common
         public double AskClose { get; set; }
 
         public FxBar() :base() { } 
+
         public FxBar(double open, double askOpen, double high, double askHigh, double low, double askLow, double close, double askClose, double volume, DateTime dateTime) : base(open, high, low, close, volume, dateTime)
         {
             this.AskOpen = askOpen;

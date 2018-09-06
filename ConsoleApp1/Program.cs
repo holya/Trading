@@ -32,7 +32,7 @@ namespace ConsoleApp1
             }
 
             DateTime dailyStartDateTime = new DateTime(2018, 1, 1, 0, 0, 0);
-            var dailyEndDateTime = new DateTime(2018, 7, 31, 23, 59, 59); // DateTime.Now;
+            var dailyEndDateTime = new DateTime(2018, 7, 31, 23, 59, 59); 
             //DateTime dailyEndDateTime = new DateTime(now.Year, now.Month, , 0, 0, 0);
             List<FxBar> dailyBarList = null;
             try
