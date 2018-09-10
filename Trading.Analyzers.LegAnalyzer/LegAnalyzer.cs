@@ -74,7 +74,7 @@ namespace Trading.Analyzers.LegAnalyzer
                 if (!LastBar.PreviousBar.IsSameDirection(LastBar))
                 {
                     LegList.Add(new Leg(LastBar) { PreviousLeg = LegList.Last() });
-                    LegList[LegList.Count - 1].BarList.Remove(LastBar);
+                    LegList[LegList.Count - 2].BarList.Remove(LastBar);
                 }
                 return;
             }
