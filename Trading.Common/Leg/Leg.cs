@@ -17,7 +17,7 @@ namespace Trading.Common
         public double Close { get { return this.LastBar.Close; } }
         public double Volume { get { return this.BarList.Sum(b => b.Volume); } }
         public Leg PreviousLeg { get; set; }
-        public Bar LastBar { get { return this.BarList.Last(); } }
+        public Bar LastBar { get { return this.BarList.LastOrDefault(); } }
         public DateTime StartDateTime { get { return this.BarList.First().DateTime; } }
         public int BarCount { get { return this.BarList.Count; } }
 

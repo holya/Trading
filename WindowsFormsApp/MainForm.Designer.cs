@@ -76,8 +76,6 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(170, 597);
             this.tableLayoutPanel1.TabIndex = 0;
-            this.tableLayoutPanel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.tableLayoutPanel1_MouseClick);
-            // 
             // tableLayoutPanel_chartForm
             // 
             this.tableLayoutPanel_chartForm.ColumnCount = 2;

@@ -20,6 +20,7 @@ namespace WindowsFormsApp.Custom_Views
         public Resolution Resolution { get; set; }
         public string Symbol { get; set; }
         public DateTime FromDateTime { get; set; }
+        public bool DataPopulated { get; set; } = false;
 
 
         public HlocLAForm()
@@ -42,6 +43,15 @@ namespace WindowsFormsApp.Custom_Views
             chart.ReSetPropsAndReDraw(legAnalyzer, resolution, symbol, fromDateTime);
             this.Text = $"{symbol} - {Resolution.TimeFrame}({Resolution.Size})";
             //chart.DrawAnalyzer();
+        }
+        public void Redraw()
+        {
+            if(InvokeRequired)
+                Invoke(new Action(() => chart.Invalidate()));
+        }
+        public void UpdateAnalyzer(double bid, double ask, DateTime dateTime, int volume)
+        {
+            FxBar lb = (FxBar)LegAnalyzer.LastBar;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

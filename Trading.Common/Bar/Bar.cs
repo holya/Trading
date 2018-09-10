@@ -50,8 +50,6 @@ namespace Trading.Common
                 this.PreviousBar = new Bar(open, open, open, open, 0, dateTime);
         }
 
-
-
         public BarDirection Direction
         {
             get
@@ -85,6 +83,16 @@ namespace Trading.Common
             if (bar.Direction < BarDirection.Balance & Direction < BarDirection.Balance) return true;
             if (bar.Direction > BarDirection.Balance & Direction > BarDirection.Balance) return true;
             return false;
+        }
+
+        public virtual void Update(Bar bar)
+        {
+            Open = bar.Open;
+            High = bar.High;
+            Low = bar.Low;
+            Close = bar.Close;
+            Volume = bar.Volume;
+            //DateTime = bar.DateTime;
         }
     }
 }

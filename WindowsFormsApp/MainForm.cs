@@ -21,33 +21,37 @@ namespace WindowsFormsApp
     public partial class MainForm : Form
     {
         FxcmWrapper f = new FxcmWrapper();
+        
         List<HlocLAForm> chartList = new List<HlocLAForm>();
+
         SymbolsManager symbolsManager = new SymbolsManager();
 
         Label selectedSymbolLabel = null;
         Color selectedSymbolLabelColor = Color.LawnGreen;
         Color normalSymbolLabelColor = Color.FromArgb(192, 192, 255);
 
-
         public MainForm()
         {
             InitializeComponent();
 
             logIn();
+
             populateSymbols();
 
-            this.tableLayoutPanel_chartForm.RowStyles.Add(new RowStyle
-            {
-                SizeType = SizeType.AutoSize
-            });
-
+            //???????????????????????? 225
+            //this.tableLayoutPanel_chartForm.RowStyles.Add(new RowStyle
+            //{
+            //    SizeType = SizeType.AutoSize
+            //});
             
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), new DateTime(2017, 08, 01, 00, 00, 00), 0, 0);
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), new DateTime(2018, 06, 01, 00, 00, 00), 0, 1);
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), new DateTime(2018, 08, 10, 00, 00, 00), 1, 0);
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), new DateTime(2018, 09, 01, 00, 00, 00), 1, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), new DateTime(2017, 08, 01, 00, 00, 00), 0, 0);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), new DateTime(2018, 06, 01, 00, 00, 00), 0, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), new DateTime(2018, 08, 10, 00, 00, 00), 1, 0);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), new DateTime(2018, 09, 09, 10, 00, 00), 1, 1);
 
+            f.OffersTableUpdated += OffersTableUpdated;
         }
+
 
         private void addNewChartFormToRightPanel(Resolution resolution, DateTime fromDateTime, int column, int row)
         {
@@ -64,13 +68,16 @@ namespace WindowsFormsApp
                     return;
                 }
             };
+            
             tableLayoutPanel_chartForm.Controls.Add(chart, column, row);
             chart.Show();
         }
 
+        #region Symbols Data Grid
         private void populateSymbols()
         {
-            tableLayoutPanel1.RowStyles.RemoveAt(0);
+            //????????????????????? 225
+            //tableLayoutPanel1.RowStyles.RemoveAt(0);
 
             addSymbolLabelRow(creatSymbolLabel("Majors", Color.White, Color.Red));
             createSymbolRows(symbolsManager.GetForexPairsMajor());
@@ -121,14 +128,18 @@ namespace WindowsFormsApp
             selectedSymbolLabel = (Label)sender;
             selectedSymbolLabel.BackColor = selectedSymbolLabelColor;
 
-            string symbol = ((Label)sender).Text;
+            string symbol = selectedSymbolLabel.Text;
 
             foreach(var c in chartList)
             {
-                var analyzer = GetHistoricalData(symbol, c.Resolution, c.FromDateTime, DateTime.Now.ToUniversalTime());
+                c.DataPopulated = false;
+                var analyzer = GetHistoricalData(symbol, c.Resolution, c.FromDateTime, DateTime.Now);
                 c.ResetPropsAndReDraw(analyzer, c.Resolution, symbol, c.FromDateTime);
+                c.DataPopulated = true;
             }
+
         }
+        #endregion
 
         private void logIn()
         {
@@ -138,7 +149,7 @@ namespace WindowsFormsApp
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                MessageBox.Show(e.Message);
                 Environment.Exit(0);
             }
         }
@@ -149,25 +160,52 @@ namespace WindowsFormsApp
             List<FxBar> dailyBarList = null;
             try
             {
-                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, resolution, from, to);
+                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, resolution, from, to, true);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
-                //Environment.Exit(0);
-
+                MessageBox.Show(e.Message);
+                return null;
             }
 
-            var dailyAnalyzer = new LegAnalyzer
-            {
-                Resolution = resolution
-            };
+            var dailyAnalyzer = new LegAnalyzer(resolution);
 
             dailyAnalyzer.AddBarList(dailyBarList);
 
             return dailyAnalyzer;
         }
 
+        private void OffersTableUpdated(object sender, Tuple<string, double, double, DateTime, int> e)
+        {
+            for(int i = 0; i < chartList.Count; i++)
+            {
+                var c = chartList[i];
+                if(c.DataPopulated && c.Symbol == e.Item1)
+                {
+                    FxBar b = (FxBar)c.LegAnalyzer.LastBar;
+                    FxBar newBar = createUpdatedBar(b, e.Item2, e.Item3, e.Item4, e.Item5);
+                    c.LegAnalyzer.UpdateLastBar(newBar);
+                    c.Redraw();
+                }
+            }
+        }
+        private FxBar createUpdatedBar(FxBar oldBar, double bid, double ask, DateTime dt, int volume)
+        {
+            FxBar ob = oldBar;
+            return new FxBar
+            {
+                Open = ob.Open,
+                High = bid > ob.High ? bid : ob.High,
+                Low = bid < ob.Low ? bid : ob.Low,
+                Close = bid,
+                AskOpen = ob.AskOpen,
+                AskHigh = ask > ob.AskHigh ? ask : ob.AskHigh,
+                AskLow = ask < ob.AskLow ? ask : ob.AskLow,
+                AskClose = ask,
+                DateTime = dt,
+                Volume = volume
+            };
+        }
 
         private void newChartToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -199,18 +237,7 @@ namespace WindowsFormsApp
             var chart = new HlocLAForm();
             chart.Dock = DockStyle.Fill;
             chartList.Add(chart);
-            chart.FormClosing += Chart_FormClosing;
             return chart;
-        }
-
-        private void Chart_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                e.Cancel = true;
-                return;
-            }
-            //chartList.Remove((HlocLAForm)sender);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -218,10 +245,5 @@ namespace WindowsFormsApp
             f.Logout();
         }
 
-        private void tableLayoutPanel1_MouseClick(object sender, MouseEventArgs e)
-        {
-            //for(int i = 0; i < tableLayoutPanel1.Controls.Count)
-            //    tableLayoutPanel1.Controls[i].Location.
-        }
     }
 }

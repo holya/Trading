@@ -9,11 +9,9 @@ namespace Trading.Analyzers.LegAnalyzer
 {
     public partial class LegAnalyzer
     {
-        private Action<Bar> addBar;
-
-
         #region Properties
 
+        public Resolution Resolution { get; set; }
         public Bar LastBar { get { return this.LastLeg.LastBar; } } 
         public Leg LastLeg { get { return this.LegList.Last(); } }
         public double Close { get { return this.LastBar.Close; } }
@@ -21,154 +19,145 @@ namespace Trading.Analyzers.LegAnalyzer
         //public double BarVolitility { get { return this.LastBar.High - this.LastBar.Low / 100; } }
         //public double LastSupport { get { return this.RefList.FirstOrDefault(r => r.Price < this.Close).Price; } }
         //public double LastResistance { get { return this.RefList.FirstOrDefault(r => r.Price < this.Close).Price; } }
-        public List<Leg> LegList { get; private set; }
+        public List<Leg> LegList { get; } = new List<Leg>();
         public int LegsCount { get { return this.LegList.Count; } }
         
 
         //public List<double> AdvanceList { get; private set; }
         //public List<double> DeclineList { get; private set; }
 
-        public List<Reference> RefList { get; private set; }
+        public List<Reference> RefList { get; } = new List<Reference>();
+        
 
         #endregion
 
-        public LegAnalyzer()
+        public LegAnalyzer(Resolution resolution)
         {
-            this.LegList = new List<Leg>();
-            this.RefList = new List<Reference>();
-
-            this.addBar = this.doFirstLeg;  
+            Resolution = resolution;
         }
         public int BarsCount { get { return LegList.Sum(leg => leg.BarCount); } }
-        public Resolution Resolution { get; set; }
 
-        public void AddBarList(IEnumerable<Tuple<double, double, double, double, double, DateTime>> barList)
-        {
-            foreach(var item in barList)
-            {
-                AddBar(item.Item1, item.Item2, item.Item3, item.Item4, item.Item5, item.Item6);
-            }
-        }
-        public void AddBarList2(IEnumerable<Bar> barList)
-        {
-            foreach(var bar in barList)
-            {
-                this.addBar(bar);
-            }
-        }
         public void AddBarList(IEnumerable<Bar> barList)
         {
-            var d = barList.ElementAt(0);
-            d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime);
-            LegList.Add(new Leg(d));
+            if (barList.Count() == 0)
+                return;
+
+            if (LegList.Count == 0)
+            {
+                var d = barList.ElementAt(0);
+                d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime);
+                LegList.Add(new Leg(d));
+            }
 
             for (int i = 1; i < barList.Count(); i++)
             {
-                var currentBar = barList.ElementAt(i);
-                currentBar.PreviousBar = barList.ElementAt(i - 1);
-                if (currentBar.PreviousBar.IsSameDirection(currentBar))
-                {
-                    LegList.Last().AddBar(currentBar);
-                    continue;
-                }
-                LegList.Add(new Leg(currentBar) { PreviousLeg = LegList.Last() });
+                AddBar(barList.ElementAt(i));
             }
         }
 
-
-        public void AddBar(double open, double high, double low, double close, double volume, DateTime time)
+        public void AddBar(Bar newBar)
         {
-            this.addBar(new Bar(open, high, low, close, volume, time));
-            
-        }
-        public void AddBar(Bar bar)
-        {
-            this.addBar(bar);
-        }
-
-        private void doFirstLeg(Bar bar)
-        {
-            double newBarOpen = bar.Open;
-            var prevBar = new Bar(newBarOpen, newBarOpen, newBarOpen, newBarOpen, 0, bar.DateTime, null);
-            bar.PreviousBar = prevBar;
-
-            var leg = new Leg(bar);
-            leg.PreviousLeg = leg;
-            this.LegList.Add(leg);
-
-            this.RefList.Add(leg.Direction == LegDirection.Up ? 
-                new Reference() { Price = leg.Low, DateTime = leg.StartDateTime, Owner = this.LastBar } :
-                new Reference() { Price = leg.High, DateTime = leg.StartDateTime, Owner = this.LastBar });
-            
-            this.addBar = this.continueBuildingLeg;
-            this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.NewLegAdded);
-        }
-
-        private void continueBuildingLeg(Bar bar)
-        {
-            //var bar = new Bar(open, high, low, close, volume, time, this.LastBar);
-            bar.PreviousBar = LastBar;
-
-            if(this.LastLeg.Direction == LegDirection.Up)
+            newBar.PreviousBar = LastBar;
+            if(LastBar.IsSameDirection(newBar))
             {
-                switch(bar.Direction)
-                {
-                    case BarDirection.Up:
-                    case BarDirection.GapUp:
-                    case BarDirection.Balance:
-                        this.LastLeg.AddBar(bar);
-                        this.analyzeprevRefs();
-
-                        this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.NewBarAdded);
-                        return;
-                    case BarDirection.GapDown:
-                    case BarDirection.Down:
-                        this.addReferenceForHighOfThisBar(this.LastLeg.HighestBar);
-                        break;
-                    case BarDirection.OutsideDown:
-                        if(bar.High < this.LastLeg.HighestBar.High)
-                            this.addReferenceForHighOfThisBar(this.LastLeg.HighestBar);
-                        addReferenceForHighOfThisBar(bar);
-                        break;
-                    case BarDirection.OutsideUp:
-                        this.addReferenceForHighOfThisBar(this.LastLeg.HighestBar);
-                        this.addReferenceForLowOfThisBar(bar);
-                        break;
-                }
+                LegList.Last().AddBar(newBar);
+                return;
             }
-            else 
-            {
-                switch(bar.Direction)
-                {
-                    case BarDirection.Down:
-                    case BarDirection.GapDown:
-                    case BarDirection.Balance:
-                        this.LastLeg.AddBar(bar);
-                        this.analyzeprevRefs();
-
-                        this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.NewBarAdded);
-                        return;
-                    case BarDirection.GapUp:
-                    case BarDirection.Up:
-                        this.addReferenceForLowOfThisBar(this.LastLeg.LowestBar);
-                        break;
-                    case BarDirection.OutsideDown:
-                        this.addReferenceForLowOfThisBar(this.LastLeg.LowestBar);
-                        this.addReferenceForHighOfThisBar(bar);
-                        break;
-                    case BarDirection.OutsideUp:
-                        if(bar.Low > this.LastLeg.LowestBar.Low)
-                            this.addReferenceForLowOfThisBar(this.LastLeg.LowestBar);
-                        this.addReferenceForLowOfThisBar(bar);
-                        break;
-                }
-            }
-
-            this.analyzeprevRefs();
-            var leg = new Leg(bar, this.LastLeg);
-            this.LegList.Add(leg);
-            this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.NewLegAdded);
+            LegList.Add(new Leg(newBar) { PreviousLeg = LegList.Last() });
         }
+
+        public void UpdateLastBar(Bar updatedBar)
+        {
+            if(updatedBar.DateTime <= LastBar.DateTime)
+            {
+                LastBar.Update(updatedBar);
+                if (!LastBar.PreviousBar.IsSameDirection(LastBar))
+                {
+                    LegList.Add(new Leg(LastBar) { PreviousLeg = LegList.Last() });
+                    LegList[LegList.Count - 1].BarList.Remove(LastBar);
+                }
+                return;
+            }
+
+            switch (Resolution.TimeFrame)
+            {
+                case TimeFrame.Yearly:
+                    updatedBar.DateTime = LastBar.DateTime.AddYears(Resolution.Size);
+                    break;
+                case TimeFrame.Quarterly:
+                    updatedBar.DateTime = LastBar.DateTime.AddMonths(Resolution.Size * 4);
+                    break;
+                case TimeFrame.Monthly:
+                    updatedBar.DateTime = LastBar.DateTime.AddMonths(Resolution.Size);
+                    break;
+                case TimeFrame.Weekly:
+                    updatedBar.DateTime = LastBar.DateTime.AddDays(Resolution.Size * 7);
+                    break;
+                case TimeFrame.Daily:
+                    updatedBar.DateTime = LastBar.DateTime.AddDays(Resolution.Size);
+                    break;
+                case TimeFrame.Hourly:
+                    updatedBar.DateTime = LastBar.DateTime.AddDays(Resolution.Size);
+                    break;
+                case TimeFrame.Minute:
+                    updatedBar.DateTime = LastBar.DateTime.AddDays(Resolution.Size);
+                    break;
+                default:
+                    break;
+            }
+
+            AddBar(updatedBar);
+        }
+
+        public void UpdateLastBar2(Bar updatedBar)
+        {
+            if(updatedBar.DateTime > LastBar.DateTime)
+            {
+                switch (Resolution.TimeFrame)
+                {
+                    case TimeFrame.Yearly:
+                        updatedBar.DateTime = LastBar.DateTime.AddYears(Resolution.Size);
+                        break;
+                    case TimeFrame.Quarterly:
+                        updatedBar.DateTime = LastBar.DateTime.AddMonths(Resolution.Size * 4);
+                        break;
+                    case TimeFrame.Monthly:
+                        updatedBar.DateTime = LastBar.DateTime.AddMonths(Resolution.Size);
+                        break;
+                    case TimeFrame.Weekly:
+                        updatedBar.DateTime = LastBar.DateTime.AddDays(Resolution.Size * 7);
+                        break;
+                    case TimeFrame.Daily:
+                        updatedBar.DateTime = LastBar.DateTime.AddDays(Resolution.Size);
+                        break;
+                    case TimeFrame.Hourly:
+                        updatedBar.DateTime = LastBar.DateTime.AddDays(Resolution.Size);
+                        break;
+                    case TimeFrame.Minute:
+                        updatedBar.DateTime = LastBar.DateTime.AddDays(Resolution.Size);
+                        break;
+                    default:
+                        break;
+                }
+                if (LastBar.IsSameDirection(updatedBar))
+                {
+                    LastLeg.AddBar(updatedBar);
+                    return;
+                }
+
+                LegList.Add(new Leg(updatedBar) { PreviousLeg = LegList.Last() });
+                return;
+            }
+
+            LastBar.Update(updatedBar);
+
+            if (!updatedBar.IsSameDirection(LastBar))
+            {
+                LegList.Add(new Leg(LastBar) { PreviousLeg = LegList.Last() });
+                LegList[LegList.Count - 1].BarList.Remove(LastBar);
+            }
+        }
+
 
         private void addReferenceForHighOfThisBar(Bar bar)
         {
@@ -180,255 +169,6 @@ namespace Trading.Analyzers.LegAnalyzer
             this.RefList.Add(new Reference { Price = bar.Low, DateTime = bar.DateTime, Owner = bar });
         }
 
-        public void UpdateBar(double open, double high, double low, double close, double volume, DateTime time)
-        {
-            if(!this.lastBarShouldBeUpdated(open, high, low, close))
-            {
-                this.LastBar.Volume += volume;
-                this.LastBar.Close = close;
-
-                this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.CloseUpdated);
-                return;
-            }
-
-            var oldLegDirection = this.LastLeg.Direction;
-            var oldLastBarDirection = this.LastBar.Direction;
-            if(high > this.LastBar.High)
-                LastBar.High = high;
-            if(low < this.LastBar.Low)
-                LastBar.Low = low;
-            this.LastBar.Close = close;
-            this.LastBar.Volume += volume;
-            //this.LastBar.DateTime = time;
-            BarDirection newBarDirection = this.LastBar.Direction;
-
-            if(oldLegDirection == LegDirection.Up)
-            {
-                switch(oldLastBarDirection)
-                {
-                    case BarDirection.Balance:
-                        switch(newBarDirection)
-                        {
-                            case BarDirection.Down:
-                                var l = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                this.addBar(l);
-                                break;
-                            case BarDirection.OutsideDown:
-                                var nb = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                this.addBar(nb);
-                                break;
-                            case BarDirection.Balance:
-                                this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.LastBarExpanded);
-                                break;
-                            case BarDirection.Up:
-                                this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.LastBarExpanded);
-                                break;
-                            case BarDirection.OutsideUp:
-                                var newBar = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                this.addBar(newBar);
-                                break;
-                        }
-                        break;
-                    case BarDirection.Up:
-                        switch(newBarDirection)
-                        {
-                            case BarDirection.OutsideDown:
-                                var newBar = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                if(this.LastLeg.BarCount == 0)
-                                {
-                                    this.LegList.Remove(this.LastLeg);
-                                    this.RefList.Remove(this.RefList.Last());
-                                }
-                                this.addBar(newBar);
-                                break;
-                            case BarDirection.Up:
-                                this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.LastBarExpanded);
-                                break;
-                            case BarDirection.OutsideUp:
-                                var lb = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                if(this.LastLeg.BarCount == 0)
-                                {
-                                    this.LegList.Remove(this.LastLeg);
-                                    this.RefList.Remove(this.RefList.Last());
-                                }
-                                this.addBar(lb);
-                                break;
-                        }
-                        break;
-                    case BarDirection.GapUp:
-                        switch(newBarDirection)
-                        {
-                            case BarDirection.OutsideDown:
-                                var lb = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                if(this.LastLeg.BarCount == 0)
-                                {
-                                    this.LegList.Remove(this.LastLeg);
-                                    this.RefList.Remove(this.RefList.Last());
-                                }
-                                this.addBar(lb);
-                                break;
-                            case BarDirection.Up:
-                            case BarDirection.GapUp:
-                                this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.LastBarExpanded);
-                                break;
-                            case BarDirection.OutsideUp:
-                                var nb = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                if(this.LastLeg.BarCount == 0)
-                                {
-                                    this.LegList.Remove(this.LastLeg);
-                                    this.RefList.Remove(this.RefList.Last());
-                                }
-                                this.addBar(nb);
-                                break;
-                        }
-                        break;
-                    case BarDirection.OutsideUp:
-                        switch(newBarDirection)
-                        {
-                            case BarDirection.OutsideDown:
-                                this.RefList.Remove(this.RefList.Last());
-                                var nb = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                if(this.LastLeg.BarCount == 0)
-                                {
-                                    this.LegList.Remove(this.LastLeg);
-                                    if(this.LegsCount == 0)
-                                        this.addBar = this.doFirstLeg;
-                                }
-                                this.addBar(nb);
-                                break;
-                            case BarDirection.OutsideUp:
-                                this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.LastBarExpanded);
-                                break;
-                        }
-                        break;
-                }
-            }
-            else
-            {
-                switch(oldLastBarDirection)
-                {
-                    case BarDirection.Down:
-                        switch(newBarDirection)
-                        {
-                            case BarDirection.Down:
-                                this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.LastBarExpanded);
-                                break;
-                            case BarDirection.OutsideDown:
-                                var lb = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                if(this.LastLeg.BarCount == 0)
-                                {
-                                    this.LegList.Remove(this.LastLeg);
-                                    this.RefList.Remove(this.RefList.Last());
-                                }
-                                this.addBar(lb);
-                                break;
-                            case BarDirection.OutsideUp:
-                                var nb = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                if(this.LastLeg.BarCount == 0)
-                                {
-                                    this.LegList.Remove(this.LastLeg);
-                                    this.RefList.Remove(this.RefList.Last());
-                                }
-                                this.addBar(nb);
-                                break;
-                        }
-                        break;
-                    case BarDirection.GapDown:
-                        switch(newBarDirection)
-                        {
-                            case BarDirection.Down:
-                                this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.LastBarExpanded);
-                                break;
-                            case BarDirection.GapDown:
-                                this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.LastBarExpanded);
-                                break;
-                            case BarDirection.OutsideDown:
-                                var lb = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                if(this.LastLeg.BarCount == 0)
-                                {
-                                    this.LegList.Remove(this.LastLeg);
-                                    this.RefList.Remove(this.RefList.Last());
-                                }
-
-                                this.addBar(lb);
-                                break;
-                            case BarDirection.OutsideUp:
-                                var nb = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                if(this.LastLeg.BarCount == 0)
-                                {
-                                    this.LegList.Remove(this.LastLeg);
-                                    this.RefList.Remove(this.RefList.Last());
-                                }
-                                this.addBar(nb);
-                                break;
-                        }
-                        break;
-                    case BarDirection.OutsideDown:
-                        switch(newBarDirection)
-                        {
-                            case BarDirection.OutsideDown:
-                                this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.LastBarExpanded);
-                                break;
-                            case BarDirection.OutsideUp:
-                                this.RefList.Remove(this.RefList.Last());
-                                var lb = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                if(this.LastLeg.BarCount == 0)
-                                {
-                                    this.LegList.Remove(this.LastLeg);
-                                    if(this.LegsCount == 0)
-                                        this.addBar = this.doFirstLeg;
-                                }
-                                this.addBar(lb);
-                                break;
-                        }
-                        break;
-                    case BarDirection.Balance:
-                        switch(newBarDirection)
-                        {
-                            case BarDirection.Down:
-                                this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.LastBarExpanded);
-                                break;
-                            case BarDirection.OutsideDown:
-                                var newBar = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                this.addBar(newBar);
-                                break;
-                            case BarDirection.Balance:
-                                this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.LastBarExpanded);
-                                break;
-                            case BarDirection.Up:
-                                var nb = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                this.addBar(nb);
-                                break;
-                            case BarDirection.OutsideUp:
-                                var lb = this.LastBar;
-                                this.LastLeg.BarList.Remove(this.LastBar);
-                                if(lb.Low > this.LastLeg.Low)
-                                    this.addReferenceForLowOfThisBar(this.LastLeg.LowestBar);
-
-                                this.LegList.Add(new Leg(lb));
-                                this.addReferenceForLowOfThisBar(lb);
-                                this._onAnalyzerUpdated(LegAnalyzerUpdateEventEnum.NewLegAdded);
-                                break;
-                        }
-                        break;
-                }
-            }
-        }
 
         private bool lastBarShouldBeUpdated(double open, double newBarHigh, double newBarLow, double newBarClose)
         {

@@ -25,11 +25,14 @@ namespace WindowsFormsApp.Custom_Views
         {
             InitializeComponent();
         }
+
+        //Refactor
         public HlocLACustomChart(LegAnalyzer legAnalyzer, Resolution resolution, string symbol, DateTime fromDateTime) :this()
         {
             ReSetPropsAndReDraw(legAnalyzer, resolution, symbol, fromDateTime);
         }
 
+        // Refactor
         public void ReSetPropsAndReDraw(LegAnalyzer legAnalyzer, Resolution resolution, string symbol, DateTime fromDateTime)
         {
             foreach(var series in Series)
@@ -47,11 +50,13 @@ namespace WindowsFormsApp.Custom_Views
             Invalidate();
         }
 
+        // not used!!
         public void DrawAnalyzer()
         {
-            setupBars();
+            ////setupBars();
         }
 
+        //Maybe rename to Draw
         private void setupBars()
         {
             var chartSeries = Series[0];

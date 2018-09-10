@@ -81,6 +81,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Custom Views\HlocLAForm.resx">
+      <DependentUpon>HlocLAForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Custom Views\NewChartDialog.resx">
       <DependentUpon>NewChartDialog.cs</DependentUpon>
     </EmbeddedResource>
