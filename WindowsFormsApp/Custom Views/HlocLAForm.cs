@@ -14,7 +14,7 @@ namespace WindowsFormsApp.Custom_Views
 {
     public partial class HlocLAForm : Form
     {
-        public readonly HlocLACustomChart chart = new HlocLACustomChart();
+        public HlocLACustomChart Chart { get; } = new HlocLACustomChart();
 
         public LegAnalyzer LegAnalyzer { get; set; }
         public Resolution Resolution { get; set; }
@@ -28,10 +28,10 @@ namespace WindowsFormsApp.Custom_Views
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.TopLevel = false;
-            chart.Dock = System.Windows.Forms.DockStyle.Fill;
-            chart.Location = new System.Drawing.Point(0, 0);
-            this.chart.Size = new System.Drawing.Size(911, 450);
-            this.Controls.Add(chart);
+            Chart.Dock = System.Windows.Forms.DockStyle.Fill;
+            Chart.Location = new System.Drawing.Point(0, 0);
+            this.Chart.Size = new System.Drawing.Size(911, 450);
+            this.Controls.Add(Chart);
         }
 
         public void ResetPropsAndReDraw(LegAnalyzer legAnalyzer, Resolution resolution, string symbol, DateTime fromDateTime)
@@ -40,23 +40,14 @@ namespace WindowsFormsApp.Custom_Views
             Resolution = resolution;
             Symbol = symbol;
             FromDateTime = fromDateTime;
-            chart.ReSetPropsAndReDraw(legAnalyzer, resolution, symbol, fromDateTime);
+            Chart.ReSetPropsAndReDraw(legAnalyzer, resolution, symbol, fromDateTime);
             this.Text = $"{symbol} - {Resolution.TimeFrame}({Resolution.Size})";
             //chart.DrawAnalyzer();
         }
         public void Redraw()
         {
             if(InvokeRequired)
-                Invoke(new Action(() => chart.Invalidate()));
-        }
-        public void UpdateAnalyzer(double bid, double ask, DateTime dateTime, int volume)
-        {
-            FxBar lb = (FxBar)LegAnalyzer.LastBar;
-        }
-
-        protected override void OnFormClosing(FormClosingEventArgs e)
-        {
-            base.OnFormClosing(e);
+                Invoke(new Action(() => Chart.ReSetPropsAndReDraw()));
         }
     }
 }

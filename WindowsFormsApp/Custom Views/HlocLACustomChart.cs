@@ -35,7 +35,7 @@ namespace WindowsFormsApp.Custom_Views
         // Refactor
         public void ReSetPropsAndReDraw(LegAnalyzer legAnalyzer, Resolution resolution, string symbol, DateTime fromDateTime)
         {
-            foreach(var series in Series)
+            foreach (var series in Series)
             {
                 if (series.Points.Count > 0)
                     series.Points.Clear();
@@ -49,12 +49,12 @@ namespace WindowsFormsApp.Custom_Views
             setupBars();
             Invalidate();
         }
-
-        // not used!!
-        public void DrawAnalyzer()
+        public void ReSetPropsAndReDraw()
         {
-            ////setupBars();
+            this.ReSetPropsAndReDraw(LegAnalyzer, Resolution, Symbol, FromDateTime);
         }
+
+
 
         //Maybe rename to Draw
         private void setupBars()
@@ -74,6 +74,7 @@ namespace WindowsFormsApp.Custom_Views
                         Color = leg.Direction == LegDirection.Up ? Color.Green : Color.Red
                     };
                     chartSeries.Points.Add(dp);
+                    //chartSeries.Points.Last().YValues[3] = ;
                 }
             }
         }

@@ -48,11 +48,22 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="LegAnalyzer_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Trading.Analyzers.LegAnalyzer\Trading.Analyzers.LegAnalyzer.csproj">
+      <Project>{28108a74-5d38-4c8d-8389-4c0561c7fd93}</Project>
+      <Name>Trading.Analyzers.LegAnalyzer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trading.Common\Trading.Common.csproj">
+      <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
+      <Name>Trading.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -47,7 +47,7 @@ namespace WindowsFormsApp
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), new DateTime(2017, 08, 01, 00, 00, 00), 0, 0);
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), new DateTime(2018, 06, 01, 00, 00, 00), 0, 1);
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), new DateTime(2018, 08, 10, 00, 00, 00), 1, 0);
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), new DateTime(2018, 09, 09, 10, 00, 00), 1, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), new DateTime(2018, 09, 10, 00, 00, 00), 1, 1);
 
             f.OffersTableUpdated += OffersTableUpdated;
         }
@@ -183,12 +183,53 @@ namespace WindowsFormsApp
                 if(c.DataPopulated && c.Symbol == e.Item1)
                 {
                     FxBar b = (FxBar)c.LegAnalyzer.LastBar;
-                    FxBar newBar = createUpdatedBar(b, e.Item2, e.Item3, e.Item4, e.Item5);
-                    c.LegAnalyzer.UpdateLastBar(newBar);
+                    if(e.Item4 > b.DateTime)
+                    {
+                        getNextBarDateTime(b, c.Resolution);
+                        FxBar newBar = new FxBar
+                        {
+                            Open = e.Item2,
+                            AskOpen = e.Item3,
+                            High = e.Item2,
+                            AskHigh = e.Item3,
+                            Low = e.Item2,
+                            AskLow = e.Item3,
+                            Close = e.Item2,
+                            AskClose = e.Item3,
+                            DateTime = getNextBarDateTime(b, c.Resolution)
+                        };
+                        c.LegAnalyzer.AddBar(newBar);
+                    }
+                    else
+                    {
+
+                    }
+                    //FxBar newBar = createUpdatedBar(b, e.Item2, e.Item3, e.Item4, e.Item5);
+                    //c.LegAnalyzer.UpdateLastBar(newBar);
                     c.Redraw();
                 }
             }
         }
+        private DateTime getNextBarDateTime(Bar bar, Resolution resolution)
+        {
+            var tf = resolution.TimeFrame;
+            var size = resolution.Size;
+            if (tf == TimeFrame.Yearly)
+                return bar.DateTime.AddYears(size);
+            if (tf == TimeFrame.Quarterly)
+                bar.DateTime.AddMonths(size * 4);
+            if (tf == TimeFrame.Monthly)
+                return bar.DateTime.AddMonths(size);
+            if (tf == TimeFrame.Weekly)
+                return bar.DateTime.AddDays(size * 7);
+            if (tf == TimeFrame.Daily)
+                return bar.DateTime.AddDays(size);
+            if (tf == TimeFrame.Hourly)
+                return bar.DateTime.AddHours(size);
+
+            return bar.DateTime.AddMinutes(size);
+        }
+
         private FxBar createUpdatedBar(FxBar oldBar, double bid, double ask, DateTime dt, int volume)
         {
             FxBar ob = oldBar;
