@@ -28,6 +28,26 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
+        public void AddBarList__Should_Create_DownLeg()
+        {
+            LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
+
+            List<Bar> barList = new List<Bar>();
+            barList.Add(Helper.GetDownBar());
+            barList.Add(Helper.GetDownBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
+            barList.Add(Helper.GetDownBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
+            barList.Add(Helper.GetDownBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
+            barList.Add(Helper.GetDownBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
+
+            la.AddBarList(barList);
+
+            Assert.AreEqual(la.LegsCount, 1);
+            Assert.AreEqual(la.LastLeg.Direction, LegDirection.Down);
+            Assert.AreEqual(la.LastLeg.BarCount, 5);
+        }
+
+
+        [TestMethod]
         public void AddBar__Add_UpBar_To_UpLeg()
         {
             LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
@@ -42,6 +62,26 @@ namespace UnitTestProject1
 
             Assert.AreEqual(4, la.LastLeg.BarCount);
         }
+
+        [TestMethod]
+        public void AddBar__Add_DownBar_To_DownLeg()
+        {
+            LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
+
+            List<Bar> barList = new List<Bar>();
+            barList.Add(Helper.GetDownBar());
+            barList.Add(Helper.GetDownBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
+            barList.Add(Helper.GetDownBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
+
+            la.AddBarList(barList);
+
+            la.AddBar(Helper.GetDownBar(la.LastBar, la.LastBar.DateTime.AddDays(1)));
+            la.AddBar(Helper.GetDownBar(la.LastBar, la.LastBar.DateTime.AddDays(1)));
+            la.AddBar(Helper.GetDownBar(la.LastBar, la.LastBar.DateTime.AddDays(1)));
+
+            Assert.AreEqual(la.LastLeg.BarCount, 6);
+        }
+
 
         [TestMethod]
         public void UpdateLastBar_Update_Close()
