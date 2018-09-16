@@ -64,6 +64,7 @@ namespace UnitTestProject1
             Assert.AreEqual(((FxBar)la.LastBar).AskHigh, 116);
             Assert.AreEqual(la.LastBar.Close, 73);
             Assert.AreEqual(((FxBar)la.LastBar).AskClose, 74);
+            Assert.AreEqual(la.LastBar.Volume, 200);
 
 
         }

@@ -91,7 +91,7 @@ namespace Trading.Common
             High = bar.High;
             Low = bar.Low;
             Close = bar.Close;
-            Volume = bar.Volume;
+            Volume += bar.Volume;
             //DateTime = bar.DateTime;
         }
     }
