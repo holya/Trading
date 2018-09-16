@@ -43,33 +43,33 @@ namespace UnitTestProject1
             Assert.AreEqual(la.LastLeg.BarCount, 4);
         }
 
-        //[TestMethod]
-        //public void UpdateLastBar_Close_Changed()
-        //{
-        //    LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
-
-        //    List<Bar> barList = new List<Bar>();
-        //    barList.Add(Helper.GetUpBar());
-        //    barList.Add(Helper.GetUpBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
-        //    Bar b = barList.Last();
-        //    FxBar b = (FxBar)c.LegAnalyzer.LastBar;
-        //    if (e.Item4 > b.DateTime)
+        //    [TestMethod]
+        //    public void UpdateLastBar_Close_Changed()
         //    {
-        //        getNextBarDateTime(b, c.Resolution);
-        //        FxBar newBar = new FxBar
+        //        LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
+
+        //        List<Bar> barList = new List<Bar>();
+        //        barList.Add(Helper.GetUpBar());
+        //        barList.Add(Helper.GetUpBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
+        //        Bar b = barList.Last();
+        //        FxBar b = (FxBar)c.LegAnalyzer.LastBar;
+        //        if (e.Item4 > b.DateTime)
         //        {
-        //            Open = e.Item2,
-        //            AskOpen = e.Item3,
-        //            High = e.Item2,
-        //            AskHigh = e.Item3,
-        //            Low = e.Item2,
-        //            AskLow = e.Item3,
-        //            Close = e.Item2,
-        //            AskClose = e.Item3,
-        //            DateTime = getNextBarDateTime(b, c.Resolution)
-        //        };
-        //        c.LegAnalyzer.AddBar(newBar);
-        //        la.UpdateLastBar(new FxBar())
-        //}
+        //            getNextBarDateTime(b, c.Resolution);
+        //            FxBar newBar = new FxBar
+        //            {
+        //                Open = e.Item2,
+        //                AskOpen = e.Item3,
+        //                High = e.Item2,
+        //                AskHigh = e.Item3,
+        //                Low = e.Item2,
+        //                AskLow = e.Item3,
+        //                Close = e.Item2,
+        //                AskClose = e.Item3,
+        //                DateTime = getNextBarDateTime(b, c.Resolution)
+        //            };
+        //            c.LegAnalyzer.AddBar(newBar);
+        //            la.UpdateLastBar(new FxBar())
+        //    }
     }
 }
