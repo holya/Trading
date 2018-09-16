@@ -24,7 +24,7 @@ namespace UnitTestProject1
 
             Assert.AreEqual(la.LegsCount, 1);
             Assert.AreEqual(la.LastLeg.Direction, LegDirection.Up);
-            Assert.AreEqual(la.LastLeg.BarCount, 3);
+            Assert.AreEqual(3, la.LastLeg.BarCount);
         }
 
         [TestMethod]
@@ -40,36 +40,32 @@ namespace UnitTestProject1
 
             la.AddBar(Helper.GetUpBar(la.LastBar, la.LastBar.DateTime.AddDays(1)));
 
-            Assert.AreEqual(la.LastLeg.BarCount, 4);
+            Assert.AreEqual(4, la.LastLeg.BarCount);
         }
 
-        //    [TestMethod]
-        //    public void UpdateLastBar_Close_Changed()
-        //    {
-        //        LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
+        [TestMethod]
+        public void UpdateLastBar_Update_Close()
+        {
+            LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
 
-        //        List<Bar> barList = new List<Bar>();
-        //        barList.Add(Helper.GetUpBar());
-        //        barList.Add(Helper.GetUpBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
-        //        Bar b = barList.Last();
-        //        FxBar b = (FxBar)c.LegAnalyzer.LastBar;
-        //        if (e.Item4 > b.DateTime)
-        //        {
-        //            getNextBarDateTime(b, c.Resolution);
-        //            FxBar newBar = new FxBar
-        //            {
-        //                Open = e.Item2,
-        //                AskOpen = e.Item3,
-        //                High = e.Item2,
-        //                AskHigh = e.Item3,
-        //                Low = e.Item2,
-        //                AskLow = e.Item3,
-        //                Close = e.Item2,
-        //                AskClose = e.Item3,
-        //                DateTime = getNextBarDateTime(b, c.Resolution)
-        //            };
-        //            c.LegAnalyzer.AddBar(newBar);
-        //            la.UpdateLastBar(new FxBar())
-        //    }
+            la.AddBar(Helper.GetUpBar());
+            la.AddBar(Helper.GetUpBar(la.LastBar, la.LastBar.DateTime.AddDays(1)));
+
+            FxBar b = (FxBar)la.LastBar;
+
+            FxBar nb = new FxBar
+            {
+                Open = b.Open, AskOpen = b.AskOpen, High = b.High + 5, AskHigh = b.AskHigh + 5, Low = b.Low, AskLow = b.AskLow, Close = b.Close + 3, AskClose = b.AskClose + 3, DateTime = b.DateTime, Volume = 100
+            };
+            la.UpdateLastBar(nb);
+
+            Assert.AreEqual(la.LastBar.Direction, BarDirection.Up);
+            Assert.AreEqual(la.LastBar.High, 115);
+            Assert.AreEqual(((FxBar)la.LastBar).AskHigh, 116);
+            Assert.AreEqual(la.LastBar.Close, 73);
+            Assert.AreEqual(((FxBar)la.LastBar).AskClose, 74);
+
+
+        }
     }
 }

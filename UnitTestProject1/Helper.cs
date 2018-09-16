@@ -11,26 +11,28 @@ namespace UnitTestProject1
     {
         public static Bar GetUpBar()
         {
-            return new Bar(50, 100, 0, 60, 10, new DateTime(2018, 01, 01, 00, 00, 00));
+            return new FxBar(50, 51, 100, 101, 0, 1, 60, 61, 10, new DateTime(2018, 01, 01, 00, 00, 00));
         }
         public static Bar GetDownBar()
         {
-            return new Bar(50, 100, 0, 40, 10, new DateTime(2018, 01, 01, 00, 00, 00));
+            return new FxBar(50, 51, 100, 101, 0, 1, 40, 41, 10, new DateTime(2018, 01, 01, 00, 00, 00));
         }
 
 
         public static Bar GetUpBar(Bar previousBar, DateTime dateTime)
         {
-            return new Bar(previousBar.Open + 10, previousBar.High + 10,
-                            previousBar.Low + 10, previousBar.Close + 10, 
-                            previousBar.Volume + 10, dateTime, previousBar);
+            var pb = (FxBar)previousBar;
+            return new FxBar(pb.Open + 10, pb.AskOpen +10, pb.High + 10, pb.AskHigh +10,
+                            pb.Low + 10, pb.AskLow + 10, pb.Close + 10, pb.AskClose +10,
+                            100, dateTime);
         }
 
         public static Bar GetDownBar(Bar previousBar, DateTime dateTime)
         {
-            return new Bar(previousBar.Open - 10, previousBar.High - 10,
-                            previousBar.Low - 10, previousBar.Close - 10,
-                            previousBar.Volume + 10, dateTime, previousBar);
+            var pb = (FxBar)previousBar;
+            return new FxBar(pb.Open - 10, pb.AskOpen-10, pb.High - 10, pb.AskHigh-10,
+                            pb.Low - 10, pb.AskLow-10, pb.Close - 10, pb.AskClose-10,
+                            100, dateTime);
         }
 
         //public static Leg GetUpLeg(int numberOfBars)
