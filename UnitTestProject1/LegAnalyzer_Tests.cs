@@ -22,8 +22,8 @@ namespace UnitTestProject1
 
             la.AddBarList(barList);
 
-            Assert.AreEqual(la.LegsCount, 1);
-            Assert.AreEqual(la.LastLeg.Direction, LegDirection.Up);
+            Assert.AreEqual(1, la.LegsCount);
+            Assert.AreEqual(LegDirection.Up, la.LastLeg.Direction);
             Assert.AreEqual(3, la.LastLeg.BarCount);
         }
 
@@ -44,7 +44,7 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void UpdateLastBar_Update_Close()
+        public void UpdateLastBar__Update_Close()
         {
             LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
 
@@ -59,13 +59,44 @@ namespace UnitTestProject1
             };
             la.UpdateLastBar(nb);
 
-            Assert.AreEqual(la.LastBar.Direction, BarDirection.Up);
-            Assert.AreEqual(la.LastBar.High, 115);
-            Assert.AreEqual(((FxBar)la.LastBar).AskHigh, 116);
-            Assert.AreEqual(la.LastBar.Close, 73);
-            Assert.AreEqual(((FxBar)la.LastBar).AskClose, 74);
-            Assert.AreEqual(la.LastBar.Volume, 200);
+            Assert.AreEqual(BarDirection.Up, la.LastBar.Direction);
+            Assert.AreEqual(115, la.LastBar.High);
+            Assert.AreEqual(116, ((FxBar)la.LastBar).AskHigh);
+            Assert.AreEqual(73, la.LastBar.Close);
+            Assert.AreEqual(74, ((FxBar)la.LastBar).AskClose);
+            Assert.AreEqual(200, la.LastBar.Volume);
+        }
 
+        [TestMethod]
+        public void UpdateLastBar__Turn_LastBar_To_DownBar_And_Create_New_DownLeg()
+        {
+            LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
+
+            List<Bar> barList = new List<Bar>();
+            barList.Add(Helper.GetUpBar());
+            barList.Add(Helper.GetUpBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
+            barList.Add(Helper.GetUpBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
+
+            la.AddBarList(barList);
+
+            FxBar b = (FxBar)la.LastLeg.BarList[1];
+            FxBar nb = new FxBar
+            {
+                Open = b.Open,
+                AskOpen = b.AskOpen,
+                High = b.High - 5,
+                AskHigh = b.AskHigh - 5,
+                Low = b.Low - 5,
+                AskLow = b.AskLow - 5,
+                Close = b.Open - 3,
+                AskClose = b.AskOpen - 3,
+                DateTime = b.DateTime,
+                Volume = 100
+            };
+            la.UpdateLastBar(nb);
+
+            Assert.AreEqual(2, la.LegsCount);
+            Assert.AreEqual(LegDirection.Down, la.LastLeg.Direction);
 
         }
     }

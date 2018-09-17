@@ -27,8 +27,11 @@ namespace Trading.Common
             base.Update(bar);
 
             AskOpen = ((FxBar)bar).AskOpen;
-            AskHigh = ((FxBar)bar).AskHigh;
-            AskLow = ((FxBar)bar).AskLow;
+            if(((FxBar)bar).AskHigh > AskHigh)
+                AskHigh = ((FxBar)bar).AskHigh;
+            if(((FxBar)bar).AskLow < AskLow)
+                AskLow = ((FxBar)bar).AskLow;
+
             AskClose = ((FxBar)bar).AskClose;
         }
     }

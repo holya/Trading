@@ -11,11 +11,11 @@ namespace UnitTestProject1
     {
         public static Bar GetUpBar()
         {
-            return new FxBar(50, 51, 100, 101, 0, 1, 60, 61, 100, new DateTime(2018, 01, 01, 00, 00, 00));
+            return new FxBar(50, 51, 100, 101, 0, 1, 60, 61, 10, new DateTime(2018, 01, 01, 00, 00, 00));
         }
         public static Bar GetDownBar()
         {
-            return new FxBar(50, 51, 100, 101, 0, 1, 40, 41, 100, new DateTime(2018, 01, 01, 00, 00, 00));
+            return new FxBar(50, 51, 100, 101, 0, 1, 40, 41, 10, new DateTime(2018, 01, 01, 00, 00, 00));
         }
 
 

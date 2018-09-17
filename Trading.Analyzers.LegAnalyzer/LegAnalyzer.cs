@@ -48,7 +48,7 @@ namespace Trading.Analyzers.LegAnalyzer
         private void addFirstBar(Bar newBar)
         {
             var d = newBar;
-            d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime);
+            //d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime);
             LegList.Add(new Leg(d));
             addBar = addBarContiued;
         }
@@ -72,12 +72,19 @@ namespace Trading.Analyzers.LegAnalyzer
         {
             //if(updatedBar.DateTime <= getEndTimeframeDateTime(LastBar.DateTime))
             //{
+            var oldDir = LastBar.Direction;
             LastBar.Update(updatedBar);
-            if (!LastBar.PreviousBar.IsSameDirection(LastBar))
+            if(LastBar.Direction != oldDir)
             {
-                LegList.Add(new Leg(LastBar) { PreviousLeg = LegList.Last() });
-                LegList[LegList.Count - 2].BarList.Remove(LastBar);
+                var savedLastBar = LastBar;
+                LastLeg.BarList.Remove(LastBar);
+                addBar(savedLastBar);
             }
+            //if (!LastBar.PreviousBar.IsSameDirection(LastBar))
+            //{
+            //    LegList.Add(new Leg(LastBar) { PreviousLeg = LegList.Last() });
+            //    LegList[LegList.Count - 2].BarList.Remove(LastBar);
+            //}
             //    return;
             //}
 

@@ -217,7 +217,7 @@ namespace WindowsFormsApp
             if (tf == TimeFrame.Yearly)
                 return bar.DateTime.AddYears(size);
             if (tf == TimeFrame.Quarterly)
-                bar.DateTime.AddMonths(size * 4);
+                return bar.DateTime.AddMonths(size * 4);
             if (tf == TimeFrame.Monthly)
                 return bar.DateTime.AddMonths(size);
             if (tf == TimeFrame.Weekly)

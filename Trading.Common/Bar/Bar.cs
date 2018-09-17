@@ -21,7 +21,7 @@ namespace Trading.Common
 
         public Bar() { }
 
-        public Bar(double open, double high, double low, double close, double volume, DateTime dateTime) : this()
+        private Bar(double open, double high, double low, double close, double volume, DateTime dateTime) : this()
         {
             this.Open = open;
             this.High = high;
@@ -88,8 +88,11 @@ namespace Trading.Common
         public virtual void Update(Bar bar)
         {
             Open = bar.Open;
-            High = bar.High;
-            Low = bar.Low;
+            if(bar.High > High)
+                High = bar.High;
+            if(bar.Low < Low)
+                Low = bar.Low;
+
             Close = bar.Close;
             Volume += bar.Volume;
             //DateTime = bar.DateTime;
