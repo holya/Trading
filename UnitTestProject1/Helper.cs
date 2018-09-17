@@ -35,6 +35,15 @@ namespace UnitTestProject1
                             100, dateTime);
         }
 
+        public static Bar GetBalanceBar(Bar previousBar, DateTime dateTime)
+        {
+            var pb = (FxBar)previousBar;
+            return new FxBar(pb.Open, pb.AskOpen, pb.High - 10, pb.AskHigh - 10,
+                            pb.Low + 10, pb.AskLow + 10, pb.Close, pb.AskClose,
+                            100, dateTime);
+        }
+
+
         //public static Leg GetUpLeg(int numberOfBars)
         //{
         //    Leg leg = new Leg(GetUpBar());

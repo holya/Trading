@@ -28,22 +28,21 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void AddBarList__Should_Create_DownLeg()
+        public void AddBarList__Should_Create_One_DownLeg_One_UpLeg()
         {
             LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
 
             List<Bar> barList = new List<Bar>();
             barList.Add(Helper.GetDownBar());
             barList.Add(Helper.GetDownBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
-            barList.Add(Helper.GetDownBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
-            barList.Add(Helper.GetDownBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
-            barList.Add(Helper.GetDownBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
+            barList.Add(Helper.GetBalanceBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
+
+            barList.Add(Helper.GetUpBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
 
             la.AddBarList(barList);
 
-            Assert.AreEqual(la.LegsCount, 1);
-            Assert.AreEqual(la.LastLeg.Direction, LegDirection.Down);
-            Assert.AreEqual(la.LastLeg.BarCount, 5);
+            Assert.AreEqual(2, la.LegsCount);
+            Assert.AreEqual(LegDirection.Up, la.LastLeg.Direction);
         }
 
 
