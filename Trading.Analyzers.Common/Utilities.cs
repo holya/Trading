@@ -49,7 +49,21 @@ namespace Trading.Analyzers.Common
                     }
                     return new DateTime(date.Year, date.Month, date.Day, hour, 00, 00, 00, date.Kind);
                 case TimeFrame.Minute:
-                    break;
+                    int minute = 0;
+                    int floor = 0;
+                    int ceiling = resolution.Size;
+                    while (ceiling <= 60)
+                    {
+                        if (date.Minute >= floor && date.Minute < ceiling)
+                        {
+                            minute = floor;
+                            break;
+                        }
+                        floor += resolution.Size;
+                        ceiling += resolution.Size;
+                    }
+                    return new DateTime(date.Year, date.Month, date.Day, date.Hour, minute, 00, 00, date.Kind);
+
                 default:
                     break;
             }

@@ -87,7 +87,7 @@ namespace Trading.Common
 
         public virtual void Update(Bar bar)
         {
-            Open = bar.Open;
+            //Open = bar.Open;
             if(bar.High > High)
                 High = bar.High;
             if(bar.Low < Low)

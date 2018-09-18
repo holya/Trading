@@ -16,9 +16,12 @@ namespace Trading.Common
 
         public FxBar(double open, double askOpen, double high, double askHigh, double low, double askLow, double close, double askClose, double volume, DateTime dateTime) : base(open, high, low, close, volume, dateTime)
         {
-            this.AskOpen = askOpen;
-            this.AskHigh = askHigh;
-            this.AskLow = askLow;
+            //this.AskOpen = askOpen;
+            if(askHigh > AskHigh)
+                this.AskHigh = askHigh;
+            if(askLow < AskLow)
+                this.AskLow = askLow;
+
             this.AskClose = askClose;
         }
 

@@ -44,10 +44,10 @@ namespace WindowsFormsApp
             //    SizeType = SizeType.AutoSize
             //});
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), new DateTime(2017, 08, 01, 00, 00, 00), 0, 0);
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), new DateTime(2018, 06, 01, 00, 00, 00), 0, 1);
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), new DateTime(2018, 08, 14, 00, 00, 00), 1, 0);
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), new DateTime(2018, 09, 17, 00, 00, 00), 1, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), new DateTime(2017, 08, 01, 00, 00, 00), 0, 0);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), new DateTime(2018, 09, 01, 00, 00, 00), 0, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), new DateTime(2018, 09, 17, 00, 00, 00), 1, 0);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), new DateTime(2018, 09, 18, 00, 00, 00), 1, 1);
 
             f.OffersTableUpdated += OffersTableUpdated;
         }
@@ -183,7 +183,7 @@ namespace WindowsFormsApp
                 if(c.DataPopulated && c.Symbol == e.Item1)
                 {
                     FxBar b = (FxBar)c.LegAnalyzer.LastBar;
-                    if(e.Item4 <= b.DateTime)
+                    if(e.Item4 < b.DateTime.AddMinutes(5))
                     {
                         FxBar newBar = new FxBar
                         {
@@ -201,7 +201,7 @@ namespace WindowsFormsApp
                     }
                     else
                     {
-                        getNextBarDateTime(b, c.Resolution);
+                        var dt = Utilities.NormalizeBarDateTime_FXCM(e.Item4, c.Resolution);
                         FxBar newBar = new FxBar
                         {
                             Open = e.Item2,
@@ -212,7 +212,7 @@ namespace WindowsFormsApp
                             AskLow = e.Item3,
                             Close = e.Item2,
                             AskClose = e.Item3,
-                            DateTime = getNextBarDateTime(b, c.Resolution)
+                            DateTime = dt
                         };
                         c.LegAnalyzer.AddBar(newBar);
 
@@ -221,43 +221,7 @@ namespace WindowsFormsApp
                 }
             }
         }
-        private DateTime getNextBarDateTime(Bar bar, Resolution resolution)
-        {
-            var tf = resolution.TimeFrame;
-            var size = resolution.Size;
-            if (tf == TimeFrame.Yearly)
-                return bar.DateTime.AddYears(size);
-            if (tf == TimeFrame.Quarterly)
-                return bar.DateTime.AddMonths(size * 4);
-            if (tf == TimeFrame.Monthly)
-                return bar.DateTime.AddMonths(size);
-            if (tf == TimeFrame.Weekly)
-                return bar.DateTime.AddDays(size * 7);
-            if (tf == TimeFrame.Daily)
-                return bar.DateTime.AddDays(size);
-            if (tf == TimeFrame.Hourly)
-                return bar.DateTime.AddHours(size);
 
-            return bar.DateTime.AddMinutes(size);
-        }
-
-        private FxBar createUpdatedBar(FxBar oldBar, double bid, double ask, DateTime dt, int volume)
-        {
-            FxBar ob = oldBar;
-            return new FxBar
-            {
-                Open = ob.Open,
-                High = bid > ob.High ? bid : ob.High,
-                Low = bid < ob.Low ? bid : ob.Low,
-                Close = bid,
-                AskOpen = ob.AskOpen,
-                AskHigh = ask > ob.AskHigh ? ask : ob.AskHigh,
-                AskLow = ask < ob.AskLow ? ask : ob.AskLow,
-                AskClose = ask,
-                DateTime = dt,
-                Volume = volume
-            };
-        }
 
         private void newChartToolStripMenuItem_Click(object sender, EventArgs e)
         {

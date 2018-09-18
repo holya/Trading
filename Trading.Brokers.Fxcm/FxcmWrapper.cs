@@ -12,7 +12,7 @@ namespace Trading.Brokers.Fxcm
 {
     public class FxcmWrapper : IDataProvider, IDisposable
     {
-        List<string> realTimeInstruments = new List<string>();
+        private List<string> realTimeInstruments = new List<string>();
 
         public event EventHandler<SessionStatusEnum> SessionStatusChanged = delegate { };
         public SessionStatusEnum SessionStatusEnum { get; private set; } = SessionStatusEnum.Disconnected;
@@ -106,6 +106,10 @@ namespace Trading.Brokers.Fxcm
             try
             {
                 barList = GetHistoryPrices(session, symbol, convert_Resolution_To_string(resolution), startDateTime.ToUniversalTime(), endDateTime.ToUniversalTime(), 1000, responseListener);
+                foreach (var b in barList)
+                {
+                    b.DateTime = b.DateTime.ToUniversalTime();
+                }
             }
             catch (Exception e)
             {
@@ -119,7 +123,7 @@ namespace Trading.Brokers.Fxcm
 
             if (subscribeToRealTime && !realTimeInstruments.Contains(symbol))
                 realTimeInstruments.Add(symbol);
-
+            
             return barList;
         }
 
