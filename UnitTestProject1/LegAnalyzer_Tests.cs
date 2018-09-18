@@ -63,7 +63,7 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void UpdateLastBar_Update_Close()
+        public void UpdateLastBar__Update_Close()
         {
             LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
 
@@ -118,5 +118,40 @@ namespace UnitTestProject1
             Assert.AreEqual(LegDirection.Down, la.LastLeg.Direction);
 
         }
+
+        //[TestMethod]
+        //public void UpdateLastBar__Send_New_Bar()
+        //{
+        //    LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
+
+        //    List<Bar> barList = new List<Bar>();
+        //    barList.Add(Helper.GetUpBar());
+        //    barList.Add(Helper.GetUpBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
+        //    barList.Add(Helper.GetUpBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
+
+        //    la.AddBarList(barList);
+
+        //    FxBar b = (FxBar)la.LastBar;
+        //    FxBar nb = new FxBar
+        //    {
+        //        Open = b.Open,
+        //        AskOpen = b.AskOpen,
+        //        High = b.High - 5,
+        //        AskHigh = b.AskHigh - 5,
+        //        Low = b.Low - 5,
+        //        AskLow = b.AskLow - 5,
+        //        Close = b.Open - 3,
+        //        AskClose = b.AskOpen - 3,
+        //        DateTime = b.DateTime.AddDays(1),
+        //        Volume = 100
+        //    };
+        //    la.UpdateLastBar(nb);
+
+        //    Assert.AreEqual(2, la.LegsCount);
+        //    Assert.AreEqual(LegDirection.Down, la.LastLeg.Direction);
+
+        //}
+
+
     }
 }

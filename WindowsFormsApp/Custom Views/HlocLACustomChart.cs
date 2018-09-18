@@ -20,7 +20,7 @@ namespace WindowsFormsApp.Custom_Views
         public Resolution Resolution { get; set; }
         public string Symbol { get; set; }
         public DateTime FromDateTime { get; set; }
-
+        public bool DataPopulated { get; set; } = false;
         public HlocLACustomChart()
         {
             InitializeComponent();

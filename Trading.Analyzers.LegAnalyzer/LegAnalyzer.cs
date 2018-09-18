@@ -48,7 +48,7 @@ namespace Trading.Analyzers.LegAnalyzer
         private void addFirstBar(Bar newBar)
         {
             var d = newBar;
-            //d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime);
+            d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime);
             LegList.Add(new Leg(d));
             addBar = addBarContiued;
         }
