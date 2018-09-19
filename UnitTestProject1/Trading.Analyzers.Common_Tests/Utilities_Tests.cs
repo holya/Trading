@@ -57,13 +57,28 @@ namespace UnitTestProject1.Trading.Analyzers.Common_Tests
         public void NormalizeBarDateTime_FXCM_Hourly()
         {
             DateTime actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 01, 01, 5, 59, 59, DateTimeKind.Local), new Resolution(TimeFrame.Hourly, 6));
-            DateTime expected = new DateTime(2018, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+            DateTime expected = new DateTime(2018, 01, 01, 6, 0, 0);
             Assert.AreEqual(expected, actual);
 
-            actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 01, 01, 23, 01, 01, DateTimeKind.Local), new Resolution(TimeFrame.Hourly, 6));
-            expected = new DateTime(2018, 01, 01, 18, 00, 00, DateTimeKind.Utc);
+            actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 01, 01, 23, 0, 10), new Resolution(TimeFrame.Hourly, 6));
+            expected = new DateTime(2018, 01, 01, 23, 59, 59, 999);
             Assert.AreEqual(expected, actual);
         }
 
+        [TestMethod]
+        public void NormalizeBarDateTime_FXCM_Minute()
+        {
+            DateTime actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 01, 01, 10, 05, 59, DateTimeKind.Local), new Resolution(TimeFrame.Minute, 5));
+            DateTime expected = new DateTime(2018, 01, 01, 10, 010, 00, DateTimeKind.Utc);
+            Assert.AreEqual(expected, actual);
+
+            actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 01, 01, 10, 55, 59), new Resolution(TimeFrame.Minute, 20));
+            expected = new DateTime(2018, 01, 01, 10, 59, 59, 999);
+            Assert.AreEqual(expected, actual);
+
+            actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 01, 01, 23, 58, 25), new Resolution(TimeFrame.Minute, 15));
+            expected = new DateTime(2018, 01, 01, 23, 59, 59, 999);
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

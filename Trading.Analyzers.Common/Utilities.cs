@@ -10,7 +10,7 @@ namespace Trading.Analyzers.Common
     {
         public static DateTime NormalizeBarDateTime_FXCM(DateTime date, Resolution resolution)
         {
-            DateTime dt = DateTime.Now;
+            //DateTime dt = DateTime.Now;
             switch (resolution.TimeFrame)
             {
                 case TimeFrame.Yearly:
@@ -34,40 +34,38 @@ namespace Trading.Analyzers.Common
                 case TimeFrame.Daily:
                     return new DateTime(date.Year, date.Month, date.Day, 00, 00, 00, date.Kind);
                 case TimeFrame.Hourly:
-                    int hour = 0;
                     int bottom = 0;
                     int top = resolution.Size;
-                    while(top <= 24)
+                    while(top < 24)
                     {
                         if (date.Hour >= bottom && date.Hour < top)
-                        {
-                            hour = bottom;
                             break;
-                        }
                         bottom += resolution.Size;
                         top += resolution.Size;
                     }
-                    return new DateTime(date.Year, date.Month, date.Day, hour, 00, 00, 00, date.Kind);
+                    if (top >= 24)
+                        return new DateTime(date.Year, date.Month, date.Day, bottom,  00, 00, 00, date.Kind).AddHours(resolution.Size).AddMilliseconds(-1);
+
+                    return new DateTime(date.Year, date.Month, date.Day, top, 00, 00, 00, date.Kind);
                 case TimeFrame.Minute:
-                    int minute = 0;
                     int floor = 0;
                     int ceiling = resolution.Size;
-                    while (ceiling <= 60)
+                    while (ceiling < 60)
                     {
                         if (date.Minute >= floor && date.Minute < ceiling)
-                        {
-                            minute = floor;
                             break;
-                        }
                         floor += resolution.Size;
                         ceiling += resolution.Size;
                     }
-                    return new DateTime(date.Year, date.Month, date.Day, date.Hour, minute, 00, 00, date.Kind);
+
+                    if(ceiling >= 60)
+                        return new DateTime(date.Year, date.Month, date.Day, date.Hour,            floor, 00, 00, date.Kind).AddMinutes       (resolution.Size).AddMilliseconds(-1);
+
+                    return new DateTime(date.Year, date.Month, date.Day, date.Hour, ceiling, 00, 00, date.Kind);
 
                 default:
-                    break;
+                    return DateTime.UtcNow;
             }
-            return dt;
         }
     }
 }

@@ -106,10 +106,10 @@ namespace Trading.Brokers.Fxcm
             try
             {
                 barList = GetHistoryPrices(session, symbol, convert_Resolution_To_string(resolution), startDateTime.ToUniversalTime(), endDateTime.ToUniversalTime(), 1000, responseListener);
-                foreach (var b in barList)
-                {
-                    b.DateTime = b.DateTime.ToUniversalTime();
-                }
+                //foreach (var b in barList)
+                //{
+                //    b.DateTime = b.DateTime.ToUniversalTime();
+                //}
             }
             catch (Exception e)
             {

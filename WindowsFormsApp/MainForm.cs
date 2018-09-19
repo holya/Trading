@@ -46,12 +46,30 @@ namespace WindowsFormsApp
 
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), new DateTime(2017, 08, 01, 00, 00, 00), 0, 0);
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), new DateTime(2018, 09, 01, 00, 00, 00), 0, 1);
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), new DateTime(2018, 09, 17, 00, 00, 00), 1, 0);
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), new DateTime(2018, 09, 18, 00, 00, 00), 1, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddDays(-2), 0, 0);
+
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-10), 0, 1);
+
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-3), 1, 0);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddMinutes(-30), 1, 1);
+
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), new DateTime(2018, 09, 19, 19, 02, 00), 1, 1);
 
             f.OffersTableUpdated += OffersTableUpdated;
         }
 
+        private void logIn()
+        {
+            try
+            {
+                f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                Environment.Exit(0);
+            }
+        }
 
         private void addNewChartFormToRightPanel(Resolution resolution, DateTime fromDateTime, int column, int row)
         {
@@ -121,6 +139,8 @@ namespace WindowsFormsApp
             };
         }
 
+        #endregion
+
         private void symbolLabel_Click(object sender, EventArgs e)
         {
             if(selectedSymbolLabel != null)
@@ -133,46 +153,34 @@ namespace WindowsFormsApp
             foreach(var c in chartList)
             {
                 c.DataPopulated = false;
-                var analyzer = GetHistoricalData(symbol, c.Resolution, c.FromDateTime, DateTime.Now);
+                var barList = GetHistoricalData(symbol, c.Resolution, c.FromDateTime, DateTime.Now);
+                LegAnalyzer analyzer = createAnalyzer(c.Resolution, barList);
                 c.ResetPropsAndReDraw(analyzer, c.Resolution, symbol, c.FromDateTime);
                 c.DataPopulated = true;
             }
-
         }
-        #endregion
 
-        private void logIn()
+        private static LegAnalyzer createAnalyzer(Resolution res, List<FxBar> barList)
+        {
+            foreach (var b in barList)
+                b.DateTime = Utilities.NormalizeBarDateTime_FXCM(b.DateTime, res);
+            var analyzer = new LegAnalyzer(res);
+            analyzer.AddBarList(barList);
+            return analyzer;
+        }
+
+
+        private List<FxBar> GetHistoricalData(string symbol, Resolution resolution, DateTime from, DateTime to)
         {
             try
             {
-                f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-                Environment.Exit(0);
-            }
-        }
-
-        private LegAnalyzer GetHistoricalData(string symbol, Resolution resolution, DateTime from, DateTime to)
-        {
-
-            List<FxBar> dailyBarList = null;
-            try
-            {
-                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, resolution, from, to, true);
+                return (List<FxBar>)f.GetHistoricalData(symbol, resolution, from, to, true);
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
                 return null;
             }
-
-            var dailyAnalyzer = new LegAnalyzer(resolution);
-
-            dailyAnalyzer.AddBarList(dailyBarList);
-
-            return dailyAnalyzer;
         }
 
         private void OffersTableUpdated(object sender, Tuple<string, double, double, DateTime, int> e)
@@ -183,7 +191,7 @@ namespace WindowsFormsApp
                 if(c.DataPopulated && c.Symbol == e.Item1)
                 {
                     FxBar b = (FxBar)c.LegAnalyzer.LastBar;
-                    if(e.Item4 < b.DateTime.AddMinutes(5))
+                    if(e.Item4 < b.DateTime)
                     {
                         FxBar newBar = new FxBar
                         {
@@ -239,7 +247,8 @@ namespace WindowsFormsApp
                     var fromDate = dialogBox.dateTimePicker_from.Value;
                     var toDate = dialogBox.dateTimePicker_to.Value;
 
-                    var la = GetHistoricalData(symbol, res, fromDate, toDate);
+                    var barList = GetHistoricalData(symbol, res, fromDate, toDate);
+                    var la = createAnalyzer(res, barList);
 
                     HlocLAForm chart = createChartForm();
                     chart.ResetPropsAndReDraw(la, res, symbol, fromDate);
@@ -251,7 +260,7 @@ namespace WindowsFormsApp
         private HlocLAForm createChartForm()
         {
             var chart = new HlocLAForm();
-            chart.Dock = DockStyle.Fill;
+            //chart.Dock = DockStyle.Fill;
             chartList.Add(chart);
             return chart;
         }

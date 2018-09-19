@@ -12,15 +12,16 @@ namespace Trading.Analyzers.LegAnalyzer
 
         #region Properties
         public Resolution Resolution { get; set; }
-        public Bar LastBar { get { return this.LastLeg.LastBar; } } 
-        public Leg LastLeg { get { return this.LegList.Last(); } }
-        public double Close { get { return this.LastBar.Close; } }
+        public Bar LastBar => LastLeg.BarCount != 0 ?
+                    LastLeg.LastBar : LegList[LegList.Count - 2].LastBar;
+        public Leg LastLeg => LegList.Last();
+        public double Close => LastBar.Close;
         //public double BarVolitility { get { return this.LastBar.High - this.LastBar.Low / 100; } }
         //public double LastSupport { get { return this.RefList.FirstOrDefault(r => r.Price < this.Close).Price; } }
         //public double LastResistance { get { return this.RefList.FirstOrDefault(r => r.Price < this.Close).Price; } }
         public List<Leg> LegList { get; } = new List<Leg>();
-        public int LegsCount { get { return this.LegList.Count; } }
-        public int BarsCount { get { return LegList.Sum(leg => leg.BarCount); } }
+        public int LegsCount => LegList.Count;
+        public int BarsCount => LegList.Sum(leg => leg.BarCount);
         //public List<double> AdvanceList { get; private set; }
         //public List<double> DeclineList { get; private set; }
 
@@ -63,10 +64,7 @@ namespace Trading.Analyzers.LegAnalyzer
             LegList.Add(new Leg(newBar) { PreviousLeg = LegList.Last() });
 
         }
-        public void AddBar(Bar newBar)
-        {
-            addBar(newBar);
-        }
+        public void AddBar(Bar newBar) => addBar(newBar);
 
         public void UpdateLastBar(Bar updatedBar)
         {
