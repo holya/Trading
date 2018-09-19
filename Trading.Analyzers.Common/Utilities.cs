@@ -61,6 +61,24 @@ namespace Trading.Analyzers.Common
                     if(ceiling >= 60)
                         return new DateTime(date.Year, date.Month, date.Day, date.Hour,            floor, 00, 00, date.Kind).AddMinutes       (resolution.Size).AddMilliseconds(-1);
 
+                    //int minute = 0;
+                    //int maxLimit = 60;
+                    //int segments = 0;
+
+                    //segments = maxLimit / resolution.Size;
+                    //int[] partitions = new int[segments + 1];
+
+                    //for (int i = 0; i <= segments; i++)
+                    //{
+                    //    partitions[i] = i * segments;
+                    //}
+
+                    //foreach (int i in partitions)
+                    //{
+                    //    int index = date.Minute / i;
+                    //    minute = index;
+                    //}
+
                     return new DateTime(date.Year, date.Month, date.Day, date.Hour, ceiling, 00, 00, date.Kind);
 
                 default:
