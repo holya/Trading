@@ -13,7 +13,7 @@ namespace UnitTestProject1
         [TestMethod]
         public void AddBarList__Should_Create_UpLeg()
         {
-            LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
+            LegAnalyzer la = new LegAnalyzer();
 
             List<Bar> barList = new List<Bar>();
             barList.Add(Helper.GetUpBar());
@@ -30,7 +30,7 @@ namespace UnitTestProject1
         [TestMethod]
         public void AddBarList__Should_Create_One_DownLeg_One_UpLeg()
         {
-            LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
+            LegAnalyzer la = new LegAnalyzer();
 
             List<Bar> barList = new List<Bar>();
             barList.Add(Helper.GetDownBar());
@@ -49,7 +49,7 @@ namespace UnitTestProject1
         [TestMethod]
         public void AddBar__Add_UpBar_To_UpLeg()
         {
-            LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
+            LegAnalyzer la = new LegAnalyzer();
 
             List<Bar> barList = new List<Bar>();
             barList.Add(Helper.GetUpBar());
@@ -65,7 +65,7 @@ namespace UnitTestProject1
         [TestMethod]
         public void UpdateLastBar__Update_Close()
         {
-            LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
+            LegAnalyzer la = new LegAnalyzer();
 
             la.AddBar(Helper.GetUpBar());
             la.AddBar(Helper.GetUpBar(la.LastBar, la.LastBar.DateTime.AddDays(1)));
@@ -89,7 +89,7 @@ namespace UnitTestProject1
         [TestMethod]
         public void UpdateLastBar__Turn_LastBar_To_DownBar_And_Create_New_DownLeg()
         {
-            LegAnalyzer la = new LegAnalyzer(new Resolution(TimeFrame.Daily, 1));
+            LegAnalyzer la = new LegAnalyzer();
 
             List<Bar> barList = new List<Bar>();
             barList.Add(Helper.GetUpBar());

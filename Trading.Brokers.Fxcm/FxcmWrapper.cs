@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Trading.Analyzers.Common;
 using Trading.Common;
 using Trading.DataProviders;
 
@@ -87,16 +88,6 @@ namespace Trading.Brokers.Fxcm
             session.unsubscribeSessionStatus(sessionStatusResponseListener);
         }
         #endregion
-        private void OffersTable_RowChanged(object sender, RowEventArgs e)
-        {
-            O2GOfferTableRow otr = (O2GOfferTableRow)e.RowData;
-            if (otr != null && realTimeInstruments.Count > 0)
-            {
-                if(realTimeInstruments.Contains(otr.Instrument))
-                    OffersTableUpdated?.Invoke(this, new Tuple<string ,double, double, DateTime, int>(otr.Instrument ,otr.Bid, otr.Ask, otr.Time, otr.Volume));
-            }
-        }
-
 
         public IEnumerable<Bar> GetHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime, bool subscribeToRealTime = false)
         {
@@ -116,7 +107,10 @@ namespace Trading.Brokers.Fxcm
                 throw e;
             }
 
-            if(resolution.TimeFrame == TimeFrame.Quarterly)
+            foreach (var b in barList)
+                b.DateTime =  Utilities.NormalizeBarDateTime_FXCM(b.DateTime, resolution);
+
+            if (resolution.TimeFrame == TimeFrame.Quarterly)
             {
                 return normalizeToQuarterlyTimeFrame(barList);
             }
@@ -125,6 +119,21 @@ namespace Trading.Brokers.Fxcm
                 realTimeInstruments.Add(symbol);
             
             return barList;
+        }
+
+        private void OffersTable_RowChanged(object sender, RowEventArgs e)
+        {
+            O2GOfferTableRow otr = (O2GOfferTableRow)e.RowData;
+            if (otr != null && realTimeInstruments.Count > 0)
+            {
+                if(realTimeInstruments.Contains(otr.Instrument))
+                    OffersTableUpdated?.Invoke(this, new Tuple<string ,double, double, DateTime, int>(otr.Instrument ,otr.Bid, otr.Ask, otr.Time, otr.Volume));
+            }
+        }
+
+        public void UnsubscibeRealTime(string symbol)
+        {
+            realTimeInstruments.Remove(symbol);
         }
 
         private static IEnumerable<Bar> normalizeToQuarterlyTimeFrame(List<FxBar> barList)

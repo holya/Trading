@@ -51,6 +51,10 @@
     <Compile Include="SessionStatusEnum.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Trading.Analyzers.Common\Trading.Analyzers.Common.csproj">
+      <Project>{bb95d2e4-9158-43f9-8e25-19483333175c}</Project>
+      <Name>Trading.Analyzers.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Trading.Common\Trading.Common.csproj">
       <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
       <Name>Trading.Common</Name>
@@ -59,6 +63,9 @@
       <Project>{f56906e6-e201-4c15-bfb1-980d99bb3884}</Project>
       <Name>Trading.DataProviders</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

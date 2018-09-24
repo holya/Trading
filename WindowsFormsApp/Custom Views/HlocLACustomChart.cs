@@ -16,110 +16,150 @@ namespace WindowsFormsApp.Custom_Views
 {
     public partial class HlocLACustomChart : HlocCustomChart
     {
-        public LegAnalyzer LegAnalyzer { get; set; }
-        public Resolution Resolution { get; set; }
+        public LegAnalyzer LegAnalyzer { get; } = new LegAnalyzer();
         public string Symbol { get; set; }
+        public Resolution Resolution { get; set; }
         public DateTime FromDateTime { get; set; }
         public bool DataPopulated { get; set; } = false;
         public HlocLACustomChart()
         {
             InitializeComponent();
+            this.ResizeRedraw = true;
+            
+            LegAnalyzer.AnalyzerPopulated += LegAnalyzer_AnalyzerPopulated;
+            LegAnalyzer.NewBarAdded += LegAnalyzer_NewBarAdded;
+            LegAnalyzer.LastBarUpdated += LegAnalyzer_LastBarUpdated;
         }
 
-        //Refactor
-        public HlocLACustomChart(LegAnalyzer legAnalyzer, Resolution resolution, string symbol, DateTime fromDateTime) :this()
+        private void LegAnalyzer_LastBarUpdated(object sender, LastBarUpdatedEventArgs e)
         {
-            ReSetPropsAndReDraw(legAnalyzer, resolution, symbol, fromDateTime);
+            if (this.InvokeRequired)
+            {
+                Invoke(new Action<LastBarUpdatedEventArgs>(this.updateLastBar), e);
+            }
+            else
+                this.updateLastBar(e);
         }
 
-        // Refactor
-        public void ReSetPropsAndReDraw(LegAnalyzer legAnalyzer, Resolution resolution, string symbol, DateTime fromDateTime)
+        private void updateLastBar(LastBarUpdatedEventArgs e)
+        {
+            DataPoint dp = Series[0].Points.Last();
+            Bar bar = e.LastBar;
+            switch (e.UpdateEnum)
+            {
+                case LastbarUpdateEventEnum.NoPriceChange:
+                    return;
+                case LastbarUpdateEventEnum.CloseUpdated:
+                    dp.YValues[3] = e.LastBar.Close;
+                    break;
+                case LastbarUpdateEventEnum.Expanded:
+                case LastbarUpdateEventEnum.TypeChanged:
+                    dp.YValues = new double[] { bar.High, bar.Low, bar.Open, bar.Close };
+                    break;
+                default:
+                    break;
+            }
+            Invalidate();
+        }
+
+        private void LegAnalyzer_NewBarAdded(object sender, NewBarAddedEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<NewBarAddedEventArgs>(addNewbar), e);
+            }
+        }
+
+        private void addNewbar(NewBarAddedEventArgs e)
+        {
+            addNewDataPoint(Series[0], e.LastLeg, e.LastLeg.LastBar);
+            Invalidate();
+        }
+
+        private void LegAnalyzer_AnalyzerPopulated(object sender, AnalyzerPopulatedEventArgs e)
+        {
+            setupBars();
+            //Invalidate();
+        }
+
+        public void Reset()
         {
             foreach (var series in Series)
             {
                 if (series.Points.Count > 0)
                     series.Points.Clear();
             }
-
-            LegAnalyzer = legAnalyzer;
-            Resolution = resolution;
-            Symbol = symbol;
-            FromDateTime = fromDateTime;
-
-            setupBars();
-            Invalidate();
+            LegAnalyzer.Reset();
         }
-        public void ReSetPropsAndReDraw()
-        {
-            this.ReSetPropsAndReDraw(LegAnalyzer, Resolution, Symbol, FromDateTime);
-        }
-
-
-
         //Maybe rename to Draw
         private void setupBars()
         {
             var chartSeries = Series[0];
-            bool isIntrady = isLAIntraday();
             foreach (var leg in LegAnalyzer.LegList)
             {
                 foreach (var bar in leg.BarList)
                 {
-                    string labelString = isIntrady ? bar.DateTime.ToShortTimeString() : bar.DateTime.ToShortDateString();
-                    DataPoint dp = new DataPoint
-                    {
-                        AxisLabel = labelString,
-                        XValue = bar.DateTime.ToOADate(),
-                        YValues = new double[] { bar.High, bar.Low, bar.Open, bar.Close },
-                        Color = leg.Direction == LegDirection.Up ? Color.Green : Color.Red
-                    };
-                    chartSeries.Points.Add(dp);
-                    //chartSeries.Points.Last().YValues[3] = ;
+                    addNewDataPoint(chartSeries, leg, bar);
                 }
             }
+        }
+
+        private void addNewDataPoint(Series chartSeries, Leg leg, Bar bar)
+        {
+            string labelString = isTimeFrameIntraday() ? bar.DateTime.ToShortTimeString() : bar.DateTime.ToLongDateString();
+            DataPoint dp = new DataPoint
+            {
+                AxisLabel = labelString,
+                XValue = bar.DateTime.ToOADate(),
+                YValues = new double[] { bar.High, bar.Low, bar.Open, bar.Close },
+                Color = leg.Direction == LegDirection.Up ? Color.Green : Color.Red
+            };
+            chartSeries.Points.Add(dp);
+            //chartSeries.Points.Last().YValues[3] = ;
+        }
+
+        private bool isTimeFrameIntraday()
+        {
+            return Resolution.TimeFrame < TimeFrame.Daily;
         }
 
         private void drawRefLines(Graphics g)
         {
-            foreach (var r in LegAnalyzer.RefList)
-            {
-                double dts = r.DateTime.ToOADate();
-                var d = Series[0].Points.FirstOrDefault(p => p.XValue.Equals(dts));
+            //foreach (var r in LegAnalyzer.RefList)
+            //{
+            //    double dts = r.DateTime.ToOADate();
+            //    var d = Series[0].Points.FirstOrDefault(p => p.XValue.Equals(dts));
 
-                double pointIndex = -1;
-                for (int i = 0; i < Series[0].Points.Count; i++)
-                {
-                    if (Series[0].Points[i].XValue == dts)
-                    {
-                        pointIndex = i;
-                        break;
-                    }
-                }
+            //    double pointIndex = -1;
+            //    for (int i = 0; i < Series[0].Points.Count; i++)
+            //    {
+            //        if (Series[0].Points[i].XValue == dts)
+            //        {
+            //            pointIndex = i;
+            //            break;
+            //        }
+            //    }
 
-                float x1 = (float)ChartAreas[0].AxisX.ValueToPixelPosition(pointIndex + 1);
-                float x2 = (float)ChartAreas[0].AxisX.ValueToPixelPosition(Series[0].Points.Count - 1) + 20;
-                var y = (float)ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
-                g.DrawLine(new Pen(Color.Black, 1), x1, y, x2, y);
+            //    float x1 = (float)ChartAreas[0].AxisX.ValueToPixelPosition(pointIndex + 1);
+            //    float x2 = (float)ChartAreas[0].AxisX.ValueToPixelPosition(Series[0].Points.Count - 1) + 20;
+            //    var y = (float)ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
+            //    g.DrawLine(new Pen(Color.Black, 1), x1, y, x2, y);
 
-                var font = new Font(FontFamily.GenericSerif, 8);
-                SolidBrush drawBrush = new SolidBrush(Color.Black);
-                g.DrawString("" + r.Price, font, drawBrush, x2 + 7, y - 10);
-            }
+            //    var font = new Font(FontFamily.GenericSerif, 8);
+            //    SolidBrush drawBrush = new SolidBrush(Color.Black);
+            //    g.DrawString("" + r.Price, font, drawBrush, x2 + 7, y - 10);
+            //}
 
             //draw close value
-            float xCoord = (float)ChartAreas[0].AxisX.ValueToPixelPosition(Series[0].Points.Count - 1) + 20;
+            float diff = (float)ChartAreas[0].AxisX.ValueToPixelPosition(Series[0].Points.Count - 1) - Right;
+            float xCoord = Right + diff/2;
             var yCoord = (float)ChartAreas[0].AxisY2.ValueToPixelPosition(LegAnalyzer.Close);
             var f = new Font(FontFamily.GenericSerif, 8);
-            SolidBrush db = new SolidBrush(Color.OrangeRed);
-            g.DrawString("" + LegAnalyzer.Close, f, db, xCoord + 7, yCoord - 10);
+            SolidBrush db = new SolidBrush(Color.Blue);
+            g.DrawString("" + LegAnalyzer.Close, f, db, xCoord, yCoord - 10);
 
         }
 
-        private bool isLAIntraday()
-        {
-            return (Resolution.TimeFrame == TimeFrame.Hourly ||
-                Resolution.TimeFrame == TimeFrame.Minute) ? true : false;
-        }
 
         protected override void OnPaint(PaintEventArgs pe)
         {

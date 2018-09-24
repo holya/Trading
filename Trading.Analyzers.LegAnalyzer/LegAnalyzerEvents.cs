@@ -1,56 +1,49 @@
 ﻿using System;
+using System.Collections.Generic;
 using Trading.Common;
 
 namespace Trading.Analyzers.LegAnalyzer
 {
-    public enum LegAnalyzerUpdateEventEnum
+    public enum LastbarUpdateEventEnum
     {
+        NoPriceChange,
         CloseUpdated,
-        LastBarExpanded,
-        NewLegAdded,
-        NewBarAdded,
+        Expanded,
+        TypeChanged
     }
-
 
     public partial class LegAnalyzer
     {
-        //public event EventHandler<NewLegAddedEventArgs> NewLegAdded; 
-        //private void _onNewLegAddedEvent(Leg newLeg)
-        //{
-        //    NewLegAdded?.Invoke(this, new NewLegAddedEventArgs { NewLeg = this.LastLeg });
-            
-        //}
-
-        //public event EventHandler<NewBarAddedEventArgs> NewBarAdded;
-        //private void _onNewBarAddedEvent(Bar newBar)
-        //{
-        //    NewBarAdded?.Invoke(this, new NewBarAddedEventArgs { NewBar = this.LastBar });
-        //}
-
-        public event EventHandler<LegAnalyzerUpdatedEventArgs> AnalyzerUpdated;
-        private void _onAnalyzerUpdated(LegAnalyzerUpdateEventEnum eventEnum)
+        public event EventHandler<AnalyzerPopulatedEventArgs> AnalyzerPopulated;
+        private void _onAnalyzerPopulated(object sender, AnalyzerPopulatedEventArgs eventArgs)
         {
-            AnalyzerUpdated?.Invoke(this, new LegAnalyzerUpdatedEventArgs { Leg = this.LastLeg, EventEnum = eventEnum });
+            AnalyzerPopulated?.Invoke(this, eventArgs);
+        }
+
+        public event EventHandler<NewBarAddedEventArgs> NewBarAdded;
+        private void _onNewBarAdded(object sender, NewBarAddedEventArgs eventArgs)
+        {
+            NewBarAdded?.Invoke(this, eventArgs);
+        }
+
+        public event EventHandler<LastBarUpdatedEventArgs> LastBarUpdated;
+        private void _onLastBarUpdated(object sender, LastBarUpdatedEventArgs eventArgs)
+        {
+            LastBarUpdated?.Invoke(this, eventArgs);
         }
     }
 
-    //public class NewLegAddedEventArgs : EventArgs
-    //{
-    //    public Leg NewLeg { get; set; }
-    //}
-
-    //public class NewBarAddedEventArgs : EventArgs
-    //{
-    //    public Bar NewBar { get; set; }
-    //}
-
-    public class LegAnalyzerUpdatedEventArgs : EventArgs
+    public class AnalyzerPopulatedEventArgs : EventArgs
     {
-        public Leg Leg { get; set; }
-
-        public LegAnalyzerUpdateEventEnum EventEnum { get; set; }
+        public IEnumerable<Leg> LegList { get; set; }
     }
-
-
-
+    public class NewBarAddedEventArgs : EventArgs
+    {
+        public Leg LastLeg { get; set; }
+    }
+    public class LastBarUpdatedEventArgs : EventArgs
+    {
+        public Bar LastBar { get; set; }
+        public LastbarUpdateEventEnum UpdateEnum { get; set; }
+    }
 }

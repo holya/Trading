@@ -7,12 +7,12 @@ namespace Trading.Common
 {
     public enum TimeFrame
     {
-        Yearly,
-        Quarterly,
-        Monthly,
-        Weekly,
-        Daily,
+        Minute, 
         Hourly,
-        Minute
+        Daily,
+        Weekly,
+        Monthly,
+        Quarterly,
+        Yearly
     }
 }

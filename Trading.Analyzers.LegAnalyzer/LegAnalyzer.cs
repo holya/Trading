@@ -12,8 +12,7 @@ namespace Trading.Analyzers.LegAnalyzer
 
         #region Properties
         public Resolution Resolution { get; set; }
-        public Bar LastBar => LastLeg.BarCount != 0 ?
-                    LastLeg.LastBar : LegList[LegList.Count - 2].LastBar;
+        public Bar LastBar => LastLeg.LastBar;
         public Leg LastLeg => LegList.Last();
         public double Close => LastBar.Close;
         //public double BarVolitility { get { return this.LastBar.High - this.LastBar.Low / 100; } }
@@ -28,21 +27,22 @@ namespace Trading.Analyzers.LegAnalyzer
         public List<Reference> RefList { get; } = new List<Reference>();
         #endregion
 
-        public LegAnalyzer(Resolution resolution)
-        {
-            addBar = addFirstBar;
-            Resolution = resolution;
-        }
+        public LegAnalyzer() { addBar = addFirstBar; }
+        //public LegAnalyzer(Resolution resolution):this()
+        //{
+        //    //addBar = addFirstBar;
+        //    Resolution = resolution;
+        //}
 
         public void AddBarList(IEnumerable<Bar> barList)
         {
-            if (barList.Count() == 0)
-                return;
 
             for (int i = 0; i < barList.Count(); i++)
             {
-                AddBar(barList.ElementAt(i));
+                addBar(barList.ElementAt(i));
             }
+
+            _onAnalyzerPopulated(this, new AnalyzerPopulatedEventArgs { LegList = this.LegList });
         }
 
         private Action<Bar> addBar;
@@ -64,52 +64,43 @@ namespace Trading.Analyzers.LegAnalyzer
             LegList.Add(new Leg(newBar) { PreviousLeg = LegList.Last() });
 
         }
-        public void AddBar(Bar newBar) => addBar(newBar);
+        public void AddBar(Bar newBar)
+        {
+            addBar(newBar);
+            _onNewBarAdded(this, new NewBarAddedEventArgs { LastLeg = LastLeg });
+        }
 
         public void UpdateLastBar(Bar updatedBar)
         {
-            //if(updatedBar.DateTime <= getEndTimeframeDateTime(LastBar.DateTime))
-            //{
+            LastbarUpdateEventEnum updateEnum;
+            bool isUpdateTickWithinLastBar = updatedBar.High <= LastBar.High && updatedBar.Low >= LastBar.Low;
+            bool isCloseSame = updatedBar.Close == LastBar.Close;
             var oldDir = LastBar.Direction;
             LastBar.Update(updatedBar);
-            if(LastBar.Direction != oldDir)
+            if (LastBar.Direction != oldDir)
             {
                 var savedLastBar = LastBar;
                 LastLeg.BarList.Remove(LastBar);
+                if (LastLeg.BarCount == 0)
+                    LegList.Remove(LastLeg);
                 addBar(savedLastBar);
+                updateEnum = LastbarUpdateEventEnum.TypeChanged;
             }
-            //if (!LastBar.PreviousBar.IsSameDirection(LastBar))
-            //{
-            //    LegList.Add(new Leg(LastBar) { PreviousLeg = LegList.Last() });
-            //    LegList[LegList.Count - 2].BarList.Remove(LastBar);
-            //}
-            //    return;
-            //}
+            else if (!isUpdateTickWithinLastBar)
+                updateEnum = LastbarUpdateEventEnum.Expanded;
+            else if (!isCloseSame)
+                updateEnum = LastbarUpdateEventEnum.CloseUpdated;
+            else
+                updateEnum = LastbarUpdateEventEnum.NoPriceChange;
 
-            //updatedBar.DateTime = getEndTimeframeDateTime(LastBar.DateTime);
-
-            //AddBar(updatedBar);
+            _onLastBarUpdated(this, new LastBarUpdatedEventArgs { LastBar = LastBar, UpdateEnum = updateEnum });
         }
-        //private DateTime getEndTimeframeDateTime(DateTime dt)
-        //{
-        //    var tf = Resolution.TimeFrame;
-        //    var size = Resolution.Size;
-        //    if(tf == TimeFrame.Yearly)
-        //        return LastBar.DateTime.AddYears(Resolution.Size);
-        //    if(tf == TimeFrame.Quarterly)
-        //           LastBar.DateTime.AddMonths(Resolution.Size * 4);
-        //    if(tf == TimeFrame.Monthly)
-        //        return LastBar.DateTime.AddMonths(Resolution.Size);
-        //    if(tf == TimeFrame.Weekly)
-        //        return LastBar.DateTime.AddDays(Resolution.Size * 7);
-        //    if(tf == TimeFrame.Daily)
-        //        return LastBar.DateTime.AddDays(Resolution.Size);
-        //    if(tf == TimeFrame.Hourly)
-        //        return LastBar.DateTime.AddHours(Resolution.Size);
 
-        //    return LastBar.DateTime.AddMinutes(Resolution.Size);
-        //}
-
+        public void Reset()
+        {
+            this.LegList.Clear();
+            addBar = this.addFirstBar;
+        }
 
         private void addReferenceForHighOfThisBar(Bar bar)
         {

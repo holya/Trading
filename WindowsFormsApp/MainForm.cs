@@ -22,7 +22,7 @@ namespace WindowsFormsApp
     {
         FxcmWrapper f = new FxcmWrapper();
         
-        List<HlocLAForm> chartList = new List<HlocLAForm>();
+        List<HlocLAForm> chartFormList = new List<HlocLAForm>();
 
         SymbolsManager symbolsManager = new SymbolsManager();
 
@@ -46,11 +46,11 @@ namespace WindowsFormsApp
 
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), new DateTime(2017, 08, 01, 00, 00, 00), 0, 0);
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), new DateTime(2018, 09, 01, 00, 00, 00), 0, 1);
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddDays(-2), 0, 0);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddDays(-4), 0, 0);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-10), 0, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-10), 0, 1);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-3), 1, 0);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-3), 1, 0);
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddMinutes(-30), 1, 1);
 
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), new DateTime(2018, 09, 19, 19, 02, 00), 1, 1);
@@ -73,12 +73,12 @@ namespace WindowsFormsApp
 
         private void addNewChartFormToRightPanel(Resolution resolution, DateTime fromDateTime, int column, int row)
         {
-            HlocLAForm chart = this.createChartForm();
-            chart.Resolution = resolution;
-            chart.FromDateTime = fromDateTime;
+            HlocLAForm chartForm = this.createChartForm();
+            chartForm.Chart.Resolution = resolution;
+            chartForm.Chart.FromDateTime = fromDateTime;
             //c.FormBorderStyle = FormBorderStyle.None;
             //chart.DoubleClick += chart_MouseDoubleClick;
-            chart.FormClosing += (sender, e) =>
+            chartForm.FormClosing += (sender, e) =>
             {
                 if (e.CloseReason == CloseReason.UserClosing)
                 {
@@ -87,8 +87,8 @@ namespace WindowsFormsApp
                 }
             };
             
-            tableLayoutPanel_chartForm.Controls.Add(chart, column, row);
-            chart.Show();
+            tableLayoutPanel_chartForm.Controls.Add(chartForm, column, row);
+            chartForm.Show();
         }
 
         #region Symbols Data Grid
@@ -143,32 +143,26 @@ namespace WindowsFormsApp
 
         private void symbolLabel_Click(object sender, EventArgs e)
         {
-            if(selectedSymbolLabel != null)
+            if (selectedSymbolLabel != null)
+            {
+                f.UnsubscibeRealTime(selectedSymbolLabel.Text);
                 selectedSymbolLabel.BackColor = normalSymbolLabelColor;
+            }
             selectedSymbolLabel = (Label)sender;
             selectedSymbolLabel.BackColor = selectedSymbolLabelColor;
 
             string symbol = selectedSymbolLabel.Text;
-
-            foreach(var c in chartList)
+            
+            foreach(var c in chartFormList)
             {
-                c.DataPopulated = false;
-                var barList = GetHistoricalData(symbol, c.Resolution, c.FromDateTime, DateTime.Now);
-                LegAnalyzer analyzer = createAnalyzer(c.Resolution, barList);
-                c.ResetPropsAndReDraw(analyzer, c.Resolution, symbol, c.FromDateTime);
-                c.DataPopulated = true;
+                c.Chart.DataPopulated = false;
+                c.Chart.Symbol = symbol;
+                var barList = GetHistoricalData(symbol, c.Chart.Resolution, c.Chart.FromDateTime, DateTime.Now);
+                c.Chart.Reset();
+                c.Chart.LegAnalyzer.AddBarList(barList);
+                c.Chart.DataPopulated = true;
             }
         }
-
-        private static LegAnalyzer createAnalyzer(Resolution res, List<FxBar> barList)
-        {
-            foreach (var b in barList)
-                b.DateTime = Utilities.NormalizeBarDateTime_FXCM(b.DateTime, res);
-            var analyzer = new LegAnalyzer(res);
-            analyzer.AddBarList(barList);
-            return analyzer;
-        }
-
 
         private List<FxBar> GetHistoricalData(string symbol, Resolution resolution, DateTime from, DateTime to)
         {
@@ -185,12 +179,13 @@ namespace WindowsFormsApp
 
         private void OffersTableUpdated(object sender, Tuple<string, double, double, DateTime, int> e)
         {
-            for(int i = 0; i < chartList.Count; i++)
+            for(int i = 0; i < chartFormList.Count; i++)
             {
-                var c = chartList[i];
-                if(c.DataPopulated && c.Symbol == e.Item1)
+                var chartForm = chartFormList[i];
+                var chart = chartForm.Chart;
+                if(chart.DataPopulated && chartForm.Chart.Symbol == e.Item1)
                 {
-                    FxBar b = (FxBar)c.LegAnalyzer.LastBar;
+                    FxBar b = (FxBar)chart.LegAnalyzer.LastBar;
                     if(e.Item4 < b.DateTime)
                     {
                         FxBar newBar = new FxBar
@@ -205,11 +200,11 @@ namespace WindowsFormsApp
                             AskClose = e.Item3,
                         };
 
-                        c.LegAnalyzer.UpdateLastBar(newBar);
+                        chart.LegAnalyzer.UpdateLastBar(newBar);
                     }
                     else
                     {
-                        var dt = Utilities.NormalizeBarDateTime_FXCM(e.Item4, c.Resolution);
+                        var dt = Utilities.NormalizeBarDateTime_FXCM(e.Item4, chartForm.Chart.Resolution);
                         FxBar newBar = new FxBar
                         {
                             Open = e.Item2,
@@ -222,10 +217,8 @@ namespace WindowsFormsApp
                             AskClose = e.Item3,
                             DateTime = dt
                         };
-                        c.LegAnalyzer.AddBar(newBar);
-
+                        chart.LegAnalyzer.AddBar(newBar);
                     }
-                    c.Redraw();
                 }
             }
         }
@@ -248,11 +241,12 @@ namespace WindowsFormsApp
                     var toDate = dialogBox.dateTimePicker_to.Value;
 
                     var barList = GetHistoricalData(symbol, res, fromDate, toDate);
-                    var la = createAnalyzer(res, barList);
 
-                    HlocLAForm chart = createChartForm();
-                    chart.ResetPropsAndReDraw(la, res, symbol, fromDate);
-                    chart.Show();
+                    HlocLAForm chartForm = createChartForm();
+                    chartForm.Chart.Resolution = res;
+                    chartForm.Chart.FromDateTime = fromDate;
+                    //chart.Symbol = symbol;
+                    chartForm.Show();
                 }
             }
         }
@@ -261,7 +255,7 @@ namespace WindowsFormsApp
         {
             var chart = new HlocLAForm();
             //chart.Dock = DockStyle.Fill;
-            chartList.Add(chart);
+            chartFormList.Add(chart);
             return chart;
         }
 
