@@ -38,7 +38,7 @@ namespace WindowsFormsApp.Custom_Views
             chartArea1.AxisY2.IntervalAutoMode = IntervalAutoMode.VariableCount;
             chartArea1.AxisY2.IsStartedFromZero = false;
             chartArea1.AxisY2.LabelStyle.Enabled = false;
-            chartArea1.AxisY2.MajorTickMark.Enabled = false;
+            chartArea1.AxisY2.MajorTickMark.Enabled = true;
             chartArea1.BackColor = Color.WhiteSmoke;
             chartArea1.Name = "ChartArea1";
             chartArea1.Position.Auto = false;

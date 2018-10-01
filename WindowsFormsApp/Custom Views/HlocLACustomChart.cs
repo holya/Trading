@@ -44,7 +44,6 @@ namespace WindowsFormsApp.Custom_Views
         private void updateLastBar(LastBarUpdatedEventArgs e)
         {
             DataPoint dp = Series[0].Points.Last();
-            Bar bar = e.LastBar;
             switch (e.UpdateEnum)
             {
                 case LastbarUpdateEventEnum.NoPriceChange:
@@ -54,7 +53,9 @@ namespace WindowsFormsApp.Custom_Views
                     break;
                 case LastbarUpdateEventEnum.Expanded:
                 case LastbarUpdateEventEnum.TypeChanged:
-                    dp.YValues = new double[] { bar.High, bar.Low, bar.Open, bar.Close };
+                    Series[0].Points.Remove(dp);
+                    this.addNewDataPoint(Series[0], this.LegAnalyzer.LastLeg, e.LastBar);
+                    this.ChartAreas[0].RecalculateAxesScale();
                     break;
                 default:
                     break;
@@ -94,12 +95,11 @@ namespace WindowsFormsApp.Custom_Views
         //Maybe rename to Draw
         private void setupBars()
         {
-            var chartSeries = Series[0];
             foreach (var leg in LegAnalyzer.LegList)
             {
                 foreach (var bar in leg.BarList)
                 {
-                    addNewDataPoint(chartSeries, leg, bar);
+                    addNewDataPoint(Series[0], leg, bar);
                 }
             }
         }

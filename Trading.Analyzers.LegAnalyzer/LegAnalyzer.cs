@@ -73,7 +73,7 @@ namespace Trading.Analyzers.LegAnalyzer
         public void UpdateLastBar(Bar updatedBar)
         {
             LastbarUpdateEventEnum updateEnum;
-            bool isUpdateTickWithinLastBar = updatedBar.High <= LastBar.High && updatedBar.Low >= LastBar.Low;
+            bool isUpdateTickWithinLastBar = updatedBar.High > LastBar.High || updatedBar.Low < LastBar.Low;
             bool isCloseSame = updatedBar.Close == LastBar.Close;
             var oldDir = LastBar.Direction;
             LastBar.Update(updatedBar);

@@ -26,8 +26,12 @@ namespace WindowsFormsApp.Custom_Views
             Chart.Location = new System.Drawing.Point(0, 0);
             this.Chart.Size = new System.Drawing.Size(911, 450);
             this.Controls.Add(Chart);
-            this.Text = $"{Chart.Symbol} - {Chart.Resolution.TimeFrame}({Chart.Resolution.TimeFrame})";
 
+        }
+
+        public void SetTitle()
+        {
+            this.Text = $"{Chart.Symbol} - {Chart.Resolution.TimeFrame}({Chart.Resolution.Size})";
         }
     }
 }

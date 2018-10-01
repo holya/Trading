@@ -44,16 +44,22 @@ namespace WindowsFormsApp
             //    SizeType = SizeType.AutoSize
             //});
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), new DateTime(2017, 08, 01, 00, 00, 00), 0, 0);
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), new DateTime(2018, 09, 01, 00, 00, 00), 0, 1);
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddDays(-4), 0, 0);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-10), 0, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Monthly, 1), DateTime.UtcNow.AddMonths(-24), 0, 0);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-3), 1, 0);
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddMinutes(-30), 1, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), DateTime.UtcNow.AddMonths(-2), 0, 0);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), new DateTime(2018, 09, 19, 19, 02, 00), 1, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), DateTime.UtcNow.AddMonths(-3), 0, 0);
+
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), DateTime.UtcNow.AddDays(-6), 0, 1);
+
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddDays(-3), 1, 0);
+
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-10), 1, 1);
+
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-4), 1, 0);
+
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddHours(-1), 1, 1);
 
             f.OffersTableUpdated += OffersTableUpdated;
         }
@@ -76,6 +82,7 @@ namespace WindowsFormsApp
             HlocLAForm chartForm = this.createChartForm();
             chartForm.Chart.Resolution = resolution;
             chartForm.Chart.FromDateTime = fromDateTime;
+            chartForm.SetTitle();
             //c.FormBorderStyle = FormBorderStyle.None;
             //chart.DoubleClick += chart_MouseDoubleClick;
             chartForm.FormClosing += (sender, e) =>
@@ -141,7 +148,7 @@ namespace WindowsFormsApp
 
         #endregion
 
-        private void symbolLabel_Click(object sender, EventArgs e)
+        private async void symbolLabel_Click(object sender, EventArgs e)
         {
             if (selectedSymbolLabel != null)
             {
@@ -157,7 +164,10 @@ namespace WindowsFormsApp
             {
                 c.Chart.DataPopulated = false;
                 c.Chart.Symbol = symbol;
-                var barList = GetHistoricalData(symbol, c.Chart.Resolution, c.Chart.FromDateTime, DateTime.Now);
+                //var barList = GetHistoricalData(symbol, c.Chart.Resolution, c.Chart.FromDateTime, DateTime.Now);
+                var barList = await GetHistoricalDataAsync(symbol, c.Chart.Resolution, c.Chart.FromDateTime, DateTime.UtcNow.AddDays(10));
+
+
                 c.Chart.Reset();
                 c.Chart.LegAnalyzer.AddBarList(barList);
                 c.Chart.DataPopulated = true;
@@ -176,6 +186,20 @@ namespace WindowsFormsApp
                 return null;
             }
         }
+        private async Task<List<FxBar>> GetHistoricalDataAsync(string symbol, Resolution resolution, DateTime from, DateTime to)
+        {
+            try
+            {
+                var bars = await f.GetHistoricalDataAsync(symbol, resolution, from, to, true);
+                return (List<FxBar>)bars;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return null;
+            }
+        }
+
 
         private void OffersTableUpdated(object sender, Tuple<string, double, double, DateTime, int> e)
         {
@@ -245,7 +269,7 @@ namespace WindowsFormsApp
                     HlocLAForm chartForm = createChartForm();
                     chartForm.Chart.Resolution = res;
                     chartForm.Chart.FromDateTime = fromDate;
-                    //chart.Symbol = symbol;
+                    chartForm.SetTitle();
                     chartForm.Show();
                 }
             }
@@ -253,10 +277,9 @@ namespace WindowsFormsApp
 
         private HlocLAForm createChartForm()
         {
-            var chart = new HlocLAForm();
-            //chart.Dock = DockStyle.Fill;
-            chartFormList.Add(chart);
-            return chart;
+            var chartForm = new HlocLAForm();
+            chartFormList.Add(chartForm);
+            return chartForm;
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)

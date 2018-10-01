@@ -39,7 +39,7 @@ namespace Trading.Brokers.Fxcm
 
         public DateTime GetServerTime()
         {
-            return session.getServerTime();
+            return session.getServerTime().ToUniversalTime();
         }
 
         #region Login / Logout
@@ -96,19 +96,16 @@ namespace Trading.Brokers.Fxcm
             List<FxBar> barList;
             try
             {
-                barList = GetHistoryPrices(session, symbol, convert_Resolution_To_string(resolution), startDateTime.ToUniversalTime(), endDateTime.ToUniversalTime(), 1000, responseListener);
-                //foreach (var b in barList)
-                //{
-                //    b.DateTime = b.DateTime.ToUniversalTime();
-                //}
+                barList = GetHistoryPrices(session, symbol, convert_Resolution_To_string(resolution), startDateTime, endDateTime, 1000, responseListener);
             }
             catch (Exception e)
             {
                 throw e;
             }
-
-            foreach (var b in barList)
-                b.DateTime =  Utilities.NormalizeBarDateTime_FXCM(b.DateTime, resolution);
+            //foreach (var b in barList)
+            //    b.DateTime = b.DateTime.ToUniversalTime();
+            //foreach (var b in barList)
+            //    b.DateTime = Utilities.NormalizeBarDateTime_FXCM(b.DateTime, resolution);
 
             if (resolution.TimeFrame == TimeFrame.Quarterly)
             {
@@ -119,6 +116,15 @@ namespace Trading.Brokers.Fxcm
                 realTimeInstruments.Add(symbol);
             
             return barList;
+        }
+
+        public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime, bool subscribeToRealTime = false)
+        {
+            Task<IEnumerable<Bar>> task = Task.Factory.StartNew(() =>
+            GetHistoricalData(symbol, resolution, startDateTime, endDateTime,
+            subscribeToRealTime));
+
+            return await task;
         }
 
         private void OffersTable_RowChanged(object sender, RowEventArgs e)

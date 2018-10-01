@@ -10,11 +10,10 @@ namespace Trading.Analyzers.Common
     {
         public static DateTime NormalizeBarDateTime_FXCM(DateTime date, Resolution resolution)
         {
-            //DateTime dt = DateTime.Now;
             switch (resolution.TimeFrame)
             {
                 case TimeFrame.Yearly:
-                    return new DateTime(date.Year, 01, 01, 00, 00, 00, date.Kind);
+                    return new DateTime(date.Year, 01, 01).AddYears(1).AddMilliseconds(-1);
                 case TimeFrame.Quarterly:
                     int month;
                     if (date.Month < 4)
@@ -25,16 +24,16 @@ namespace Trading.Analyzers.Common
                         month = 7;
                     else
                         month = 10;
-                    return new DateTime(date.Year, month, 01, 00, 00, 00, date.Kind);
+                    return new DateTime(date.Year, month, 1).AddMonths(3).AddMilliseconds(-1);
                 case TimeFrame.Monthly:
-                    return new DateTime(date.Year, date.Month, 01, 00, 00, 00, date.Kind);
+                    return new DateTime(date.Year, date.Month, 01).AddMonths(resolution.Size).AddMilliseconds(-1);
                 case TimeFrame.Weekly:
-                    var tempDate = date.AddDays(-((int)date.DayOfWeek));
-                    return new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, 00, 00, 00, date.Kind);
+                    var tempDate = date.AddDays(-(int)date.DayOfWeek);
+                    return new DateTime(tempDate.Year, tempDate.Month, tempDate.Day).AddDays(7).AddMilliseconds(-1);
                 case TimeFrame.Daily:
-                    return new DateTime(date.Year, date.Month, date.Day, 00, 00, 00, date.Kind);
+                    return new DateTime(date.Year, date.Month, date.Day).AddDays(1).AddMilliseconds(-1);
                 case TimeFrame.Hourly:
-                    int bottom = 0;
+                    int bottom = 9;
                     int top = resolution.Size;
                     while(top < 24)
                     {
@@ -43,10 +42,8 @@ namespace Trading.Analyzers.Common
                         bottom += resolution.Size;
                         top += resolution.Size;
                     }
-                    if (top >= 24)
-                        return new DateTime(date.Year, date.Month, date.Day, bottom,  00, 00, 00, date.Kind).AddHours(resolution.Size).AddMilliseconds(-1);
+                    return new DateTime(date.Year, date.Month, date.Day, bottom, 0, 0).AddHours(resolution.Size).AddMilliseconds(-1);
 
-                    return new DateTime(date.Year, date.Month, date.Day, top, 00, 00, 00, date.Kind);
                 case TimeFrame.Minute:
                     int floor = 0;
                     int ceiling = resolution.Size;
@@ -57,32 +54,10 @@ namespace Trading.Analyzers.Common
                         floor += resolution.Size;
                         ceiling += resolution.Size;
                     }
-
-                    if(ceiling >= 60)
-                        return new DateTime(date.Year, date.Month, date.Day, date.Hour,            floor, 00, 00, date.Kind).AddMinutes       (resolution.Size).AddMilliseconds(-1);
-
-                    //int minute = 0;
-                    //int maxLimit = 60;
-                    //int segments = 0;
-
-                    //segments = maxLimit / resolution.Size;
-                    //int[] partitions = new int[segments + 1];
-
-                    //for (int i = 0; i <= segments; i++)
-                    //{
-                    //    partitions[i] = i * segments;
-                    //}
-
-                    //foreach (int i in partitions)
-                    //{
-                    //    int index = date.Minute / i;
-                    //    minute = index;
-                    //}
-
-                    return new DateTime(date.Year, date.Month, date.Day, date.Hour, ceiling, 00, 00, date.Kind);
+                    return new DateTime(date.Year, date.Month, date.Day, date.Hour, floor, 0).AddMinutes(resolution.Size).AddMilliseconds(-1);
 
                 default:
-                    return DateTime.UtcNow;
+                    return date;
             }
         }
     }
