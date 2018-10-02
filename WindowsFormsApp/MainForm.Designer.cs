@@ -76,11 +76,13 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(170, 597);
             this.tableLayoutPanel1.TabIndex = 0;
+            // 
             // tableLayoutPanel_chartForm
             // 
-            this.tableLayoutPanel_chartForm.ColumnCount = 2;
-            this.tableLayoutPanel_chartForm.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel_chartForm.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel_chartForm.ColumnCount = 3;
+            this.tableLayoutPanel_chartForm.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel_chartForm.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel_chartForm.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel_chartForm.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel_chartForm.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel_chartForm.Name = "tableLayoutPanel_chartForm";

@@ -26,14 +26,13 @@ namespace Trading.Analyzers.Common
                         month = 10;
                     return new DateTime(date.Year, month, 1).AddMonths(3).AddMilliseconds(-1);
                 case TimeFrame.Monthly:
-                    return new DateTime(date.Year, date.Month, 01).AddMonths(resolution.Size).AddMilliseconds(-1);
+                    return date.AddMonths(1);
                 case TimeFrame.Weekly:
-                    var tempDate = date.AddDays(-(int)date.DayOfWeek);
-                    return new DateTime(tempDate.Year, tempDate.Month, tempDate.Day).AddDays(7).AddMilliseconds(-1);
+                    return date.AddDays(7);
                 case TimeFrame.Daily:
                     return new DateTime(date.Year, date.Month, date.Day).AddDays(1).AddMilliseconds(-1);
                 case TimeFrame.Hourly:
-                    int bottom = 9;
+                    int bottom = 0;
                     int top = resolution.Size;
                     while(top < 24)
                     {
@@ -42,7 +41,7 @@ namespace Trading.Analyzers.Common
                         bottom += resolution.Size;
                         top += resolution.Size;
                     }
-                    return new DateTime(date.Year, date.Month, date.Day, bottom, 0, 0).AddHours(resolution.Size).AddMilliseconds(-1);
+                    return new DateTime(date.Year, date.Month, date.Day, bottom, 0, 0);
 
                 case TimeFrame.Minute:
                     int floor = 0;
@@ -54,10 +53,33 @@ namespace Trading.Analyzers.Common
                         floor += resolution.Size;
                         ceiling += resolution.Size;
                     }
-                    return new DateTime(date.Year, date.Month, date.Day, date.Hour, floor, 0).AddMinutes(resolution.Size).AddMilliseconds(-1);
+                    return new DateTime(date.Year, date.Month, date.Day, date.Hour, floor, 0);
 
                 default:
                     return date;
+            }
+        }
+
+        public static DateTime GetEndDateTime(DateTime dateTime, Resolution resolution)
+        {
+            switch (resolution.TimeFrame)
+            {
+                case TimeFrame.Minute:
+                    return dateTime.AddMinutes(resolution.Size);
+                case TimeFrame.Hourly:
+                    return dateTime.AddHours(resolution.Size);
+                case TimeFrame.Daily:
+                    return dateTime.AddDays(resolution.Size);
+                case TimeFrame.Weekly:
+                    return dateTime.AddDays(7);
+                case TimeFrame.Monthly:
+                    return dateTime.AddMonths(resolution.Size);
+                case TimeFrame.Quarterly:
+                    return dateTime.AddMonths(resolution.Size * 3);
+                case TimeFrame.Yearly:
+                    return dateTime.AddYears(resolution.Size);
+                default:
+                    return dateTime;
             }
         }
     }

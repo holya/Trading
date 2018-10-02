@@ -14,6 +14,7 @@ namespace Trading.Common
         public double Close { get; set; }
         public double Volume { get; set; }
         public DateTime DateTime { get; set; }
+        public DateTime EndDateTime { get; set; }
         public DateTime PreviousBarDateTime { get { return PreviousBar.DateTime; } }
         public Bar PreviousBar { get; set; }
 

@@ -47,19 +47,19 @@ namespace WindowsFormsApp
 
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Monthly, 1), DateTime.UtcNow.AddMonths(-24), 0, 0);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), DateTime.UtcNow.AddMonths(-2), 0, 0);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), DateTime.UtcNow.AddMonths(-2), 0, 1);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), DateTime.UtcNow.AddMonths(-3), 0, 0);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), DateTime.UtcNow.AddMonths(-1), 1, 0);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), DateTime.UtcNow.AddDays(-6), 0, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), DateTime.UtcNow.AddDays(-6), 1, 1);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddDays(-3), 1, 0);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddDays(-2), 2, 0);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-10), 1, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-10), 2, 1);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-4), 1, 0);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-1), 1, 0);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddHours(-1), 1, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddMinutes(-10), 1, 1);
 
             f.OffersTableUpdated += OffersTableUpdated;
         }
@@ -150,11 +150,14 @@ namespace WindowsFormsApp
 
         private async void symbolLabel_Click(object sender, EventArgs e)
         {
+            if (((Label)sender) == selectedSymbolLabel)
+                return;
             if (selectedSymbolLabel != null)
             {
                 f.UnsubscibeRealTime(selectedSymbolLabel.Text);
                 selectedSymbolLabel.BackColor = normalSymbolLabelColor;
             }
+
             selectedSymbolLabel = (Label)sender;
             selectedSymbolLabel.BackColor = selectedSymbolLabelColor;
 
@@ -174,23 +177,28 @@ namespace WindowsFormsApp
             }
         }
 
-        private List<FxBar> GetHistoricalData(string symbol, Resolution resolution, DateTime from, DateTime to)
-        {
-            try
-            {
-                return (List<FxBar>)f.GetHistoricalData(symbol, resolution, from, to, true);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-                return null;
-            }
-        }
+        //private List<FxBar> GetHistoricalData(string symbol, Resolution resolution, DateTime from, DateTime to)
+        //{
+        //    try
+        //    {
+        //        var barList = (List<FxBar>)f.GetHistoricalData(symbol, resolution, from, to, false);
+        //        return barList;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        MessageBox.Show(e.Message);
+        //        return null;
+        //    }
+        //}
         private async Task<List<FxBar>> GetHistoricalDataAsync(string symbol, Resolution resolution, DateTime from, DateTime to)
         {
             try
             {
                 var bars = await f.GetHistoricalDataAsync(symbol, resolution, from, to, true);
+
+                foreach (var b in bars)
+                    b.EndDateTime = Utilities.GetEndDateTime(b.DateTime, resolution);
+
                 return (List<FxBar>)bars;
             }
             catch (Exception e)
@@ -210,7 +218,7 @@ namespace WindowsFormsApp
                 if(chart.DataPopulated && chartForm.Chart.Symbol == e.Item1)
                 {
                     FxBar b = (FxBar)chart.LegAnalyzer.LastBar;
-                    if(e.Item4 < b.DateTime)
+                    if(e.Item4 < b.EndDateTime)
                     {
                         FxBar newBar = new FxBar
                         {
@@ -229,6 +237,7 @@ namespace WindowsFormsApp
                     else
                     {
                         var dt = Utilities.NormalizeBarDateTime_FXCM(e.Item4, chartForm.Chart.Resolution);
+
                         FxBar newBar = new FxBar
                         {
                             Open = e.Item2,
@@ -239,7 +248,8 @@ namespace WindowsFormsApp
                             AskLow = e.Item3,
                             Close = e.Item2,
                             AskClose = e.Item3,
-                            DateTime = dt
+                            DateTime = dt,
+                            EndDateTime = Utilities.GetEndDateTime(dt,          chart.Resolution)
                         };
                         chart.LegAnalyzer.AddBar(newBar);
                     }
@@ -248,7 +258,7 @@ namespace WindowsFormsApp
         }
 
 
-        private void newChartToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void newChartToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (var dialogBox = new NewChartDialog())
             {
@@ -264,7 +274,7 @@ namespace WindowsFormsApp
                     var fromDate = dialogBox.dateTimePicker_from.Value;
                     var toDate = dialogBox.dateTimePicker_to.Value;
 
-                    var barList = GetHistoricalData(symbol, res, fromDate, toDate);
+                    var barList = await GetHistoricalDataAsync(symbol, res, fromDate, toDate);
 
                     HlocLAForm chartForm = createChartForm();
                     chartForm.Chart.Resolution = res;

@@ -49,7 +49,7 @@ namespace UnitTestProject1.Trading.Analyzers.Common_Tests
         {
             DateTime actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 02, 06, 5, 6, 12, DateTimeKind.Local), new Resolution(TimeFrame.Daily, 1));
             DateTime expected = new DateTime(2018, 02, 6, 23, 59, 59, 999);
-
+            var k = expected.IsDaylightSavingTime();
             Assert.AreEqual(expected, actual);
         }
 
