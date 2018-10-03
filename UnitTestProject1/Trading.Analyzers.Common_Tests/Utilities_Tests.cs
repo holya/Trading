@@ -61,8 +61,8 @@ namespace UnitTestProject1.Trading.Analyzers.Common_Tests
             Assert.AreEqual(expected, actual);
 
 
-            actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 01, 01, 2, 0, 10), new Resolution(TimeFrame.Hourly, 6));
-            expected = new DateTime(2018, 01, 01, 23, 0, 0);
+            actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 01, 02, 2, 0, 10), new Resolution(TimeFrame.Hourly, 6));
+            expected = new DateTime(2018, 01, 01, 21, 0, 0);
             Assert.AreEqual(expected, actual);
         }
 
