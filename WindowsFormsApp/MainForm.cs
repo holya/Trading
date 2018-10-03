@@ -51,7 +51,7 @@ namespace WindowsFormsApp
 
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), DateTime.UtcNow.AddMonths(-1), 1, 0);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), DateTime.UtcNow.AddDays(-6), 1, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), DateTime.UtcNow.AddDays(-6), 1, 1);
 
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddDays(-2), 2, 0);
 
@@ -59,7 +59,7 @@ namespace WindowsFormsApp
 
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-1), 1, 0);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddMinutes(-10), 1, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddMinutes(-10), 1, 1);
 
             f.OffersTableUpdated += OffersTableUpdated;
         }
