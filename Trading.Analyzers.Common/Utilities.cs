@@ -32,6 +32,7 @@ namespace Trading.Analyzers.Common
                 case TimeFrame.Daily:
                     return new DateTime(date.Year, date.Month, date.Day).AddDays(1).AddMilliseconds(-1);
                 case TimeFrame.Hourly:
+
                     //int portionLengh = 24 / resolution.Size;
                     //int startHour = 21;
                     //int endHour = 0;
@@ -42,29 +43,50 @@ namespace Trading.Analyzers.Common
                     //    if(endHour > 24)
 
                     //}
-                    DateTime dt = new DateTime(date.Year, date.Month, date.Day, date.Hour, 0, 0);
-                    
-                    int bottom = 21;
-                    int top = bottom + resolution.Size;
-                    for(int i = 1; i <= 24/resolution.Size; i++)
+                    //int top = bottom + resolution.Size;
+
+                    //if (date.Hour >= bottom)
+                    //{
+                    //    return dt.AddHours(-(date.Hour - bottom));
+                    //}
+
+                    //top = 24 - top;
+
+                    //if (date.Hour < top)
+                    //{
+                    //    return dt.AddHours(-(resolution.Size - date.Hour));
+                    //}
+                    //bottom = top;
+                    //top += resolution.Size;
+                    //*********************************
+                    //int adjustant = date.IsDaylightSavingTime() ? 21 : 22;
+                    //DateTime dt = new DateTime(date.Year, date.Month, date.Day, date.Hour, 0, 0).AddHours(-adjustant);
+
+                    //int bottom = 0;
+                    //int top = resolution.Size;
+                    //while(top <= 24)
+                    //{
+                    //    if (dt.Hour >= bottom && dt.Hour < top)
+                    //        break;
+                    //    bottom += resolution.Size;
+                    //    top += resolution.Size;
+                    //}
+                    //dt = new DateTime(dt.Year, dt.Month, dt.Day, bottom, dt.Minute, dt.Second);
+                    //dt = dt.AddHours(adjustant);
+                    //return dt;
+
+                    int cutOffHour = date.IsDaylightSavingTime() ? 21 : 22;
+                    DateTime startDate = new DateTime(date.Year, date.Month, date.Day, cutOffHour, 0, 0).AddDays(-1);
+                    DateTime endDate = startDate.AddHours(resolution.Size);
+                    for(int i = 0; i < 24/resolution.Size+4; i++)
                     {
-
-                        if (date.Hour >= bottom && date.Hour < top)
-                        {
-                            dt = dt.AddHours(-(date.Hour - bottom));
+                        if (date >= startDate && date < endDate)
                             break;
-                        }
-                        if(top >= 24)
-                        {
-                            bottom = top - 24;
-                            top = bottom + resolution.Size;
-                            continue;
-                        }
-                        bottom += resolution.Size;
-                        top += resolution.Size;
-                    }
-                    return dt;
 
+                        startDate = endDate;
+                        endDate = endDate.AddHours(resolution.Size);
+                    }
+                    return startDate;
                 case TimeFrame.Minute:
                     int floor = 0;
                     int ceiling = resolution.Size;
