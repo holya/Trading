@@ -4,13 +4,14 @@ using Trading.Common;
 using Trading.Brokers.Fxcm;
 using Trading.Analyzers.LegAnalyzer;
 using System.Linq;
+using System.Threading.Tasks;
 using Trading.Analyzers.Common;
 
 namespace ConsoleApp1
 {
     public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             FxcmWrapper f = new FxcmWrapper();
 
@@ -37,7 +38,7 @@ namespace ConsoleApp1
             List<FxBar> dailyBarList = null;
             try
             {
-                dailyBarList = (List<FxBar>)f.GetHistoricalData(symbol, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime);
+                dailyBarList = (List<FxBar>)f.GetHistoricalDataAsync(symbol, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime).GetAwaiter().GetResult();
             }
             catch (Exception e)
             {

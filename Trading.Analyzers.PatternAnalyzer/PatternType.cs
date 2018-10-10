@@ -8,9 +8,10 @@ namespace Trading.Analyzers.PatternAnalyzer
 {
     public enum PatternType
     {
-        StartFull,
-        StartDouble,
+        FullStart,
+        DoubleStart,
         PullBack,
+        DoublePullBack,
         Continuation1,
         Continuation2
     }

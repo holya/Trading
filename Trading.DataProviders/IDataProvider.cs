@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
 
-namespace Trading.DataProviders
+namespace Trading.DataProviders.Interfaces
 {
     public interface IDataProvider
     {
-        IEnumerable<Bar> GetHistoricalData(string symbol, Resolution resolution,
+        Task<IEnumerable<Bar>> GetHistoricalDataAsync(string symbol, Resolution resolution,
             DateTime beginDateTime, DateTime endDateTime, bool subscribeToRealTime = false);
     }
 }

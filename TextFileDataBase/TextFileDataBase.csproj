@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4DB58E7C-0B17-49CC-ABA8-763F25428817}</ProjectGuid>
+    <ProjectGuid>{A555290A-9076-4A96-9162-083F56C59548}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Trading.Analyzers.PatternAnalyzer</RootNamespace>
-    <AssemblyName>Trading.Analyzers.PatternAnalyzer</AssemblyName>
+    <RootNamespace>TextFileDataBase</RootNamespace>
+    <AssemblyName>TextFileDataBase</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,20 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PatternDirection.cs" />
-    <Compile Include="PatternAnalyzer.cs" />
-    <Compile Include="PatternType.cs" />
+    <Compile Include="TextDataBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Pattern.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Trading.Analyzers.Common\Trading.Analyzers.Common.csproj">
-      <Project>{bb95d2e4-9158-43f9-8e25-19483333175c}</Project>
-      <Name>Trading.Analyzers.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Trading.Common\Trading.Common.csproj">
-      <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
+      <Project>{0655B3C3-4B5B-4D2F-B721-8EBA6C74BE2F}</Project>
       <Name>Trading.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.Databases.Interfaces.csproj">
+      <Project>{35CEF0FC-636C-4C15-B07C-99C6C5B93439}</Project>
+      <Name>Trading.Databases.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

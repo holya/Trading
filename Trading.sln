@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Strategies", "Strategies", "{650C3A51-49D6-43C6-A234-703E96D2F779}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.DataProviders", "Trading.DataProviders\Trading.DataProviders.csproj", "{F56906E6-E201-4C15-BFB1-980D99BB3884}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.DataProviders.Interfaces", "Trading.DataProviders\Trading.DataProviders.Interfaces.csproj", "{F56906E6-E201-4C15-BFB1-980D99BB3884}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.Analyzers.Common", "Trading.Analyzers.Common\Trading.Analyzers.Common.csproj", "{BB95D2E4-9158-43F9-8E25-19483333175C}"
 EndProject
@@ -34,6 +34,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.Analyzers.PatternAnalyzer", "Trading.Analyzers.PatternAnalyzer\Trading.Analyzers.PatternAnalyzer.csproj", "{4DB58E7C-0B17-49CC-ABA8-763F25428817}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.Utilities", "Trading.Utilities\Trading.Utilities.csproj", "{18FB624D-8845-484A-833A-FF00BE65ACD9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataBases", "DataBases", "{A7C7D23A-84B0-4A3C-BD9C-C8175DC3010D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.Databases.Interfaces", "Trading.Databases.Interfaces\Trading.Databases.Interfaces.csproj", "{35CEF0FC-636C-4C15-B07C-99C6C5B93439}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QuoteManager", "QuoteManager", "{901DDDA7-1F0A-404B-B44F-4BC8F123E4A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextFileDataBase", "TextFileDataBase\TextFileDataBase.csproj", "{A555290A-9076-4A96-9162-083F56C59548}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +89,14 @@ Global
 		{18FB624D-8845-484A-833A-FF00BE65ACD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18FB624D-8845-484A-833A-FF00BE65ACD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18FB624D-8845-484A-833A-FF00BE65ACD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35CEF0FC-636C-4C15-B07C-99C6C5B93439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35CEF0FC-636C-4C15-B07C-99C6C5B93439}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35CEF0FC-636C-4C15-B07C-99C6C5B93439}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35CEF0FC-636C-4C15-B07C-99C6C5B93439}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A555290A-9076-4A96-9162-083F56C59548}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A555290A-9076-4A96-9162-083F56C59548}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A555290A-9076-4A96-9162-083F56C59548}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A555290A-9076-4A96-9162-083F56C59548}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +109,8 @@ Global
 		{87841894-D083-4D90-ABC9-62C63A60D2A3} = {9A463DEA-672B-4B8F-B1E0-8AEADC2137DF}
 		{40B630C9-D464-49E5-9611-55910820A460} = {9A463DEA-672B-4B8F-B1E0-8AEADC2137DF}
 		{4DB58E7C-0B17-49CC-ABA8-763F25428817} = {40B630C9-D464-49E5-9611-55910820A460}
+		{35CEF0FC-636C-4C15-B07C-99C6C5B93439} = {A7C7D23A-84B0-4A3C-BD9C-C8175DC3010D}
+		{A555290A-9076-4A96-9162-083F56C59548} = {A7C7D23A-84B0-4A3C-BD9C-C8175DC3010D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FD5A9B62-3E83-4145-9C10-7C452B8FA9F0}

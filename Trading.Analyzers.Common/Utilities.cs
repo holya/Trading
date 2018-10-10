@@ -14,6 +14,7 @@ namespace Trading.Analyzers.Common
             {
                 case TimeFrame.Yearly:
                     return new DateTime(date.Year, 01, 01).AddYears(1).AddMilliseconds(-1);
+
                 case TimeFrame.Quarterly:
                     int month;
                     if (date.Month < 4)
@@ -25,56 +26,24 @@ namespace Trading.Analyzers.Common
                     else
                         month = 10;
                     return new DateTime(date.Year, month, 1).AddMonths(3).AddMilliseconds(-1);
+
                 case TimeFrame.Monthly:
-                    return date.AddMonths(1);
+                    DateTime dt = new DateTime(date.Year, date.Month, 1, 0, 0, 0);
+                    int hour = dt.AddMonths(-1).IsDaylightSavingTime() ? 21 : 22;
+                    return dt.AddHours(-(24 - hour));
+
                 case TimeFrame.Weekly:
-                    return date.AddDays(7);
+                    DateTime tempDate = new DateTime(date.Year, date.Month, date.Day, date.IsDaylightSavingTime() ? 21 : 22, 0, 0).AddDays(-(int)(date.DayOfWeek + 1));
+                    return new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempDate.IsDaylightSavingTime() ? 21 : 22, tempDate.Minute, tempDate.Second);
+
                 case TimeFrame.Daily:
-                    return new DateTime(date.Year, date.Month, date.Day).AddDays(1).AddMilliseconds(-1);
+                    int startHour = date.IsDaylightSavingTime() ? 21 : 22;
+                    DateTime d = new DateTime(date.Year, date.Month, date.Day, startHour, 0, 0);
+                    if (date.Hour >= startHour)
+                        return d;
+                    return d.AddDays(-1);
+
                 case TimeFrame.Hourly:
-
-                    //int portionLengh = 24 / resolution.Size;
-                    //int startHour = 21;
-                    //int endHour = 0;
-                    //DateTime dt = date;
-                    //for(int i = 1; i <= portionLengh; i++)
-                    //{
-                    //    endHour += startHour + (portionLengh * i);
-                    //    if(endHour > 24)
-
-                    //}
-                    //int top = bottom + resolution.Size;
-
-                    //if (date.Hour >= bottom)
-                    //{
-                    //    return dt.AddHours(-(date.Hour - bottom));
-                    //}
-
-                    //top = 24 - top;
-
-                    //if (date.Hour < top)
-                    //{
-                    //    return dt.AddHours(-(resolution.Size - date.Hour));
-                    //}
-                    //bottom = top;
-                    //top += resolution.Size;
-                    //*********************************
-                    //int adjustant = date.IsDaylightSavingTime() ? 21 : 22;
-                    //DateTime dt = new DateTime(date.Year, date.Month, date.Day, date.Hour, 0, 0).AddHours(-adjustant);
-
-                    //int bottom = 0;
-                    //int top = resolution.Size;
-                    //while(top <= 24)
-                    //{
-                    //    if (dt.Hour >= bottom && dt.Hour < top)
-                    //        break;
-                    //    bottom += resolution.Size;
-                    //    top += resolution.Size;
-                    //}
-                    //dt = new DateTime(dt.Year, dt.Month, dt.Day, bottom, dt.Minute, dt.Second);
-                    //dt = dt.AddHours(adjustant);
-                    //return dt;
-
                     int cutOffHour = date.IsDaylightSavingTime() ? 21 : 22;
                     DateTime startDate = new DateTime(date.Year, date.Month, date.Day, cutOffHour, 0, 0).AddDays(-1);
                     DateTime endDate = startDate.AddHours(resolution.Size);
@@ -87,6 +56,7 @@ namespace Trading.Analyzers.Common
                         endDate = endDate.AddHours(resolution.Size);
                     }
                     return startDate;
+
                 case TimeFrame.Minute:
                     int floor = 0;
                     int ceiling = resolution.Size;

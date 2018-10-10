@@ -16,7 +16,29 @@ namespace Trading.Analyzers.PatternAnalyzer
             LegList = new List<Leg>();
         }
 
+        public PatternDirection Direction
+        {
+            get
+            {
+                if (LegList.First().Direction == LegDirection.Up)
+                    return PatternDirection.Up;
+                return PatternDirection.Down;
+            }
+        }
         public PatternType Type { get; set; }
+        //{
+        //    get
+        //    {
+        //        if(Direction == PatternDirection.Up)
+        //        {
+
+        //        }
+        //        else
+        //        {
+
+        //        }
+        //    }
+        //}
 
         public void AddLeg(Leg leg) { LegList.Add(leg); }
     }

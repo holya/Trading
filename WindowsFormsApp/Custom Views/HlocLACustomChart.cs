@@ -29,6 +29,10 @@ namespace WindowsFormsApp.Custom_Views
             LegAnalyzer.AnalyzerPopulated += LegAnalyzer_AnalyzerPopulated;
             LegAnalyzer.NewBarAdded += LegAnalyzer_NewBarAdded;
             LegAnalyzer.LastBarUpdated += LegAnalyzer_LastBarUpdated;
+
+            ChartAreas[0].ShadowColor = Color.Red;
+            ChartAreas[0].BackColor = Color.Black;
+            this.BackColor = Color.Black;
         }
 
         private void LegAnalyzer_LastBarUpdated(object sender, LastBarUpdatedEventArgs e)
@@ -112,7 +116,7 @@ namespace WindowsFormsApp.Custom_Views
                 AxisLabel = labelString,
                 XValue = bar.DateTime.ToOADate(),
                 YValues = new double[] { bar.High, bar.Low, bar.Open, bar.Close },
-                Color = leg.Direction == LegDirection.Up ? Color.Green : Color.Red
+                Color = leg.Direction == LegDirection.Up ? Color.Green : Color.DarkRed
             };
             chartSeries.Points.Add(dp);
             //chartSeries.Points.Last().YValues[3] = ;
@@ -152,12 +156,13 @@ namespace WindowsFormsApp.Custom_Views
 
             //draw close value
             float diff = (float)ChartAreas[0].AxisX.ValueToPixelPosition(Series[0].Points.Count - 1) - Right;
-            float xCoord = Right + diff/2;
+
+            float xCoord = Right - 60;
             var yCoord = (float)ChartAreas[0].AxisY2.ValueToPixelPosition(LegAnalyzer.Close);
             var f = new Font(FontFamily.GenericSerif, 8);
-            SolidBrush db = new SolidBrush(Color.Blue);
+            SolidBrush db = new SolidBrush(Color.DarkRed);
             g.DrawString("" + LegAnalyzer.Close, f, db, xCoord, yCoord - 10);
-
+            
         }
 
 

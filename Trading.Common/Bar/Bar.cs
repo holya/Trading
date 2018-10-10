@@ -98,5 +98,10 @@ namespace Trading.Common
             Volume += bar.Volume;
             //DateTime = bar.DateTime;
         }
+
+        public override string ToString()
+        {
+            return $"{Open},{High},{Low},{Close},{Volume},{DateTime},{EndDateTime}";
+        }
     }
 }

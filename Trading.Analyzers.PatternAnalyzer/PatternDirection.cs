@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Trading.Analyzers.PatternAnalyzer
 {
-    public enum Direction
+    public enum PatternDirection
     {
         Up,
         Down,

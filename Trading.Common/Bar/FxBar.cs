@@ -37,5 +37,10 @@ namespace Trading.Common
 
             AskClose = ((FxBar)bar).AskClose;
         }
+
+        public override string ToString()
+        {
+            return $"{Open},{AskOpen},{High},{AskHigh},{Low},{AskLow},{Close},{AskClose},{Volume},{DateTime},{EndDateTime}";
+        }
     }
 }

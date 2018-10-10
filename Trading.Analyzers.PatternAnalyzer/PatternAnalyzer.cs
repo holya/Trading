@@ -78,7 +78,7 @@ namespace Trading.Analyzers.PatternAnalyzer
 
             Pattern pattern = new Pattern();
             pattern.AddLeg(leg);
-            pattern.Type = PatternType.StartFull;
+            //pattern.Type = PatternType.StartFull;
 
 
             this.RefList.Add(leg.Direction == LegDirection.Up ?

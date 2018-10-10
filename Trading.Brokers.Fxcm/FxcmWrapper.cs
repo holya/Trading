@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Trading.Analyzers.Common;
 using Trading.Common;
-using Trading.DataProviders;
+using Trading.DataProviders.Interfaces;
 
 namespace Trading.Brokers.Fxcm
 {
@@ -89,7 +89,7 @@ namespace Trading.Brokers.Fxcm
         }
         #endregion
 
-        public IEnumerable<Bar> GetHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime, bool subscribeToRealTime = false)
+        private IEnumerable<Bar> GetHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime, bool subscribeToRealTime = false)
         {
             GetHistoricalDataResponseListener responseListener = new GetHistoricalDataResponseListener(session);
             session.subscribeResponse(responseListener);

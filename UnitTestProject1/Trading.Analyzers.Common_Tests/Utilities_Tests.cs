@@ -30,27 +30,54 @@ namespace UnitTestProject1.Trading.Analyzers.Common_Tests
         public void NormalizeBarDateTime_FXCM_Monthly()
         {
             DateTime actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 02, 06, 5, 6, 12), new Resolution(TimeFrame.Monthly, 1));
-            DateTime expected = new DateTime(2018, 02, 28, 23, 59, 59, 999);
+            DateTime expected = new DateTime(2018, 1, 31, 22, 0, 0);
+            Assert.AreEqual(expected, actual);
 
+            actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 1, 30, 5, 6, 12), new Resolution(TimeFrame.Monthly, 1));
+            expected = new DateTime(2017, 12, 31, 22, 0, 0);
             Assert.AreEqual(expected, actual);
         }
 
         [TestMethod]
         public void NormalizeBarDateTime_FXCM_Weekly()
         {
-            DateTime actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 9, 26, 5, 6, 12), new Resolution(TimeFrame.Weekly, 1));
-            DateTime expected = new DateTime(2018, 12, 30, 00, 00, 00, DateTimeKind.Utc);
-
+            DateTime actual;
+            DateTime expected;
+            actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 10, 5, 5, 6, 12), new Resolution(TimeFrame.Weekly, 1));
+            expected = new DateTime(2018, 9, 29, 21, 00, 00);
             Assert.AreEqual(expected, actual);
+
+            actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 9, 28, 5, 6, 12), new Resolution(TimeFrame.Weekly, 1));
+            expected = new DateTime(2018, 9, 22, 21, 00, 00);
+            Assert.AreEqual(expected, actual);
+
+            //************** March should return false for DayLightSaving but in this test returns true!!***********//
+            actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 4, 5, 5, 6, 12), new Resolution(TimeFrame.Weekly, 1));
+            expected = new DateTime(2018, 3, 31, 21, 00, 00);
+            Assert.AreEqual(expected, actual);
+
+
         }
 
         [TestMethod]
         public void NormalizeBarDateTime_FXCM_Daily()
         {
-            DateTime actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 02, 06, 5, 6, 12, DateTimeKind.Local), new Resolution(TimeFrame.Daily, 1));
-            DateTime expected = new DateTime(2018, 02, 6, 23, 59, 59, 999);
-            var k = expected.IsDaylightSavingTime();
+            DateTime actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 02, 03, 5, 6, 12, DateTimeKind.Local), new Resolution(TimeFrame.Daily, 1));
+            DateTime expected = new DateTime(2018, 02, 2, 22, 0, 0);
             Assert.AreEqual(expected, actual);
+
+            actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 4, 3, 5, 6, 12, DateTimeKind.Local), new Resolution(TimeFrame.Daily, 1));
+            expected = new DateTime(2018, 04, 2, 21, 0, 0);
+            Assert.AreEqual(expected, actual);
+
+            actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 4, 3, 21, 6, 12, DateTimeKind.Local), new Resolution(TimeFrame.Daily, 1));
+            expected = new DateTime(2018, 04, 3, 21, 0, 0);
+            Assert.AreEqual(expected, actual);
+
+            actual = Utilities.NormalizeBarDateTime_FXCM(new DateTime(2018, 1, 1, 4, 6, 12, DateTimeKind.Local), new Resolution(TimeFrame.Daily, 1));
+            expected = new DateTime(2017, 12, 31, 22, 0, 0);
+            Assert.AreEqual(expected, actual);
+
         }
 
         [TestMethod]
