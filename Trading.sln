@@ -41,7 +41,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.Databases.Interface
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QuoteManager", "QuoteManager", "{901DDDA7-1F0A-404B-B44F-4BC8F123E4A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextFileDataBase", "TextFileDataBase\TextFileDataBase.csproj", "{A555290A-9076-4A96-9162-083F56C59548}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.DataBases.TextFileDataBase", "TextFileDataBase\Trading.DataBases.TextFileDataBase.csproj", "{A555290A-9076-4A96-9162-083F56C59548}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

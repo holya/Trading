@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Trading.Common;
 using Trading.Databases.Interfaces;
 
-namespace TextFileDataBase
+namespace Trading.Databases.TextFileDataBase
 {
     public class TextDataBase : IDataBase
     {
