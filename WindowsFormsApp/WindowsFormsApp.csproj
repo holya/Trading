@@ -118,7 +118,7 @@
     <Content Include="Symbols.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TextFileDataBase\TextFileDataBase.csproj">
+    <ProjectReference Include="..\TextFileDataBase\Trading.DataBases.TextFileDataBase.csproj">
       <Project>{a555290a-9076-4a96-9162-083f56c59548}</Project>
       <Name>TextFileDataBase</Name>
     </ProjectReference>

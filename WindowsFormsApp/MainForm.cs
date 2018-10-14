@@ -15,7 +15,7 @@ using Trading.Brokers.Fxcm;
 using Trading.Common;
 using WindowsFormsApp.Custom_Views;
 using Trading.Utilities;
-using TextFileDataBase;
+using Trading.Databases.TextFileDataBase;
 
 namespace WindowsFormsApp
 {
