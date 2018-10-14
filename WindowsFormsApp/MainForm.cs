@@ -15,12 +15,15 @@ using Trading.Brokers.Fxcm;
 using Trading.Common;
 using WindowsFormsApp.Custom_Views;
 using Trading.Utilities;
+using TextFileDataBase;
 
 namespace WindowsFormsApp
 {
     public partial class MainForm : Form
     {
         FxcmWrapper f = new FxcmWrapper();
+
+        TextDataBase dataBase = new TextDataBase();
         
         List<HlocLAForm> chartFormList = new List<HlocLAForm>();
 
@@ -33,6 +36,8 @@ namespace WindowsFormsApp
         public MainForm()
         {
             InitializeComponent();
+
+            dataBase.DirectoryFolderCheck(); //very bad practice
 
             logIn();
 
