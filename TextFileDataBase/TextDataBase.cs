@@ -7,7 +7,7 @@ using Trading.Common;
 using Trading.Databases.Interfaces;
 using Trading.Utilities;
 
-namespace TextFileDataBase
+namespace Trading.Databases.TextFileDataBase
 {
     public class TextDataBase : IDataBase
     {
