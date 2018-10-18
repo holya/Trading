@@ -23,13 +23,30 @@ namespace Trading.Databases.TextFileDataBase
             throw new NotImplementedException();
         }
 
+
+
+        private IEnumerable<string> NormalizeSymbolsForDirectory(IEnumerable<string> pairs)
+        {
+            var refinedSymbol = new List<string>();
+            char[] temp = new char[7];
+            for (int i = 0; i < pairs.Count(); i++)
+            {
+                temp = pairs.ElementAt(i).ToCharArray();
+                temp[3] = '_';
+                string newSymbol = new string(temp);
+                refinedSymbol.Add(newSymbol);
+            }
+            return refinedSymbol;
+        }
+
         public void DirectoryFolderCheck()
         {
             string projectDirectory = System.IO.Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-            string instrumentsDirectory = projectDirectory + "/Instruments/Forex";
+            string instrumentsDirectory = projectDirectory + "\\Instruments\\Forex";
             System.IO.Directory.CreateDirectory(instrumentsDirectory);
 
             var majorPairs = symbolsManager.GetForexPairsMajor();
+            majorPairs = NormalizeSymbolsForDirectory(majorPairs);
             foreach (var v in majorPairs)
             {
                 string majorsDirectory = instrumentsDirectory + $"/Majors/{v}";
@@ -37,6 +54,7 @@ namespace Trading.Databases.TextFileDataBase
             }
 
             var minorPairs = symbolsManager.GetForexPairsMinor();
+            minorPairs = NormalizeSymbolsForDirectory(minorPairs);
             foreach (var i in minorPairs)
             {
                 string minorsDirectory = instrumentsDirectory + $"/Minors/{i}";
