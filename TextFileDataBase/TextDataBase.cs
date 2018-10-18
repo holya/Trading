@@ -45,16 +45,14 @@ namespace Trading.Databases.TextFileDataBase
             string instrumentsDirectory = projectDirectory + "\\Instruments\\Forex";
             System.IO.Directory.CreateDirectory(instrumentsDirectory);
 
-            var majorPairs = symbolsManager.GetForexPairsMajor();
-            majorPairs = NormalizeSymbolsForDirectory(majorPairs);
+            var majorPairs = NormalizeSymbolsForDirectory(symbolsManager.GetForexPairsMajor());
             foreach (var v in majorPairs)
             {
                 string majorsDirectory = instrumentsDirectory + $"/Majors/{v}";
                 System.IO.Directory.CreateDirectory(majorsDirectory);
             }
 
-            var minorPairs = symbolsManager.GetForexPairsMinor();
-            minorPairs = NormalizeSymbolsForDirectory(minorPairs);
+            var minorPairs = NormalizeSymbolsForDirectory(symbolsManager.GetForexPairsMinor());
             foreach (var i in minorPairs)
             {
                 string minorsDirectory = instrumentsDirectory + $"/Minors/{i}";
