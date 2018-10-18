@@ -13,12 +13,12 @@ namespace Trading.Databases.TextFileDataBase
     {
         SymbolsManager symbolsManager = new SymbolsManager();
 
-        public IEnumerable<Bar> LoadData(string symbol, Resolution resolution, DateTime from, DateTime to)
+        public IEnumerable<Bar> ReadData(string symbol, Resolution resolution, DateTime from, DateTime to)
         {
             throw new NotImplementedException();
         }
 
-        public void SaveData(string symbol, Resolution resolution, IEnumerable<Bar> barList)
+        public void WriteData(string symbol, Resolution resolution, IEnumerable<Bar> barList)
         {
             throw new NotImplementedException();
         }
