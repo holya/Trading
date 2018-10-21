@@ -50,8 +50,8 @@ namespace Trading.Databases.TextFileDataBase
             totalPairs = NormalizeSymbolsForDirectory(totalPairs);
             foreach (var v in totalPairs)
             {
-                string majorsDirectory = instrumentsDirectory + $"/{v}";
-                Directory.CreateDirectory(majorsDirectory);
+                string symbolsDirectory = instrumentsDirectory + $"/{v}";
+                Directory.CreateDirectory(symbolsDirectory);
             }
 
         }
