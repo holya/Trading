@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
@@ -41,25 +42,18 @@ namespace Trading.Databases.TextFileDataBase
 
         public void DirectoryFolderCheck()
         {
-            string projectDirectory = System.IO.Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+            string projectDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
             string instrumentsDirectory = projectDirectory + "\\Instruments\\Forex";
-            System.IO.Directory.CreateDirectory(instrumentsDirectory);
+            Directory.CreateDirectory(instrumentsDirectory);
+            var totalPairs = symbolsManager.GetForexPairsMajor().Concat(symbolsManager.GetForexPairsMinor());
 
-            var majorPairs = NormalizeSymbolsForDirectory(symbolsManager.GetForexPairsMajor());
-            foreach (var v in majorPairs)
+            totalPairs = NormalizeSymbolsForDirectory(totalPairs);
+            foreach (var v in totalPairs)
             {
-                string majorsDirectory = instrumentsDirectory + $"/Majors/{v}";
-                System.IO.Directory.CreateDirectory(majorsDirectory);
+                string majorsDirectory = instrumentsDirectory + $"/{v}";
+                Directory.CreateDirectory(majorsDirectory);
             }
 
-            var minorPairs = NormalizeSymbolsForDirectory(symbolsManager.GetForexPairsMinor());
-            foreach (var i in minorPairs)
-            {
-                string minorsDirectory = instrumentsDirectory + $"/Minors/{i}";
-                System.IO.Directory.CreateDirectory(minorsDirectory);
-            }
         }
-
-
     }
 }

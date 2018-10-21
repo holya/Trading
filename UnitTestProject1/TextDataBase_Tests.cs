@@ -8,7 +8,7 @@ namespace UnitTestProject1
     public class TextDataBase_Tests
     {
         [TestMethod]
-        public void SaveData__Observe_Valid_Data_Entry()
+        public void WriteData__Observe_Valid_Data_Entry()
         {
             Assert.Fail();
         }
