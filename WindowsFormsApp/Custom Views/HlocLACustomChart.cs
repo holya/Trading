@@ -30,7 +30,6 @@ namespace WindowsFormsApp.Custom_Views
             LegAnalyzer.NewBarAdded += LegAnalyzer_NewBarAdded;
             LegAnalyzer.LastBarUpdated += LegAnalyzer_LastBarUpdated;
 
-            ChartAreas[0].ShadowColor = Color.Red;
             ChartAreas[0].BackColor = Color.Black;
             this.BackColor = Color.Black;
         }
@@ -160,7 +159,7 @@ namespace WindowsFormsApp.Custom_Views
             float xCoord = Right - 60;
             var yCoord = (float)ChartAreas[0].AxisY2.ValueToPixelPosition(LegAnalyzer.Close);
             var f = new Font(FontFamily.GenericSerif, 8);
-            SolidBrush db = new SolidBrush(Color.DarkRed);
+            SolidBrush db = new SolidBrush(Color.White);
             g.DrawString("" + LegAnalyzer.Close, f, db, xCoord, yCoord - 10);
             
         }

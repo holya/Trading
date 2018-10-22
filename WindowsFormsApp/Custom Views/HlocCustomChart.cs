@@ -51,6 +51,7 @@ namespace WindowsFormsApp.Custom_Views
             // series1
             //
             series1.BorderWidth = 3;
+            series1.MarkerColor = Color.White;
             series1.ChartArea = "ChartArea1";
             series1.ChartType = SeriesChartType.Stock;
             series1.IsXValueIndexed = true;

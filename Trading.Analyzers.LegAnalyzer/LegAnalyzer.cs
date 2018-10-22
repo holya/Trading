@@ -28,20 +28,13 @@ namespace Trading.Analyzers.LegAnalyzer
         #endregion
 
         public LegAnalyzer() { addBar = addFirstBar; }
-        //public LegAnalyzer(Resolution resolution):this()
-        //{
-        //    //addBar = addFirstBar;
-        //    Resolution = resolution;
-        //}
 
         public void AddBarList(IEnumerable<Bar> barList)
         {
-
             for (int i = 0; i < barList.Count(); i++)
             {
                 addBar(barList.ElementAt(i));
             }
-
             _onAnalyzerPopulated(this, new AnalyzerPopulatedEventArgs { LegList = this.LegList });
         }
 
@@ -56,14 +49,40 @@ namespace Trading.Analyzers.LegAnalyzer
         private void addBarContiued(Bar newBar)
         {
             newBar.PreviousBar = LastBar;
-            if(LastBar.IsSameDirection(newBar))
+            if((LastLeg.Direction == LegDirection.Up && newBar.Low >= LastBar.Low) ||
+                LastLeg.Direction == LegDirection.Down && newBar.High <= LastBar.High)
             {
                 LegList.Last().AddBar(newBar);
                 return;
             }
+
             LegList.Add(new Leg(newBar) { PreviousLeg = LegList.Last() });
 
+            if(LastLeg.Direction == LegDirection.Up)
+            {
+                createReferenceForLowOfThisBar(LastBar);
+
+                if(LastLeg.PreviousLeg.Direction == LegDirection.Up)
+                {
+                }
+            }
+
         }
+
+        private void createReferenceForLowOfThisBar(Bar bar)
+        {
+            createReference(bar.Low, bar.DateTime, bar);
+        }
+        private void createReferenceForHighOfThisBar(Bar bar)
+        {
+            createReference(bar.High, bar.DateTime, bar);
+        }
+
+        private void createReference(double price, DateTime dateTime, Bar owner)
+        {
+            RefList.Add(new Reference { Price = price, DateTime = dateTime, Owner = owner });
+        }
+
         public void AddBar(Bar newBar)
         {
             addBar(newBar);
@@ -83,6 +102,8 @@ namespace Trading.Analyzers.LegAnalyzer
                 LastLeg.BarList.Remove(LastBar);
                 if (LastLeg.BarCount == 0)
                     LegList.Remove(LastLeg);
+                if (LegList.Count == 0)
+                    addBar = this.addFirstBar;
                 addBar(savedLastBar);
                 updateEnum = LastbarUpdateEventEnum.TypeChanged;
             }

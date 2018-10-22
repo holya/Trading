@@ -20,9 +20,7 @@ namespace Trading.Analyzers.PatternAnalyzer
         {
             get
             {
-                if (LegList.First().Direction == LegDirection.Up)
-                    return PatternDirection.Up;
-                return PatternDirection.Down;
+                return LegList.First().Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
             }
         }
         public PatternType Type { get; set; }

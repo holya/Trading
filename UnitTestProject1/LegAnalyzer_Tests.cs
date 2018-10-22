@@ -62,6 +62,7 @@ namespace UnitTestProject1
             Assert.AreEqual(4, la.LastLeg.BarCount);
         }
 
+
         [TestMethod]
         public void UpdateLastBar__Update_Close()
         {
@@ -119,6 +120,30 @@ namespace UnitTestProject1
 
         }
 
+        [TestMethod]
+        public void AddBar__FirstLeg_FirstBar_TypeChanged()
+        {
+            LegAnalyzer la = new LegAnalyzer();
+
+            la.AddBar(new Bar(10, 20, 5, 12, 0, DateTime.Now));
+            la.UpdateLastBar(new Bar(10, 20, 5, 9, 0, DateTime.Now));
+
+            Assert.AreEqual(BarDirection.OutsideDown, la.LastBar.Direction);
+        }
+
+        [TestMethod]
+        public void OutsideUpBar_After_UpLeg_Should_Create_New_UpLeg()
+        {
+            LegAnalyzer la = new LegAnalyzer();
+
+            la.AddBar(new Bar(10, 20, 5, 12, 0, DateTime.Now));
+            la.AddBar(new Bar(15, 25, 10, 17, 0, DateTime.Now));
+
+            la.AddBar(new Bar(15, 27, 8, 17, 0, DateTime.Now));
+
+            Assert.AreEqual(2, la.LegsCount);
+            Assert.AreEqual(LegDirection.Up, la.LastLeg.Direction);
+        }
         //[TestMethod]
         //public void UpdateLastBar__Send_New_Bar()
         //{
