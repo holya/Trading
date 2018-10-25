@@ -7,19 +7,25 @@ using System.Threading.Tasks;
 using Trading.Common;
 using Trading.Databases.Interfaces;
 using Trading.Utilities;
+using Trading.Common.Instrument;
 
 namespace Trading.Databases.TextFileDataBase
 {
     public class TextDataBase : IDataBase
     {
-        SymbolsManager symbolsManager = new SymbolsManager();
-        string root = "C:\\DataBase\\Forex\\";
+        public string root = "C:\\DataBase\\";
 
-        public IEnumerable<Bar> ReadData(string symbol, Resolution resolution)
+        public TextDataBase() { }
+        public TextDataBase(string rootPath)
+        {
+            root = rootPath;
+        }
+
+        public IEnumerable<Bar> ReadData(Instrument instrument, Resolution resolution)
         {
             List<Bar> barList = new List<Bar>();
 
-            string directoryName = root + getSymbolFolderName(symbol);
+            string directoryName = $"{getSymbolFolderName(instrument)}";
             if (!Directory.Exists(directoryName))
                 return barList;
 
@@ -31,12 +37,22 @@ namespace Trading.Databases.TextFileDataBase
             using (StreamReader sr = new StreamReader(fileFullPath))
             {
                 string line;
-                while((line = sr.ReadLine()) != null)
+                if (instrument.Type == InstrumentType.Forex)
                 {
-                    string[] str = line.Split(new char[] { ',' });
-                    if(str.Count() > 7)
+                    while ((line = sr.ReadLine()) != null)
                     {
+                        string[] str = line.Split(new char[] { ',' });
                         FxBar b = new FxBar(Convert.ToDouble(str[0]), Convert.ToDouble(str[1]), Convert.ToDouble(str[2]), Convert.ToDouble(str[3]), Convert.ToDouble(str[4]), Convert.ToDouble(str[5]), Convert.ToDouble(str[6]), Convert.ToDouble(str[7]), Convert.ToDouble(str[8]), Convert.ToDateTime(str[9]), Convert.ToDateTime(str[10]));
+
+                        barList.Add(b);
+                    }
+                }
+                else
+                {
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        string[] str = line.Split(new char[] { ',' });
+                        Bar b = new Bar(Convert.ToDouble(str[0]), Convert.ToDouble(str[1]), Convert.ToDouble(str[2]), Convert.ToDouble(str[3]), Convert.ToDouble(str[4]), Convert.ToDateTime(str[5]), Convert.ToDateTime(str[6]));
 
                         barList.Add(b);
                     }
@@ -46,15 +62,13 @@ namespace Trading.Databases.TextFileDataBase
             return barList;
         }
 
-        public void WriteData(string symbol, Resolution resolution, IEnumerable<Bar> barList)
+        public void WriteData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
-            string directoryName = root + getSymbolFolderName(symbol);
-            bool directoryExists = Directory.Exists(directoryName);
-            if (!directoryExists)
+            string directoryName = $"{getSymbolFolderName(instrument)}";
+            if (!Directory.Exists(directoryName))
                 Directory.CreateDirectory(directoryName);
 
-            string fn = getFileName(resolution);
-            string fileFullPath = $"{directoryName}\\{fn}.txt";
+            string fileFullPath = $"{directoryName}\\{getFileName(resolution)}.txt";
 
             using(StreamWriter sw = new StreamWriter(fileFullPath))
             {
@@ -63,43 +77,20 @@ namespace Trading.Databases.TextFileDataBase
             }
         }
 
-        private string getSymbolFolderName(string symbol)
+        private string getSymbolFolderName(Instrument instrument)
         {
-            return symbol.Substring(0, 3) + symbol.Substring(4, 3);
+            string path = $"{root}{instrument.Type.ToString()}";
+            if (instrument.Type == InstrumentType.Forex)
+                path += $"\\{instrument.Name.Substring(0, 3)}{instrument.Name.Substring(4, 3)}";
+            else
+                path += $"\\{instrument.Name}";
+
+            return path;
         }
+
         private string getFileName(Resolution resolution)
         {
             return $"{resolution.TimeFrame.ToString()}_{resolution.Size}";
-        }
-
-        private IEnumerable<string> NormalizeSymbolsForDirectory(IEnumerable<string> pairs)
-        {
-            var refinedSymbol = new List<string>();
-            char[] temp = new char[7];
-            for (int i = 0; i < pairs.Count(); i++)
-            {
-                temp = pairs.ElementAt(i).ToCharArray();
-                temp[3] = '_';
-                string newSymbol = new string(temp);
-                refinedSymbol.Add(newSymbol);
-            }
-            return refinedSymbol;
-        }
-
-        public void DirectoryFolderCheck()
-        {
-            string projectDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-            string instrumentsDirectory = projectDirectory + "\\Instruments\\Forex";
-            Directory.CreateDirectory(instrumentsDirectory);
-            var totalPairs = symbolsManager.GetForexPairsMajor().Concat(symbolsManager.GetForexPairsMinor());
-
-            totalPairs = NormalizeSymbolsForDirectory(totalPairs);
-            foreach (var v in totalPairs)
-            {
-                string symbolsDirectory = instrumentsDirectory + $"/{v}";
-                Directory.CreateDirectory(symbolsDirectory);
-            }
-
         }
     }
 }

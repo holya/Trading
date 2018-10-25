@@ -37,8 +37,6 @@ namespace WindowsFormsApp
         {
             InitializeComponent();
 
-            dataBase.DirectoryFolderCheck(); //very bad practice
-
             logIn();
 
             populateSymbols();
