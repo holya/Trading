@@ -13,18 +13,64 @@ namespace Trading.Databases.TextFileDataBase
     public class TextDataBase : IDataBase
     {
         SymbolsManager symbolsManager = new SymbolsManager();
+        string root = "C:\\DataBase\\Forex\\";
 
-        public IEnumerable<Bar> ReadData(string symbol, Resolution resolution, DateTime from, DateTime to)
+        public IEnumerable<Bar> ReadData(string symbol, Resolution resolution)
         {
-            throw new NotImplementedException();
+            List<Bar> barList = new List<Bar>();
+
+            string directoryName = root + getSymbolFolderName(symbol);
+            if (!Directory.Exists(directoryName))
+                return barList;
+
+            string fn = getFileName(resolution);
+            string fileFullPath = $"{directoryName}\\{fn}.txt";
+            if (!File.Exists(fileFullPath))
+                return barList;
+
+            using (StreamReader sr = new StreamReader(fileFullPath))
+            {
+                string line;
+                while((line = sr.ReadLine()) != null)
+                {
+                    string[] str = line.Split(new char[] { ',' });
+                    if(str.Count() > 7)
+                    {
+                        FxBar b = new FxBar(Convert.ToDouble(str[0]), Convert.ToDouble(str[1]), Convert.ToDouble(str[2]), Convert.ToDouble(str[3]), Convert.ToDouble(str[4]), Convert.ToDouble(str[5]), Convert.ToDouble(str[6]), Convert.ToDouble(str[7]), Convert.ToDouble(str[8]), Convert.ToDateTime(str[9]), Convert.ToDateTime(str[10]));
+
+                        barList.Add(b);
+                    }
+                }
+            }
+
+            return barList;
         }
 
         public void WriteData(string symbol, Resolution resolution, IEnumerable<Bar> barList)
         {
-            throw new NotImplementedException();
+            string directoryName = root + getSymbolFolderName(symbol);
+            bool directoryExists = Directory.Exists(directoryName);
+            if (!directoryExists)
+                Directory.CreateDirectory(directoryName);
+
+            string fn = getFileName(resolution);
+            string fileFullPath = $"{directoryName}\\{fn}.txt";
+
+            using(StreamWriter sw = new StreamWriter(fileFullPath))
+            {
+                foreach (var bar in barList)
+                    sw.WriteLine(bar.ToString());
+            }
         }
 
-
+        private string getSymbolFolderName(string symbol)
+        {
+            return symbol.Substring(0, 3) + symbol.Substring(4, 3);
+        }
+        private string getFileName(Resolution resolution)
+        {
+            return $"{resolution.TimeFrame.ToString()}_{resolution.Size}";
+        }
 
         private IEnumerable<string> NormalizeSymbolsForDirectory(IEnumerable<string> pairs)
         {

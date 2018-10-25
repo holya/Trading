@@ -22,7 +22,7 @@ namespace Trading.Common
 
         public Bar() { }
 
-        private Bar(double open, double high, double low, double close, double volume, DateTime dateTime) : this()
+        private Bar(double open, double high, double low, double close, double volume, DateTime dateTime, DateTime endDateTime) : this()
         {
             this.Open = open;
             this.High = high;
@@ -30,6 +30,7 @@ namespace Trading.Common
             this.Close = close;
             this.Volume = volume;
             this.DateTime = dateTime;
+            this.EndDateTime = endDateTime;
         }
 
         /// <summary>
@@ -42,13 +43,13 @@ namespace Trading.Common
         /// <param name="volume"></param>
         /// <param name="dateTime"></param>
         /// <param name="previousBar">If null, open is used to create a bar as open, high, low and close.</param>
-        public Bar(double open, double high, double low, double close, double volume, DateTime dateTime, Bar previousBar = null)
-            : this(open, high, low, close, volume, dateTime)
+        public Bar(double open, double high, double low, double close, double volume, DateTime dateTime, DateTime endDateTime, Bar previousBar = null)
+            : this(open, high, low, close, volume, dateTime, endDateTime)
         {
             if(previousBar != null)
                 PreviousBar = previousBar;
             else
-                this.PreviousBar = new Bar(open, open, open, open, 0, dateTime);
+                this.PreviousBar = new Bar(open, open, open, open, 0, dateTime, endDateTime);
         }
 
         public BarDirection Direction

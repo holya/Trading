@@ -42,7 +42,7 @@ namespace Trading.Analyzers.LegAnalyzer
         private void addFirstBar(Bar newBar)
         {
             var d = newBar;
-            d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime);
+            d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime, d.EndDateTime);
             LegList.Add(new Leg(d));
             addBar = addBarContiued;
         }
@@ -60,13 +60,34 @@ namespace Trading.Analyzers.LegAnalyzer
 
             if(LastLeg.Direction == LegDirection.Up)
             {
-                createReferenceForLowOfThisBar(LastBar);
-
                 if(LastLeg.PreviousLeg.Direction == LegDirection.Up)
                 {
+                    createReferenceForHighOfThisBar(LastLeg.PreviousLeg.HighestBar);
+                    createReferenceForLowOfThisBar(LastBar);
+                }
+                else
+                {
+                    if (LastBar.Low > LastLeg.PreviousLeg.LowestBar.Low)
+                        createReferenceForLowOfThisBar(LastLeg.PreviousLeg.LowestBar);
+                    if (LastBar.Direction == BarDirection.OutsideUp)
+                        createReferenceForLowOfThisBar(LastBar);
                 }
             }
-
+            else
+            {
+                if (LastLeg.PreviousLeg.Direction == LegDirection.Down)
+                {
+                    createReferenceForLowOfThisBar(LastLeg.PreviousLeg.LowestBar);
+                    createReferenceForHighOfThisBar(LastBar);
+                }
+                else
+                {
+                    if (LastBar.High > LastLeg.PreviousLeg.HighestBar.High)
+                        createReferenceForHighOfThisBar(LastLeg.PreviousLeg.HighestBar);
+                    if (LastBar.Direction == BarDirection.OutsideDown)
+                        createReferenceForHighOfThisBar(LastBar);
+                }
+            }
         }
 
         private void createReferenceForLowOfThisBar(Bar bar)

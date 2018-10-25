@@ -41,11 +41,11 @@ namespace Trading.Analyzers.PatternAnalyzer
             this.addBar = this.doFirstLeg;
         }
 
-        public void AddBarList(IEnumerable<Tuple<double, double, double, double, double, DateTime>> barList)
+        public void AddBarList(IEnumerable<Tuple<double, double, double, double, double, DateTime, DateTime>> barList)
         {
             foreach (var item in barList)
             {
-                AddBar(item.Item1, item.Item2, item.Item3, item.Item4, item.Item5, item.Item6);
+                AddBar(item.Item1, item.Item2, item.Item3, item.Item4, item.Item5, item.Item6, item.Item7);
             }
         }
         public void AddBarList(IEnumerable<Bar> barList)
@@ -56,9 +56,9 @@ namespace Trading.Analyzers.PatternAnalyzer
             }
         }
 
-        public void AddBar(double open, double high, double low, double close, double volume, DateTime time)
+        public void AddBar(double open, double high, double low, double close, double volume, DateTime time, DateTime endDateTime)
         {
-            this.addBar(new Bar(open, high, low, close, volume, time));
+            this.addBar(new Bar(open, high, low, close, volume, time, endDateTime));
 
         }
         public void AddBar(Bar bar)
@@ -69,7 +69,7 @@ namespace Trading.Analyzers.PatternAnalyzer
         private void doFirstLeg(Bar bar)
         {
             double newBarOpen = bar.Open;
-            var prevBar = new Bar(newBarOpen, newBarOpen, newBarOpen, newBarOpen, 0, bar.DateTime, null);
+            var prevBar = new Bar(newBarOpen, newBarOpen, newBarOpen, newBarOpen, 0, bar.DateTime, bar.EndDateTime, null);
             bar.PreviousBar = prevBar;
 
             var leg = new Leg(bar);

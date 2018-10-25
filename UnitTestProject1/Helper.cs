@@ -11,11 +11,11 @@ namespace UnitTestProject1
     {
         public static Bar GetUpBar()
         {
-            return new FxBar(50, 51, 100, 101, 0, 1, 60, 61, 10, new DateTime(2018, 01, 01, 00, 00, 00));
+            return new FxBar(50, 51, 100, 101, 0, 1, 60, 61, 10, DateTime.Now, DateTime.Now);
         }
         public static Bar GetDownBar()
         {
-            return new FxBar(50, 51, 100, 101, 0, 1, 40, 41, 10, new DateTime(2018, 01, 01, 00, 00, 00));
+            return new FxBar(50, 51, 100, 101, 0, 1, 40, 41, 10, DateTime.Now, DateTime.Now);
         }
 
 
@@ -24,7 +24,7 @@ namespace UnitTestProject1
             var pb = (FxBar)previousBar;
             return new FxBar(pb.Open + 10, pb.AskOpen +10, pb.High + 10, pb.AskHigh +10,
                             pb.Low + 10, pb.AskLow + 10, pb.Close + 10, pb.AskClose +10,
-                            100, dateTime);
+                            100, dateTime, dateTime);
         }
 
         public static Bar GetDownBar(Bar previousBar, DateTime dateTime)
@@ -32,7 +32,7 @@ namespace UnitTestProject1
             var pb = (FxBar)previousBar;
             return new FxBar(pb.Open - 10, pb.AskOpen-10, pb.High - 10, pb.AskHigh-10,
                             pb.Low - 10, pb.AskLow-10, pb.Close - 10, pb.AskClose-10,
-                            100, dateTime);
+                            100, dateTime, dateTime);
         }
 
         public static Bar GetBalanceBar(Bar previousBar, DateTime dateTime)
@@ -40,7 +40,7 @@ namespace UnitTestProject1
             var pb = (FxBar)previousBar;
             return new FxBar(pb.Open, pb.AskOpen, pb.High - 10, pb.AskHigh - 10,
                             pb.Low + 10, pb.AskLow + 10, pb.Close, pb.AskClose,
-                            100, dateTime);
+                            100, dateTime, dateTime);
         }
 
 

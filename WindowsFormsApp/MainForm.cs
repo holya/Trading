@@ -56,7 +56,7 @@ namespace WindowsFormsApp
 
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), DateTime.UtcNow.AddMonths(-1), 1, 0);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 6), DateTime.UtcNow.AddDays(-6), 1, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 4), DateTime.UtcNow.AddDays(-6), 1, 1);
 
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddHours(-24), 2, 0);
 

@@ -37,9 +37,7 @@ namespace WindowsFormsApp.Custom_Views
         private void LegAnalyzer_LastBarUpdated(object sender, LastBarUpdatedEventArgs e)
         {
             if (this.InvokeRequired)
-            {
                 Invoke(new Action<LastBarUpdatedEventArgs>(this.updateLastBar), e);
-            }
             else
                 this.updateLastBar(e);
         }
@@ -69,12 +67,12 @@ namespace WindowsFormsApp.Custom_Views
         private void LegAnalyzer_NewBarAdded(object sender, NewBarAddedEventArgs e)
         {
             if (InvokeRequired)
-            {
-                Invoke(new Action<NewBarAddedEventArgs>(addNewbar), e);
-            }
+                Invoke(new Action<NewBarAddedEventArgs>(addNewBar), e);
+            else
+                addNewBar(e);
         }
 
-        private void addNewbar(NewBarAddedEventArgs e)
+        private void addNewBar(NewBarAddedEventArgs e)
         {
             addNewDataPoint(Series[0], e.LastLeg, e.LastLeg.LastBar);
             Invalidate();
@@ -82,7 +80,7 @@ namespace WindowsFormsApp.Custom_Views
 
         private void LegAnalyzer_AnalyzerPopulated(object sender, AnalyzerPopulatedEventArgs e)
         {
-            setupBars();
+            drawBars();
             //Invalidate();
         }
 
@@ -96,7 +94,7 @@ namespace WindowsFormsApp.Custom_Views
             LegAnalyzer.Reset();
         }
         //Maybe rename to Draw
-        private void setupBars()
+        private void drawBars()
         {
             foreach (var leg in LegAnalyzer.LegList)
             {
@@ -128,30 +126,30 @@ namespace WindowsFormsApp.Custom_Views
 
         private void drawRefLines(Graphics g)
         {
-            //foreach (var r in LegAnalyzer.RefList)
-            //{
-            //    double dts = r.DateTime.ToOADate();
-            //    var d = Series[0].Points.FirstOrDefault(p => p.XValue.Equals(dts));
+            foreach (var r in LegAnalyzer.RefList)
+            {
+                double dts = r.DateTime.ToOADate();
+                var d = Series[0].Points.FirstOrDefault(p => p.XValue.Equals(dts));
 
-            //    double pointIndex = -1;
-            //    for (int i = 0; i < Series[0].Points.Count; i++)
-            //    {
-            //        if (Series[0].Points[i].XValue == dts)
-            //        {
-            //            pointIndex = i;
-            //            break;
-            //        }
-            //    }
+                double pointIndex = -1;
+                for (int i = 0; i < Series[0].Points.Count; i++)
+                {
+                    if (Series[0].Points[i].XValue == dts)
+                    {
+                        pointIndex = i;
+                        break;
+                    }
+                }
 
-            //    float x1 = (float)ChartAreas[0].AxisX.ValueToPixelPosition(pointIndex + 1);
-            //    float x2 = (float)ChartAreas[0].AxisX.ValueToPixelPosition(Series[0].Points.Count - 1) + 20;
-            //    var y = (float)ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
-            //    g.DrawLine(new Pen(Color.Black, 1), x1, y, x2, y);
+                float x1 = (float)ChartAreas[0].AxisX.ValueToPixelPosition(pointIndex + 1);
+                float x2 = (float)ChartAreas[0].AxisX.ValueToPixelPosition(Series[0].Points.Count - 1) + 20;
+                var y = (float)ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
+                g.DrawLine(new Pen(Color.White, 1), x1, y, x2, y);
 
-            //    var font = new Font(FontFamily.GenericSerif, 8);
-            //    SolidBrush drawBrush = new SolidBrush(Color.Black);
-            //    g.DrawString("" + r.Price, font, drawBrush, x2 + 7, y - 10);
-            //}
+                var font = new Font(FontFamily.GenericSerif, 8);
+                SolidBrush drawBrush = new SolidBrush(Color.White);
+                g.DrawString("" + r.Price, font, drawBrush, x2 + 7, y - 10);
+            }
 
             //draw close value
             float diff = (float)ChartAreas[0].AxisX.ValueToPixelPosition(Series[0].Points.Count - 1) - Right;

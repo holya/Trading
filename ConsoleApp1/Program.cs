@@ -48,21 +48,6 @@ namespace ConsoleApp1
             }
 
 
-            var d = dailyBarList.ElementAt(0);
-            d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime);
-            var LegList = new List<Leg> { new Leg(d) };
-
-            for (int i = 1; i < dailyBarList.Count(); i++)
-            {
-                var currentBar = dailyBarList.ElementAt(i);
-                currentBar.PreviousBar = dailyBarList.ElementAt(i - 1);
-                if (currentBar.IsSameDirection(currentBar.PreviousBar))
-                {
-                    LegList.Last().AddBar(currentBar);
-                    continue;
-                }
-                LegList.Add(new Leg(currentBar) { PreviousLeg = LegList.Last() });
-            }
 
             //var dailyAnalyzer = new LegAnalyzer();
             //dailyAnalyzer.AddBarList(dailyBarList);
