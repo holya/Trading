@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Trading.Common.Instrument
+namespace Trading.Common
 {
     public struct Instrument
     {

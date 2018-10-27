@@ -39,7 +39,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataBases", "DataBases", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.Databases.Interfaces", "Trading.Databases.Interfaces\Trading.Databases.Interfaces.csproj", "{35CEF0FC-636C-4C15-B07C-99C6C5B93439}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QuoteManager", "QuoteManager", "{901DDDA7-1F0A-404B-B44F-4BC8F123E4A9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataManager", "DataManager", "{901DDDA7-1F0A-404B-B44F-4BC8F123E4A9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.DataBases.TextFileDataBase", "TextFileDataBase\Trading.DataBases.TextFileDataBase.csproj", "{A555290A-9076-4A96-9162-083F56C59548}"
 EndProject

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
 
-namespace Trading.Analyzers.PatternAnalyzer
+namespace Trading.Common
 {
     public class Pattern
     {
@@ -23,11 +23,11 @@ namespace Trading.Analyzers.PatternAnalyzer
                 return LegList.First().Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
             }
         }
-        public PatternType Type { get; set; }
+        //public PatternType Type
         //{
         //    get
         //    {
-        //        if(Direction == PatternDirection.Up)
+        //        if (Direction == PatternDirection.Up)
         //        {
 
         //        }
@@ -38,6 +38,14 @@ namespace Trading.Analyzers.PatternAnalyzer
         //    }
         //}
 
-        public void AddLeg(Leg leg) { LegList.Add(leg); }
+        //public bool AddLeg(Leg leg)
+        //{
+        //    if(Direction == PatternDirection.Up)
+        //    {
+        //        if (leg.Low < LegList.Last(l => l.Direction == LegDirection.Up).Low)
+        //            return false;
+        //        if(leg.Direction == LegDirection.Up)
+        //    }
+        //}
     }
 }

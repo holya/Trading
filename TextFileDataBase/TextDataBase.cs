@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 using Trading.Common;
 using Trading.Databases.Interfaces;
-using Trading.Utilities;
-using Trading.Common.Instrument;
 
 namespace Trading.Databases.TextFileDataBase
 {
@@ -69,7 +64,7 @@ namespace Trading.Databases.TextFileDataBase
                 Directory.CreateDirectory(directoryName);
 
             string fileFullPath = $"{directoryName}\\{getFileName(resolution)}.txt";
-
+            
             using(StreamWriter sw = new StreamWriter(fileFullPath))
             {
                 foreach (var bar in barList)
@@ -88,9 +83,6 @@ namespace Trading.Databases.TextFileDataBase
             return path;
         }
 
-        private string getFileName(Resolution resolution)
-        {
-            return $"{resolution.TimeFrame.ToString()}_{resolution.Size}";
-        }
+        private string getFileName(Resolution resolution) => $"{resolution.TimeFrame.ToString()}_{resolution.Size}";
     }
 }

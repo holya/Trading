@@ -120,7 +120,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TextFileDataBase\Trading.DataBases.TextFileDataBase.csproj">
       <Project>{a555290a-9076-4a96-9162-083f56c59548}</Project>
-      <Name>TextFileDataBase</Name>
+      <Name>Trading.DataBases.TextFileDataBase</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trading.Analyzers.Common\Trading.Analyzers.Common.csproj">
       <Project>{bb95d2e4-9158-43f9-8e25-19483333175c}</Project>

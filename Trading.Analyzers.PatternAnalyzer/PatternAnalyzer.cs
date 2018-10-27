@@ -77,7 +77,7 @@ namespace Trading.Analyzers.PatternAnalyzer
             this.LegList.Add(leg);
 
             Pattern pattern = new Pattern();
-            pattern.AddLeg(leg);
+            //pattern.AddLeg(leg);
             //pattern.Type = PatternType.StartFull;
 
 
