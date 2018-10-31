@@ -9,7 +9,6 @@ namespace Trading.Analyzers.LegAnalyzer
 {
     public partial class LegAnalyzer
     {
-
         #region Properties
         public Resolution Resolution { get; set; }
         public Bar LastBar => LastLeg.LastBar;
@@ -26,7 +25,6 @@ namespace Trading.Analyzers.LegAnalyzer
 
         public List<Reference> RefList { get; } = new List<Reference>();
         #endregion
-
         public LegAnalyzer() { addBar = addFirstBar; }
 
         public void AddBarList(IEnumerable<Bar> barList)
@@ -44,13 +42,14 @@ namespace Trading.Analyzers.LegAnalyzer
             var d = newBar;
             d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime, d.EndDateTime);
             LegList.Add(new Leg(d));
+
             addBar = addBarContiued;
         }
         private void addBarContiued(Bar newBar)
         {
             newBar.PreviousBar = LastBar;
             if((LastLeg.Direction == LegDirection.Up && newBar.Low >= LastBar.Low) ||
-                LastLeg.Direction == LegDirection.Down && newBar.High <= LastBar.High)
+               (LastLeg.Direction == LegDirection.Down && newBar.High <= LastBar.High))
             {
                 LegList.Last().AddBar(newBar);
                 return;
@@ -58,36 +57,36 @@ namespace Trading.Analyzers.LegAnalyzer
 
             LegList.Add(new Leg(newBar) { PreviousLeg = LegList.Last() });
 
-            if(LastLeg.Direction == LegDirection.Up)
-            {
-                if(LastLeg.PreviousLeg.Direction == LegDirection.Up)
-                {
-                    createReferenceForHighOfThisBar(LastLeg.PreviousLeg.HighestBar);
-                    createReferenceForLowOfThisBar(LastBar);
-                }
-                else
-                {
-                    if (LastBar.Low > LastLeg.PreviousLeg.LowestBar.Low)
-                        createReferenceForLowOfThisBar(LastLeg.PreviousLeg.LowestBar);
-                    if (LastBar.Direction == BarDirection.OutsideUp)
-                        createReferenceForLowOfThisBar(LastBar);
-                }
-            }
-            else
-            {
-                if (LastLeg.PreviousLeg.Direction == LegDirection.Down)
-                {
-                    createReferenceForLowOfThisBar(LastLeg.PreviousLeg.LowestBar);
-                    createReferenceForHighOfThisBar(LastBar);
-                }
-                else
-                {
-                    if (LastBar.High > LastLeg.PreviousLeg.HighestBar.High)
-                        createReferenceForHighOfThisBar(LastLeg.PreviousLeg.HighestBar);
-                    if (LastBar.Direction == BarDirection.OutsideDown)
-                        createReferenceForHighOfThisBar(LastBar);
-                }
-            }
+            //if(LastLeg.Direction == LegDirection.Up)
+            //{
+            //    if(LastLeg.PreviousLeg.Direction == LegDirection.Up)
+            //    {
+            //        createReferenceForHighOfThisBar(LastLeg.PreviousLeg.HighestBar);
+            //        createReferenceForLowOfThisBar(LastBar);
+            //    }
+            //    else
+            //    {
+            //        if (LastBar.Low > LastLeg.PreviousLeg.LowestBar.Low)
+            //            createReferenceForLowOfThisBar(LastLeg.PreviousLeg.LowestBar);
+            //        if (LastBar.Direction == BarDirection.OutsideUp)
+            //            createReferenceForLowOfThisBar(LastBar);
+            //    }
+            //}
+            //else
+            //{
+            //    if (LastLeg.PreviousLeg.Direction == LegDirection.Down)
+            //    {
+            //        createReferenceForLowOfThisBar(LastLeg.PreviousLeg.LowestBar);
+            //        createReferenceForHighOfThisBar(LastBar);
+            //    }
+            //    else
+            //    {
+            //        if (LastBar.High > LastLeg.PreviousLeg.HighestBar.High)
+            //            createReferenceForHighOfThisBar(LastLeg.PreviousLeg.HighestBar);
+            //        if (LastBar.Direction == BarDirection.OutsideDown)
+            //            createReferenceForHighOfThisBar(LastBar);
+            //    }
+            //}
         }
 
         private void createReferenceForLowOfThisBar(Bar bar)

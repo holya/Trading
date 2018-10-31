@@ -11,41 +11,45 @@ namespace Trading.Common
     {
         public List<Leg> LegList { get; private set; }
 
-        public Pattern()
-        {
-            LegList = new List<Leg>();
-        }
+        public Leg LastLeg => LegList.Last();
+        public Bar LastBar => LastLeg.LastBar;
+        public Pattern() => LegList = new List<Leg>();
+        public Pattern(Leg leg) : this() => LegList.Add(leg);
+        public PatternDirection Direction => LegList.First().Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
 
-        public PatternDirection Direction
+        public PatternType Type
         {
             get
             {
-                return LegList.First().Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
+                if (Direction == PatternDirection.Up)
+                {
+
+                }
+                else
+                {
+
+                }
             }
         }
-        //public PatternType Type
-        //{
-        //    get
-        //    {
-        //        if (Direction == PatternDirection.Up)
-        //        {
 
-        //        }
-        //        else
-        //        {
+        public bool AddBar(Bar bar)
+        {
+            if (Direction == PatternDirection.Up)
+            {
+                if (bar.Low < LegList.Last(l => l.Direction == LegDirection.Up).Low)
+                    return false;
 
-        //        }
-        //    }
-        //}
-
-        //public bool AddLeg(Leg leg)
-        //{
-        //    if(Direction == PatternDirection.Up)
-        //    {
-        //        if (leg.Low < LegList.Last(l => l.Direction == LegDirection.Up).Low)
-        //            return false;
-        //        if(leg.Direction == LegDirection.Up)
-        //    }
-        //}
+                if()
+                LegList.Add(leg);
+                return true;
+            }
+            else
+            {
+                if (leg.High > LegList.Last(l => l.Direction == LegDirection.Down).High)
+                    return false;
+                LegList.Add(leg);
+                return true;
+            }
+        }
     }
 }

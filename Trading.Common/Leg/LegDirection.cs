@@ -8,7 +8,7 @@ namespace Trading.Common
 {
     public enum LegDirection
     {
-        Up,
-        Down
+        Down,
+        Up
     }
 }

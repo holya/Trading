@@ -64,7 +64,7 @@ namespace Trading.Databases.TextFileDataBase
                 Directory.CreateDirectory(directoryName);
 
             string fileFullPath = $"{directoryName}\\{getFileName(resolution)}.txt";
-            
+
             using(StreamWriter sw = new StreamWriter(fileFullPath))
             {
                 foreach (var bar in barList)
