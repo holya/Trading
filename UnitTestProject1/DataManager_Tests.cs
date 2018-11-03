@@ -8,7 +8,12 @@ namespace UnitTestProject1
     public class DataManager_Tests
     {
         [TestMethod]
-        public void DataUpdate_Forex()
+        public void RespondToUserDataRequest_LocalData()
+        {
+            Assert.Fail();
+        }
+
+        public void RespondToUserDataRequest_DownloadedData()
         {
             Assert.Fail();
         }
