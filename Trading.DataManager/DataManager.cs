@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
 using Trading.DataProviders.Interfaces;
-using Trading.Databases.Interfaces;
+using Trading.Databases.TextFileDataBase;
 using Trading.Common.Instrument;
 
 namespace Trading.DataManager
