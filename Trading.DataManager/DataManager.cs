@@ -37,13 +37,5 @@ namespace Trading.DataManager
             throw new NotImplementedException();
         }
 
-        private bool LocalDataReport(Instrument instrument, Resolution resolution)
-        {
-            var temp = db.ReadData(instrument, resolution);
-
-            if (temp.Count() != 0)
-                return true;
-            else return false;
-        }
     }
 }
