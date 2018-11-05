@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,7 +39,11 @@ namespace Trading.DataManager
 
         private bool LocalDataReport(Instrument instrument, Resolution resolution)
         {
-            return false;
+            var temp = db.ReadData(instrument, resolution);
+
+            if (temp.Count() != 0)
+                return true;
+            else return false;
         }
     }
 }
