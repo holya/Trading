@@ -20,16 +20,7 @@ namespace Trading.DataManager
 
         public IEnumerable<Bar> RespondToUserDataRequest(Instrument instrument, Resolution resolution)
         {
-            if (LocalDataReport(instrument, resolution) == true)
-            {
-                var localData = db.ReadData(instrument, resolution);
-                return localData;
-            }
-            else
-            {
-                var downloadedData = DataDownload(instrument, resolution);
-                return downloadedData;
-            }
+            throw new NotImplementedException();
         }
 
         public IEnumerable<Bar> DataDownload(Instrument instrument, Resolution resolution)
