@@ -1,36 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
 using Trading.Brokers.Fxcm;
 using Trading.DataProviders.Interfaces;
-using Trading.Databases.Interfaces;
+using Trading.Databases.TextFileDataBase;
+using Trading.Common.Instrument;
 
 namespace Trading.DataManager
 {
     public class DataManager
     {
-        public IEnumerable<Bar> ReadData(Instrument instrument, Resolution resolution)
-        {
-            throw new NotImplementedException();
-        }
+        TextDataBase db = new TextDataBase();
 
-        public void WriteData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
-        {
+        FxcmWrapper fxm = new FxcmWrapper();
 
-        }
-
-        public Task<IEnumerable<Bar>> GetHistoricalDataAsync(string symbol, Resolution resolution,
-            DateTime beginDateTime, DateTime endDateTime, bool subscribeToRealTime = false)
+        private async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
+            DateTime beginDate, DateTime endDate, bool placeHolder = false)
         {
-            throw new NotImplementedException();
-        }
+            string symbol = instrument.Name;
 
-        private bool LocalDataReport(Instrument instrument, Resolution resolution)
-        {
-            return false;
+            if (db.ReadData(instrument, resolution).Count() != 0)
+            {
+                var localData = db.ReadData(instrument, resolution);
+                return localData;
+            }
+            else
+            {
+                var downloadedData = fxm.GetHistoricalDataAsync(symbol, resolution, beginDate, endDate, placeHolder);
+                db.WriteData(instrument, resolution, downloadedData.Result);
+                return await downloadedData;
+            }
         }
     }
 }
