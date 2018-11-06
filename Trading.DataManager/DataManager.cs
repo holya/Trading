@@ -18,15 +18,22 @@ namespace Trading.DataManager
 
         FxcmWrapper fxm = new FxcmWrapper();
 
-        public IEnumerable<Bar> RespondToUserDataRequest(Instrument instrument, Resolution resolution)
+        private async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
+            DateTime beginDate, DateTime endDate, bool placeHolder = false)
         {
-            throw new NotImplementedException();
-        }
+            string symbol = instrument.Name;
 
-        public IEnumerable<Bar> DataDownload(Instrument instrument, Resolution resolution)
-        {
-            throw new NotImplementedException();
+            if (db.ReadData(instrument, resolution).Count() != 0)
+            {
+                var localData = db.ReadData(instrument, resolution);
+                return localData;
+            }
+            else
+            {
+                var downloadedData = fxm.GetHistoricalDataAsync(symbol, resolution, beginDate, endDate, placeHolder);
+                db.WriteData(instrument, resolution, downloadedData.Result);
+                return await downloadedData;
+            }
         }
-
     }
 }
