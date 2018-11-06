@@ -8,7 +8,6 @@ using Trading.Common;
 using Trading.Brokers.Fxcm;
 using Trading.DataProviders.Interfaces;
 using Trading.Databases.TextFileDataBase;
-using Trading.Common.Instrument;
 
 namespace Trading.DataManager
 {
