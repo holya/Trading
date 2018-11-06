@@ -17,39 +17,63 @@ namespace Trading.Common
         public Pattern(Leg leg) : this() => LegList.Add(leg);
         public PatternDirection Direction => LegList.First().Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
 
-        public PatternType Type
-        {
-            get
-            {
-                if (Direction == PatternDirection.Up)
-                {
+        //public PatternType Type
+        //{
+        //    get
+        //    {
+        //        if (Direction == PatternDirection.Up)
+        //        {
 
-                }
-                else
-                {
+        //        }
+        //        else
+        //        {
 
-                }
-            }
-        }
+        //        }
+        //    }
+        //}
 
-        public bool AddBar(Bar bar)
-        {
-            if (Direction == PatternDirection.Up)
-            {
-                if (bar.Low < LegList.Last(l => l.Direction == LegDirection.Up).Low)
-                    return false;
+        //public bool AddBar(Bar bar)
+        //{
+        //    if (Direction == PatternDirection.Up)
+        //    {
+        //        if (bar.Low < LegList.Last(l => l.Direction == LegDirection.Up).Low)
+        //            return false;
 
-                if()
-                LegList.Add(leg);
-                return true;
-            }
-            else
-            {
-                if (leg.High > LegList.Last(l => l.Direction == LegDirection.Down).High)
-                    return false;
-                LegList.Add(leg);
-                return true;
-            }
-        }
+        //        if(LastLeg.Direction == LegDirection.Up)
+        //        {
+        //            if(bar.Direction == BarDirection.Up || bar.Direction == BarDirection.Balance)
+        //            {
+        //                LastLeg.AddBar(bar);
+        //                return true;
+        //            }
+        //            else
+        //            {
+        //                LegList.Add(new Leg(bar, LastLeg));
+        //                return true;
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (bar.High > LegList.Last(l => l.Direction == LegDirection.Down).High)
+        //            return false;
+
+        //        if (LastLeg.Direction == LegDirection.Up)
+        //        {
+        //            if (bar.Direction == BarDirection.Up || bar.Direction == BarDirection.Balance)
+        //            {
+        //                LastLeg.AddBar(bar);
+        //                return true;
+        //            }
+        //            else
+        //            {
+        //                LegList.Add(new Leg(bar, LastLeg));
+        //                return true;
+        //            }
+        //        }
+
+
+        //    }
+        //}
     }
 }
