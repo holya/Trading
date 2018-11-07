@@ -17,21 +17,18 @@ namespace Trading.DataManager
 
         FxcmWrapper fxm = new FxcmWrapper();
 
-        private async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
+        public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
             DateTime beginDate, DateTime endDate)
         {
-            string symbol = instrument.Name;
-
-            if (db.ReadData(instrument, resolution).Count() != 0)
-            {
-                var localData = db.ReadData(instrument, resolution);
-                return localData;
-            }
+            var data = db.ReadData(instrument, resolution);
+            //if beginDate and endDate check ---- convert IEnumerable<Bar> to List<Bar> to add DateTime at the end
+            if (data.Count() != 0)         
+                return data;
             else
             {
-                var downloadedData = fxm.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate);
-                db.WriteData(instrument, resolution, downloadedData.Result);
-                return await downloadedData;
+                var downloadedData = await fxm.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate);
+                db.WriteData(instrument, resolution, downloadedData);
+                return downloadedData;
             }
         }
     }
