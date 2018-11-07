@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Trading.Utilities
+namespace Trading.DataManager.Symbols
 {
     public class SymbolsManager
     {

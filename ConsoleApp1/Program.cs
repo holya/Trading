@@ -6,6 +6,7 @@ using Trading.Analyzers.LegAnalyzer;
 using System.Linq;
 using System.Threading.Tasks;
 using Trading.Analyzers.Common;
+using Trading.DataManager;
 
 namespace ConsoleApp1
 {
@@ -13,39 +14,47 @@ namespace ConsoleApp1
     {
         public static void Main(string[] args)
         {
-            FxcmWrapper f = new FxcmWrapper();
+            //FxcmWrapper f = new FxcmWrapper();
 
             Instrument instrument = new Instrument { Name = "USD/JPY", Type = InstrumentType.Forex };
+            DateTime dailyStartDateTime = new DateTime(2018, 1, 1, 0, 0, 0);
+            var dailyEndDateTime = new DateTime(2018, 7, 31, 23, 59, 59);
 
-            f.SessionStatusChanged += (sender, sessionStatusEnum) =>
+
+            DataManager dm = new DataManager();
+
+            var fxcm = dm.dataProvider;
+
+            fxcm.SessionStatusChanged += (sender, sessionStatusEnum) =>
             {
-                Console.WriteLine(f.SessionStatusEnum + "");
+                Console.WriteLine(fxcm.SessionStatusEnum + "");
             };
 
-            try
-            {
-                f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                Environment.Exit(0);
-            }
+            var test = dm.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime).GetAwaiter().GetResult();
+            fxcm.Logout();
 
-            DateTime dailyStartDateTime = new DateTime(2018, 1, 1, 0, 0, 0);
-            var dailyEndDateTime = new DateTime(2018, 7, 31, 23, 59, 59); 
+            //try
+            //{
+            //    f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e.Message);
+            //    Environment.Exit(0);
+            //}
+
             //DateTime dailyEndDateTime = new DateTime(now.Year, now.Month, , 0, 0, 0);
-            List<FxBar> dailyBarList = null;
-            try
-            {
-                dailyBarList = (List<FxBar>)f.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime).GetAwaiter().GetResult();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                //Environment.Exit(0);
+            //List<FxBar> dailyBarList = null;
+            //try
+            //{
+            //    dailyBarList = (List<FxBar>)f.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime).GetAwaiter().GetResult();
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e.Message);
+            //    //Environment.Exit(0);
 
-            }
+            //}
 
 
 
@@ -126,8 +135,7 @@ namespace ConsoleApp1
 
             //Console.WriteLine(f.GetServerTime());
 
-            Console.ReadLine();
-            f.Logout();
+            //f.Logout();
         }
     }
 }

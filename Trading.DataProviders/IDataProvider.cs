@@ -13,5 +13,9 @@ namespace Trading.DataProviders.Interfaces
             DateTime beginDateTime, DateTime endDateTime);
 
         void SubscribeToRealTime(Instrument instrument);
+
+        void Login();
+
+        void Logout();
     }
 }

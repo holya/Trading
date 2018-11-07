@@ -328,5 +328,10 @@ namespace Trading.Brokers.Fxcm
         {
             session.Dispose();
         }
+
+        public void Login()
+        {
+
+        }
     }
 }
