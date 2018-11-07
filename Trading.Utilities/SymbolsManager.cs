@@ -27,14 +27,14 @@ namespace Trading.Utilities
 
         private IEnumerable<string> getForexPairs(string forexType)
         {
-            var majorList = new List<string>();
+            var list = new List<string>();
             var doc = XDocument.Load(docUri);
 
             var elements = doc.Element("symbols").Element("forex").Element(forexType).Elements().Attributes("name");
             foreach (var v in elements)
-                majorList.Add(v.Value);
+                list.Add(v.Value);
 
-            return majorList;
+            return list;
         }
 
     }

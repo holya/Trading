@@ -52,10 +52,9 @@ namespace Trading.Analyzers.LegAnalyzer
                (LastLeg.Direction == LegDirection.Down && newBar.High <= LastBar.High))
             {
                 LegList.Last().AddBar(newBar);
-                return;
             }
-
-            LegList.Add(new Leg(newBar) { PreviousLeg = LegList.Last() });
+            else
+                LegList.Add(new Leg(newBar) { PreviousLeg = LegList.Last() });
 
             //if(LastLeg.Direction == LegDirection.Up)
             //{

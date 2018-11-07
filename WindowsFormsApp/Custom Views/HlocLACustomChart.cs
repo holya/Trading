@@ -88,7 +88,7 @@ namespace WindowsFormsApp.Custom_Views
         {
             foreach (var series in Series)
             {
-                if (series.Points.Count > 0)
+                //if (series.Points.Count > 0)
                     series.Points.Clear();
             }
             LegAnalyzer.Reset();

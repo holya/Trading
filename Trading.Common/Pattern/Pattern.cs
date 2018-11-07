@@ -9,13 +9,18 @@ namespace Trading.Common
 {
     public class Pattern
     {
-        public List<Leg> LegList { get; private set; }
+        public List<Reference> RefList { get; } = new List<Reference>();
+        public Pattern()
+        {
 
-        public Leg LastLeg => LegList.Last();
-        public Bar LastBar => LastLeg.LastBar;
-        public Pattern() => LegList = new List<Leg>();
-        public Pattern(Leg leg) : this() => LegList.Add(leg);
-        public PatternDirection Direction => LegList.First().Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
+        }
+        //public List<Leg> LegList { get; private set; }
+
+        //public Leg LastLeg => LegList.Last();
+        //public Bar LastBar => LastLeg.LastBar;
+        //public Pattern() => LegList = new List<Leg>();
+        //public Pattern(Leg leg) : this() => LegList.Add(leg);
+        //public PatternDirection Direction => LegList.First().Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
 
         //public PatternType Type
         //{
@@ -23,11 +28,18 @@ namespace Trading.Common
         //    {
         //        if (Direction == PatternDirection.Up)
         //        {
+        //            if (LastLeg.Direction == LegDirection.Down)
+        //                return PatternType.PullBack1;
+
+        //            return PatternType.Continuation1;
 
         //        }
         //        else
         //        {
+        //            if (LastLeg.Direction == LegDirection.Up)
+        //                return PatternType.PullBack1;
 
+        //            return PatternType.Continuation1;
         //        }
         //    }
         //}
@@ -39,19 +51,19 @@ namespace Trading.Common
         //        if (bar.Low < LegList.Last(l => l.Direction == LegDirection.Up).Low)
         //            return false;
 
-        //        if(LastLeg.Direction == LegDirection.Up)
+        //        if (LastLeg.Direction == LegDirection.Up)
         //        {
-        //            if(bar.Direction == BarDirection.Up || bar.Direction == BarDirection.Balance)
+        //            if (bar.Direction == BarDirection.Up || bar.Direction == BarDirection.Balance)
         //            {
         //                LastLeg.AddBar(bar);
-        //                return true;
         //            }
         //            else
         //            {
         //                LegList.Add(new Leg(bar, LastLeg));
-        //                return true;
         //            }
         //        }
+
+        //        return true;
         //    }
         //    else
         //    {
@@ -72,7 +84,7 @@ namespace Trading.Common
         //            }
         //        }
 
-
+        //        return true;
         //    }
         //}
     }

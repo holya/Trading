@@ -22,6 +22,7 @@ namespace WindowsFormsApp.Custom_Views
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.ResizeRedraw = true;
             this.TopLevel = false;
+            //this.Dock = DockStyle.Fill;
             Chart.Dock = System.Windows.Forms.DockStyle.Fill;
             Chart.Location = new System.Drawing.Point(0, 0);
             this.Chart.Size = new System.Drawing.Size(911, 450);

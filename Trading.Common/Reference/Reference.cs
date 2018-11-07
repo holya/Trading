@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Trading.Common;
 
-namespace Trading.Analyzers.Common
+namespace Trading.Common
 {
     public struct Reference
     {

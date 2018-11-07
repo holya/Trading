@@ -15,7 +15,7 @@ namespace ConsoleApp1
         {
             FxcmWrapper f = new FxcmWrapper();
 
-            string symbol = "USD/JPY";
+            Instrument instrument = new Instrument { Name = "USD/JPY", Type = InstrumentType.Forex };
 
             f.SessionStatusChanged += (sender, sessionStatusEnum) =>
             {
@@ -38,7 +38,7 @@ namespace ConsoleApp1
             List<FxBar> dailyBarList = null;
             try
             {
-                dailyBarList = (List<FxBar>)f.GetHistoricalDataAsync(symbol, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime).GetAwaiter().GetResult();
+                dailyBarList = (List<FxBar>)f.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime).GetAwaiter().GetResult();
             }
             catch (Exception e)
             {

@@ -89,7 +89,7 @@ namespace Trading.Brokers.Fxcm
         }
         #endregion
 
-        private IEnumerable<Bar> GetHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime, bool subscribeToRealTime = false)
+        private IEnumerable<Bar> GetHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
         {
             GetHistoricalDataResponseListener responseListener = new GetHistoricalDataResponseListener(session);
             session.subscribeResponse(responseListener);
@@ -102,28 +102,25 @@ namespace Trading.Brokers.Fxcm
             {
                 throw e;
             }
-            //foreach (var b in barList)
-            //    b.DateTime = b.DateTime.ToUniversalTime();
-            //foreach (var b in barList)
-            //    b.DateTime = Utilities.NormalizeBarDateTime_FXCM(b.DateTime, resolution);
 
             if (resolution.TimeFrame == TimeFrame.Quarterly)
             {
                 return normalizeToQuarterlyTimeFrame(barList);
             }
 
-            if (subscribeToRealTime && !realTimeInstruments.Contains(symbol))
-                realTimeInstruments.Add(symbol);
-            
             return barList;
         }
 
-        public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime, bool subscribeToRealTime = false)
+        public void SubscribeToRealTime(Instrument instrument)
+        {
+            if (!realTimeInstruments.Contains(instrument.Name))
+                realTimeInstruments.Add(instrument.Name);
+        }
+
+        public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
         {
             Task<IEnumerable<Bar>> task = Task.Factory.StartNew(() =>
-            GetHistoricalData(symbol, resolution, startDateTime, endDateTime,
-            subscribeToRealTime));
-
+            GetHistoricalData(instrument.Name, resolution, startDateTime, endDateTime));
             return await task;
         }
 

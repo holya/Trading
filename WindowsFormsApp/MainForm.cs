@@ -60,6 +60,9 @@ namespace WindowsFormsApp
 
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-5), 2, 1);
 
+
+
+
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-4), 2, 1);
 
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddMinutes(-10), 1, 1);
@@ -83,6 +86,7 @@ namespace WindowsFormsApp
         private void addNewChartFormToRightPanel(Resolution resolution, DateTime fromDateTime, int column, int row)
         {
             HlocLAForm chartForm = this.createChartForm();
+            chartForm.Dock = DockStyle.Fill;
             chartForm.Chart.Resolution = resolution;
             chartForm.Chart.FromDateTime = fromDateTime;
             chartForm.SetTitle();
@@ -165,39 +169,26 @@ namespace WindowsFormsApp
             selectedSymbolLabel.BackColor = selectedSymbolLabelColor;
 
             string symbol = selectedSymbolLabel.Text;
+            Instrument instrument = new Instrument { Name = symbol, Type = InstrumentType.Forex };
             
             foreach(var c in chartFormList)
             {
                 c.Chart.DataPopulated = false;
                 c.Chart.Symbol = symbol;
-                //var barList = GetHistoricalData(symbol, c.Chart.Resolution, c.Chart.FromDateTime, DateTime.Now);
-                var barList = await GetHistoricalDataAsync(symbol, c.Chart.Resolution, c.Chart.FromDateTime, DateTime.UtcNow.AddDays(10));
-
-
+                var barList = await getHistoricalDataAsync(instrument, c.Chart.Resolution, c.Chart.FromDateTime, DateTime.UtcNow.AddDays(10));
                 c.Chart.Reset();
                 c.Chart.LegAnalyzer.AddBarList(barList);
                 c.Chart.DataPopulated = true;
+
+                f.SubscribeToRealTime(instrument);
             }
         }
 
-        //private List<FxBar> GetHistoricalData(string symbol, Resolution resolution, DateTime from, DateTime to)
-        //{
-        //    try
-        //    {
-        //        var barList = (List<FxBar>)f.GetHistoricalData(symbol, resolution, from, to, false);
-        //        return barList;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        MessageBox.Show(e.Message);
-        //        return null;
-        //    }
-        //}
-        private async Task<List<FxBar>> GetHistoricalDataAsync(string symbol, Resolution resolution, DateTime from, DateTime to)
+        private async Task<List<FxBar>> getHistoricalDataAsync(Instrument instrument, Resolution resolution, DateTime from, DateTime to)
         {
             try
             {
-                var bars = await f.GetHistoricalDataAsync(symbol, resolution, from, to, true);
+                var bars = await f.GetHistoricalDataAsync(instrument, resolution, from, to);
 
                 foreach (var b in bars)
                     b.EndDateTime = Utilities.GetEndDateTime(b.DateTime, resolution);
@@ -269,7 +260,7 @@ namespace WindowsFormsApp
                 if(result == DialogResult.OK)
                 {
                     string symbol = (string)dialogBox.comboBox_symbols.SelectedItem;
-
+                    Instrument instrument = new Instrument { Name = symbol, Type = InstrumentType.Forex };
                     TimeFrame timeFrame = (TimeFrame)Enum.Parse(typeof(TimeFrame), dialogBox.comboBox_timeFrame.SelectedItem.ToString());
                     int size = Convert.ToInt16(dialogBox.textBox_timeFrame_size.Text);
                     var res = new Resolution(timeFrame, size);
@@ -277,7 +268,7 @@ namespace WindowsFormsApp
                     var fromDate = dialogBox.dateTimePicker_from.Value;
                     var toDate = dialogBox.dateTimePicker_to.Value;
 
-                    var barList = await GetHistoricalDataAsync(symbol, res, fromDate, toDate);
+                    var barList = await getHistoricalDataAsync(instrument, res, fromDate, toDate);
 
                     HlocLAForm chartForm = createChartForm();
                     chartForm.Chart.Resolution = res;

@@ -53,10 +53,23 @@ namespace Trading.Common
             PreviousLeg = previousLeg;
         }
 
-        public void AddBar(Bar bar)
+        public bool AddBar(Bar bar)
         {
-            this.BarList.Add(bar);
+            if(this.Direction == LegDirection.Up && (bar.Direction == BarDirection.Up || bar.Direction == BarDirection.Balance))
+            {
+                this.BarList.Add(bar);
+                return true;
+            }
+
+            if(this.Direction == LegDirection.Down && (bar.Direction == BarDirection.Down || bar.Direction == BarDirection.Balance))
+            {
+                this.BarList.Add(bar);
+                return true;
+            }
+
+            return false;
         }
+        
 
         public LegDirection Direction
         {

@@ -9,7 +9,9 @@ namespace Trading.DataProviders.Interfaces
 {
     public interface IDataProvider
     {
-        Task<IEnumerable<Bar>> GetHistoricalDataAsync(string symbol, Resolution resolution,
-            DateTime beginDateTime, DateTime endDateTime, bool subscribeToRealTime = false);
+        Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution,
+            DateTime beginDateTime, DateTime endDateTime);
+
+        void SubscribeToRealTime(Instrument instrument);
     }
 }

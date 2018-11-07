@@ -18,7 +18,7 @@ namespace Trading.DataManager
         FxcmWrapper fxm = new FxcmWrapper();
 
         private async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
-            DateTime beginDate, DateTime endDate, bool placeHolder = false)
+            DateTime beginDate, DateTime endDate)
         {
             string symbol = instrument.Name;
 
@@ -29,7 +29,7 @@ namespace Trading.DataManager
             }
             else
             {
-                var downloadedData = fxm.GetHistoricalDataAsync(symbol, resolution, beginDate, endDate, placeHolder);
+                var downloadedData = fxm.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate);
                 db.WriteData(instrument, resolution, downloadedData.Result);
                 return await downloadedData;
             }

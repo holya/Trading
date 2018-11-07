@@ -8,11 +8,10 @@ namespace Trading.Common
 {
     public enum PatternType
     {
-        FullStart,
-        DoubleStart,
-        PullBack,
-        DoublePullBack,
         Continuation1,
-        Continuation2
+        Continuation2,
+        PullBack1,
+        PullBack2,
+        HeadAndShoulder
     }
 }
