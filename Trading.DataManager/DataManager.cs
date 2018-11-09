@@ -28,17 +28,16 @@ namespace Trading.DataManager
         public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
             DateTime beginDate, DateTime endDate)
         {
-            var downloadedData = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate);
             var data = db.ReadData(instrument, resolution);
-            //if beginDate and endDate check ---- convert IEnumerable<Bar> to List<Bar> to add DateTime at the end
-            if (data.Count() != 0)
+            while (data.Count() != 0)
             {
-                var savedDate = data.First().DateTime;
-                int comparison = DateTime.Compare(savedDate, beginDate);
+                var firstLocalBarDateTime = data.First().DateTime;
+                int comparison = DateTime.Compare(firstLocalBarDateTime, beginDate);
                 if (comparison > 0)
-                    return downloadedData;
+                    break;
                 return data;
             }
+            var downloadedData = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate);
             db.WriteData(instrument, resolution, downloadedData);
             return downloadedData;
         }
