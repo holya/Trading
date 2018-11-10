@@ -16,7 +16,7 @@ namespace ConsoleApp1
         {
             //FxcmWrapper f = new FxcmWrapper();
 
-            Instrument instrument = new Instrument { Name = "USD/CAD", Type = InstrumentType.Forex };
+            Instrument instrument = new Instrument { Name = "USD/JPY", Type = InstrumentType.Forex };
             DateTime dailyStartDateTime = new DateTime(2018, 1, 1, 0, 0, 0);
             var dailyEndDateTime = new DateTime(2018, 7, 31, 23, 59, 59);
 
@@ -25,12 +25,10 @@ namespace ConsoleApp1
 
             List<FxBar> dailyBarList = null;
 
-            var fxcm = dm.dataProvider;
-
-            fxcm.SessionStatusChanged += (sender, sessionStatusEnum) =>
-            {
-                Console.WriteLine(fxcm.SessionStatusEnum + "");
-            };
+            //dm.SessionStatusChanged += (sender, sessionStatusEnum) =>
+            //{
+            //    Console.WriteLine(fxcm.SessionStatusEnum + "");
+            //};
 
             dailyBarList = (List<FxBar>)dm.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime).GetAwaiter().GetResult();
             foreach (var v in dailyBarList)

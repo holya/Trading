@@ -9,13 +9,14 @@ using Trading.Brokers.Fxcm;
 using Trading.Databases.Interfaces;
 using Trading.DataProviders.Interfaces;
 using Trading.Databases.TextFileDataBase;
+using Trading.Analyzers.Common;
 
 namespace Trading.DataManager
 {
     public class DataManager : IDisposable
     {
         TextDataBase db;
-        public FxcmWrapper dataProvider;
+        FxcmWrapper dataProvider;
 
         public DataManager()
         {
@@ -28,16 +29,51 @@ namespace Trading.DataManager
         public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
             DateTime beginDate, DateTime endDate)
         {
-            var data = db.ReadData(instrument, resolution);
-            while (data.Count() != 0)
+            var data = db.ReadData(instrument, resolution).ToList();
+            List<Bar> partialLocalData = new List<Bar>();
+            if (data.Count() != 0)
             {
-                var firstLocalBarDateTime = data.First().DateTime;
-                int comparison = DateTime.Compare(firstLocalBarDateTime, beginDate);
-                if (comparison > 0)
-                    break;
-                return data;
+                var localFirstBarDateTime = data.First().DateTime;
+                var localLastBarDateTime = data.Last().DateTime;
+                int firstDateCompare = DateTime.Compare(localFirstBarDateTime, beginDate);
+                int lastDateCompare = DateTime.Compare(localLastBarDateTime, endDate);
+
+                if (firstDateCompare > 0 && lastDateCompare == 0)
+                {
+                    int leftIndex = data.FindIndex(x => beginDate == x.DateTime);
+                    partialLocalData = (List<Bar>)data.Skip(leftIndex - 1);
+                    return partialLocalData;
+                }
+                else if (firstDateCompare > 0 && lastDateCompare < 0)
+                {
+                    int leftIndex = data.FindIndex(x => beginDate == x.DateTime);
+                    int rightIndex = data.FindIndex(y => endDate == y.DateTime);
+                    partialLocalData = (List<Bar>)data.Skip(leftIndex - 1).Take((data.Count) - leftIndex - rightIndex - 2);
+                }
+                else if (firstDateCompare == 0 && lastDateCompare < 0)
+                {
+                    int rightIndex = data.FindIndex(y => endDate == y.DateTime);
+                    partialLocalData = (List<Bar>)data.Take(data.Count - (rightIndex - 1));
+                }
+                else if (firstDateCompare < 0 && lastDateCompare == 0)
+                {
+
+                }
+                else if (firstDateCompare < 0 && lastDateCompare > 0)
+                {
+
+                }
+                else if (firstDateCompare < 0 && lastDateCompare < 0)
+                {
+
+                }
+
             }
             var downloadedData = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate);
+            foreach (var v in downloadedData)
+            {
+                v.EndDateTime = Utilities.GetEndDateTime(v.DateTime, resolution);
+            }
             db.WriteData(instrument, resolution, downloadedData);
             return downloadedData;
         }
@@ -58,6 +94,5 @@ namespace Trading.DataManager
                 Environment.Exit(0);
             }
         }
-
     }
 }
