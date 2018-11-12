@@ -30,7 +30,7 @@ namespace Trading.DataManager
             DateTime beginDate, DateTime endDate)
         {
             var data = db.ReadData(instrument, resolution).ToList();
-            List<Bar> partialLocalData = new List<Bar>();
+            List<Bar> requestedLocalData = new List<Bar>();
             if (data.Count() != 0)
             {
                 var localFirstBarDateTime = data.First().DateTime;
@@ -38,35 +38,62 @@ namespace Trading.DataManager
                 int firstDateCompare = DateTime.Compare(localFirstBarDateTime, beginDate);
                 int lastDateCompare = DateTime.Compare(localLastBarDateTime, endDate);
 
-                if (firstDateCompare > 0 && lastDateCompare == 0)
+                if (firstDateCompare < 0)
                 {
                     int leftIndex = data.FindIndex(x => beginDate == x.DateTime);
-                    partialLocalData = (List<Bar>)data.Skip(leftIndex - 1);
-                    return partialLocalData;
+                    if (lastDateCompare < 0)
+                    {
+                        var endFiller = await dataProvider.GetHistoricalDataAsync(instrument, resolution, localLastBarDateTime, endDate);
+                        requestedLocalData = (List<Bar>)data.Skip(leftIndex - 1).Union(endFiller);
+                        db.WriteData(instrument, resolution, requestedLocalData);
+                        return requestedLocalData;
+                    }
+                    else if (lastDateCompare > 0)
+                    {
+                        int rightIndex = data.FindIndex(y => endDate == y.DateTime);
+                        requestedLocalData = (List<Bar>)data.Skip(leftIndex - 1).Take(rightIndex - 1);
+                        return requestedLocalData;
+                    }
+                    else if (lastDateCompare == 0)
+                    {
+                        requestedLocalData = (List<Bar>)data.Skip(leftIndex - 1);
+                        return requestedLocalData;
+                    }
                 }
-                else if (firstDateCompare > 0 && lastDateCompare < 0)
+                else if (firstDateCompare > 0)
                 {
-                    int leftIndex = data.FindIndex(x => beginDate == x.DateTime);
-                    int rightIndex = data.FindIndex(y => endDate == y.DateTime);
-                    partialLocalData = (List<Bar>)data.Skip(leftIndex - 1).Take((data.Count) - leftIndex - rightIndex - 2);
+                    var startFiller = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, localFirstBarDateTime);
                 }
-                else if (firstDateCompare == 0 && lastDateCompare < 0)
-                {
-                    int rightIndex = data.FindIndex(y => endDate == y.DateTime);
-                    partialLocalData = (List<Bar>)data.Take(data.Count - (rightIndex - 1));
-                }
-                else if (firstDateCompare < 0 && lastDateCompare == 0)
-                {
 
-                }
-                else if (firstDateCompare < 0 && lastDateCompare > 0)
-                {
+                //if (firstDateCompare > 0 && lastDateCompare == 0)
+                //{
+                //    int leftIndex = data.FindIndex(x => beginDate == x.DateTime);
+                //    requestedLocalData = (List<Bar>)data.Skip(leftIndex - 1);
+                //    return requestedLocalData;
+                //}
+                //else if (firstDateCompare > 0 && lastDateCompare < 0)
+                //{
+                //    int leftIndex = data.FindIndex(x => beginDate == x.DateTime);
+                //    int rightIndex = data.FindIndex(y => endDate == y.DateTime);
+                //    requestedLocalData = (List<Bar>)data.Skip(leftIndex - 1).Take((data.Count) - leftIndex - rightIndex - 2);
+                //}
+                //else if (firstDateCompare == 0 && lastDateCompare < 0)
+                //{
+                //    int rightIndex = data.FindIndex(y => endDate == y.DateTime);
+                //    requestedLocalData = (List<Bar>)data.Take(data.Count - (rightIndex - 1));
+                //}
+                //else if (firstDateCompare < 0 && lastDateCompare == 0)
+                //{
 
-                }
-                else if (firstDateCompare < 0 && lastDateCompare < 0)
-                {
+                //}
+                //else if (firstDateCompare < 0 && lastDateCompare > 0)
+                //{
 
-                }
+                //}
+                //else if (firstDateCompare < 0 && lastDateCompare < 0)
+                //{
+
+                //}
 
             }
             var downloadedData = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate);
