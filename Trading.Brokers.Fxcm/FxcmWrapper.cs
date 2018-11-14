@@ -39,7 +39,7 @@ namespace Trading.Brokers.Fxcm
 
         public DateTime GetServerTime()
         {
-            return session.getServerTime().ToUniversalTime();
+            return session.getServerTime();
         }
 
         #region Login / Logout

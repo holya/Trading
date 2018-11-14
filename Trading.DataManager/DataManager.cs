@@ -29,85 +29,55 @@ namespace Trading.DataManager
         public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
             DateTime beginDate, DateTime endDate)
         {
+            var k = dataProvider.GetServerTime();
             var data = db.ReadData(instrument, resolution).ToList();
-            List<Bar> requestedLocalData = new List<Bar>();
+            List<Bar> returnData = new List<Bar>();
             if (data.Count() != 0)
             {
-                var localFirstBarDateTime = data.First().DateTime;
-                var localLastBarDateTime = data.Last().DateTime;
-                int firstDateCompare = DateTime.Compare(localFirstBarDateTime, beginDate);
-                int lastDateCompare = DateTime.Compare(localLastBarDateTime, endDate);
+                var firstBarDt = data.First().DateTime;
+                var lastBarDt = data.Last().DateTime;
 
-                if (firstDateCompare < 0)
+                if(beginDate < firstBarDt)
                 {
-                    int leftIndex = data.FindIndex(x => beginDate == x.DateTime);
-                    if (lastDateCompare < 0)
-                    {
-                        var endFiller = await dataProvider.GetHistoricalDataAsync(instrument, resolution, localLastBarDateTime, endDate);
-                        requestedLocalData = (List<Bar>)data.Skip(leftIndex - 1).Union(endFiller);
-                        db.WriteData(instrument, resolution, requestedLocalData);
-                        return requestedLocalData;
-                    }
-                    else if (lastDateCompare > 0)
-                    {
-                        int rightIndex = data.FindIndex(y => endDate == y.DateTime);
-                        requestedLocalData = (List<Bar>)data.Skip(leftIndex - 1).Take(rightIndex - 1);
-                        return requestedLocalData;
-                    }
-                    else if (lastDateCompare == 0)
-                    {
-                        requestedLocalData = (List<Bar>)data.Skip(leftIndex - 1);
-                        return requestedLocalData;
-                    }
+                    returnData = await getDataAndWriteToDB(instrument, resolution, beginDate, dataProvider.GetServerTime());
                 }
-                else if (firstDateCompare > 0)
+                else
                 {
-                    var startFiller = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, localFirstBarDateTime);
+                    int i = data.FindIndex(p => p.DateTime >= beginDate);
+                    data.RemoveRange(0, i - 1);
+                    returnData.AddRange(data);
+                }
+                
+                if(endDate > lastBarDt)
+                {
+                    returnData = await getDataAndWriteToDB(instrument, resolution, beginDate, dataProvider.GetServerTime());
+                }
+                else
+                {
+                    int i = data.FindIndex(p => p.DateTime >= endDate);
+                    data.RemoveRange(i, data.Count - i);
+                    returnData.AddRange(data);
                 }
 
-                //if (firstDateCompare > 0 && lastDateCompare == 0)
-                //{
-                //    int leftIndex = data.FindIndex(x => beginDate == x.DateTime);
-                //    requestedLocalData = (List<Bar>)data.Skip(leftIndex - 1);
-                //    return requestedLocalData;
-                //}
-                //else if (firstDateCompare > 0 && lastDateCompare < 0)
-                //{
-                //    int leftIndex = data.FindIndex(x => beginDate == x.DateTime);
-                //    int rightIndex = data.FindIndex(y => endDate == y.DateTime);
-                //    requestedLocalData = (List<Bar>)data.Skip(leftIndex - 1).Take((data.Count) - leftIndex - rightIndex - 2);
-                //}
-                //else if (firstDateCompare == 0 && lastDateCompare < 0)
-                //{
-                //    int rightIndex = data.FindIndex(y => endDate == y.DateTime);
-                //    requestedLocalData = (List<Bar>)data.Take(data.Count - (rightIndex - 1));
-                //}
-                //else if (firstDateCompare < 0 && lastDateCompare == 0)
-                //{
-
-                //}
-                //else if (firstDateCompare < 0 && lastDateCompare > 0)
-                //{
-
-                //}
-                //else if (firstDateCompare < 0 && lastDateCompare < 0)
-                //{
-
-                //}
-
+                return returnData;
             }
-            var downloadedData = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate);
-            foreach (var v in downloadedData)
-            {
-                v.EndDateTime = Utilities.GetEndDateTime(v.DateTime, resolution);
-            }
-            db.WriteData(instrument, resolution, downloadedData);
-            return downloadedData;
+
+            var list = await getDataAndWriteToDB(instrument, resolution, beginDate, endDate);
+
+            return list;
+        }
+
+        private async Task<List<Bar>> getDataAndWriteToDB(Instrument instrument, Resolution resolution, DateTime beginDate, DateTime endDate)
+        {
+            var list = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate);
+            db.WriteData(instrument, resolution, list);
+            return list.ToList();
         }
 
         public void Dispose()
         {
             dataProvider.Logout();
+            dataProvider.Dispose();
         }
 
         private void logIn()

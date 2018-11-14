@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Trading.Common;
-using Trading.Utilities;
+using Trading.DataManager.Symbols;
 
 namespace WindowsFormsApp.Custom_Views
 {

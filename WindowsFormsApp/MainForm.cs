@@ -14,7 +14,7 @@ using Trading.Analyzers.LegAnalyzer;
 using Trading.Brokers.Fxcm;
 using Trading.Common;
 using WindowsFormsApp.Custom_Views;
-using Trading.Utilities;
+using Trading.DataManager.Symbols;
 using Trading.Databases.TextFileDataBase;
 
 namespace WindowsFormsApp
@@ -170,8 +170,8 @@ namespace WindowsFormsApp
 
             string symbol = selectedSymbolLabel.Text;
             Instrument instrument = new Instrument { Name = symbol, Type = InstrumentType.Forex };
-            
-            foreach(var c in chartFormList)
+
+            foreach (var c in chartFormList)
             {
                 c.Chart.DataPopulated = false;
                 c.Chart.Symbol = symbol;

@@ -14,29 +14,28 @@ namespace ConsoleApp1
     {
         public static void Main(string[] args)
         {
-            //FxcmWrapper f = new FxcmWrapper();
-
-            Instrument instrument = new Instrument { Name = "USD/JPY", Type = InstrumentType.Forex };
-            DateTime dailyStartDateTime = new DateTime(2018, 1, 1, 0, 0, 0);
-            var dailyEndDateTime = new DateTime(2018, 7, 31, 23, 59, 59);
-
-
             DataManager dm = new DataManager();
 
-            List<FxBar> dailyBarList = null;
+            //FxcmWrapper f = new FxcmWrapper();
+            //f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
+            Instrument instrument = new Instrument { Name = "EUR/USD", Type = InstrumentType.Forex };
+            DateTime sd = new DateTime(2018, 11, 1, 0, 0, 0);
+            var ed = new DateTime(2018, 11, 14, 11,59, 59);
+            //var barList = f.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), sd, ed).GetAwaiter().GetResult();
 
-            //dm.SessionStatusChanged += (sender, sessionStatusEnum) =>
-            //{
-            //    Console.WriteLine(fxcm.SessionStatusEnum + "");
-            //};
+            var barList = dm.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), sd, ed).GetAwaiter().GetResult();
 
-            dailyBarList = (List<FxBar>)dm.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), dailyStartDateTime, dailyEndDateTime).GetAwaiter().GetResult();
-            foreach (var v in dailyBarList)
+            foreach (var bar in barList)
             {
-                Console.WriteLine(v);
+                Console.WriteLine(bar.ToString());
             }
-            dm.Dispose();
 
+
+
+
+            //dm.Dispose();
+            //f.Logout();
+            //f.Dispose();
             Console.ReadLine();
 
             //try
