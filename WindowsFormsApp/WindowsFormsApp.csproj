@@ -138,6 +138,10 @@
       <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
       <Name>Trading.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Trading.DataManager\Trading.DataManager.csproj">
+      <Project>{e95f8145-b29c-4faf-85af-495c5420c889}</Project>
+      <Name>Trading.DataManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Trading.DataProviders\Trading.DataProviders.Interfaces.csproj">
       <Project>{f56906e6-e201-4c15-bfb1-980d99bb3884}</Project>
       <Name>Trading.DataProviders.Interfaces</Name>

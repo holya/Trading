@@ -10,6 +10,7 @@ using Trading.Databases.Interfaces;
 using Trading.DataProviders.Interfaces;
 using Trading.Databases.TextFileDataBase;
 using Trading.Analyzers.Common;
+using System.Xml.Linq;
 
 namespace Trading.DataManager
 {

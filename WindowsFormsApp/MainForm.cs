@@ -14,7 +14,7 @@ using Trading.Analyzers.LegAnalyzer;
 using Trading.Brokers.Fxcm;
 using Trading.Common;
 using WindowsFormsApp.Custom_Views;
-using Trading.DataManager.Symbols;
+using Trading.DataManager;
 using Trading.Databases.TextFileDataBase;
 
 namespace WindowsFormsApp
