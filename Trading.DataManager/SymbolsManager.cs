@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace Trading.DataManager
 {
-    class SymbolsManager
+    public class SymbolsManager
     {
         private string docUri = "../../Symbols.xml";
 
