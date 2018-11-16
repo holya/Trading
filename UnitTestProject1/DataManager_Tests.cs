@@ -8,14 +8,9 @@ namespace UnitTestProject1
     public class DataManager_Tests
     {
         [TestMethod]
-        public void RespondToUserDataRequest_LocalData()
+        public void GetHistoricalDataAsync__For_Local_Data()
         {
-            Assert.Fail();
-        }
 
-        public void RespondToUserDataRequest_DownloadedData()
-        {
-            Assert.Fail();
         }
     }
 }

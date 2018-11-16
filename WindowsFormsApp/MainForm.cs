@@ -189,10 +189,6 @@ namespace WindowsFormsApp
             try
             {
                 var bars = await f.GetHistoricalDataAsync(instrument, resolution, from, to);
-
-                foreach (var b in bars)
-                    b.EndDateTime = Utilities.GetEndDateTime(b.DateTime, resolution);
-
                 return (List<FxBar>)bars;
             }
             catch (Exception e)
