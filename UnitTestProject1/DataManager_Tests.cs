@@ -12,7 +12,5 @@ namespace UnitTestProject1
         {
             Assert.Fail();
         }
-
-        }
     }
 }
