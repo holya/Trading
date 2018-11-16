@@ -59,17 +59,53 @@ namespace Trading.Databases.TextFileDataBase
 
         public void WriteData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
+            string fileFullPath = getFullPath(instrument, resolution);
+
+            using (StreamWriter sw = new StreamWriter(fileFullPath))
+            {
+                foreach (var bar in barList)
+                    sw.WriteLine(bar.ToString());
+
+                sw.Close();
+            }
+        }
+
+        public void PrependData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        {
+            string fileFullPath = getFullPath(instrument, resolution);
+
+            var localList = ReadData(instrument, resolution);
+
+            using (StreamWriter sw = new StreamWriter(fileFullPath))
+            {
+
+                foreach (var bar in barList)
+                    sw.WriteLine(bar.ToString());
+
+                foreach (var bar in localList)
+                    sw.WriteLine(bar.ToString());
+            }
+        }
+
+        public void AppendData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        {
+            string path = getFullPath(instrument, resolution);
+
+            using (StreamWriter sw = File.AppendText(path))
+            {
+                foreach (var bar in barList)
+                    sw.WriteLine(bar.ToString());
+            }
+        }
+
+        private string getFullPath(Instrument instrument, Resolution resolution)
+        {
             string directoryName = $"{getSymbolFolderName(instrument)}";
             if (!Directory.Exists(directoryName))
                 Directory.CreateDirectory(directoryName);
 
             string fileFullPath = $"{directoryName}\\{getFileName(resolution)}.txt";
-
-            using(StreamWriter sw = new StreamWriter(fileFullPath))
-            {
-                foreach (var bar in barList)
-                    sw.WriteLine(bar.ToString());
-            }
+            return fileFullPath;
         }
 
         private string getSymbolFolderName(Instrument instrument)

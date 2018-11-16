@@ -39,41 +39,39 @@ namespace Trading.DataManager
 
                 if(beginDate < firstBarDt)
                 {
-                    returnData = await getDataAndWriteToDB(instrument, resolution, beginDate, dataProvider.GetServerTime());
+                    IEnumerable<Bar> collection = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, firstBarDt);
+                    db.PrependData(instrument, resolution, collection);
+                    data.InsertRange(0, collection);
                 }
-                else
+                else if(beginDate > firstBarDt)
                 {
                     int i = data.FindIndex(p => p.DateTime >= beginDate);
-                    data.RemoveRange(0, i - 1);
-                    returnData.AddRange(data);
+                    data.RemoveRange(0, i);
                 }
                 
                 if(endDate > lastBarDt)
                 {
-                    returnData = await getDataAndWriteToDB(instrument, resolution, beginDate, dataProvider.GetServerTime());
+                    if (endDate > dataProvider.GetServerTime())
+                        endDate = dataProvider.GetServerTime();
+                    var collection = await dataProvider.GetHistoricalDataAsync(instrument, resolution, lastBarDt, endDate);
+                    db.AppendData(instrument, resolution, collection);
+                    data.AddRange(collection);
                 }
-                else
+                else if(endDate < lastBarDt)
                 {
                     int i = data.FindIndex(p => p.DateTime >= endDate);
-                    data.RemoveRange(i, data.Count - i);
-                    returnData.AddRange(data);
+                    data.RemoveRange(i, data.Count);
                 }
 
-                return returnData;
+                return data;
             }
 
-            var list = await getDataAndWriteToDB(instrument, resolution, beginDate, endDate);
+            var list = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate);
+            db.WriteData(instrument, resolution, list);
 
             return list;
         }
-
-        private async Task<List<Bar>> getDataAndWriteToDB(Instrument instrument, Resolution resolution, DateTime beginDate, DateTime endDate)
-        {
-            var list = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate);
-            db.WriteData(instrument, resolution, list);
-            return list.ToList();
-        }
-
+   
         public void Dispose()
         {
             dataProvider.Logout();

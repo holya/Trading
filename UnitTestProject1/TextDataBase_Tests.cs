@@ -46,5 +46,56 @@ namespace UnitTestProject1
             Assert.AreEqual(barList.Count, rbs.Count());
         }
 
+        [TestMethod]
+        public void PrependData__adds_data_to_beginning_of_file()
+        {
+            TextDataBase tb = new TextDataBase();
+
+            List<Bar> barList = new List<Bar>();
+            barList.Add(new Bar(10, 20, 5, 12, 0, DateTime.Now, DateTime.Now));
+            barList.Add(new Bar(15, 25, 10, 17, 0, DateTime.Now, DateTime.Now));
+            barList.Add(new Bar(15, 27, 8, 17, 0, DateTime.Now, DateTime.Now));
+
+            var instrument = new Instrument { Type = InstrumentType.Stock, Name = "TSLA" };
+            var resolution = new Resolution(TimeFrame.Hourly, 1);
+            tb.WriteData(instrument, resolution, barList);
+
+            barList.Clear();
+            barList.Add(new Bar(1, 20, 5, 12, 0, DateTime.Now, DateTime.Now));
+            barList.Add(new Bar(0, 25, 10, 17, 0, DateTime.Now, DateTime.Now));
+            barList.Add(new Bar(0, 27, 8, 17, 0, DateTime.Now, DateTime.Now));
+            tb.PrependData(instrument, resolution, barList);
+
+            var rbs = tb.ReadData(instrument, resolution);
+
+            Assert.AreEqual(6, rbs.Count());
+        }
+
+        [TestMethod]
+        public void AppendData__adds_data_to_end_of_file()
+        {
+            TextDataBase tb = new TextDataBase();
+
+            List<Bar> barList = new List<Bar>();
+            barList.Add(new Bar(10, 20, 5, 12, 0, DateTime.Now, DateTime.Now));
+            barList.Add(new Bar(15, 25, 10, 17, 0, DateTime.Now, DateTime.Now));
+            barList.Add(new Bar(15, 27, 8, 17, 0, DateTime.Now, DateTime.Now));
+
+            var instrument = new Instrument { Type = InstrumentType.Stock, Name = "TSLA" };
+            var resolution = new Resolution(TimeFrame.Hourly, 1);
+            tb.WriteData(instrument, resolution, barList);
+
+            barList.Clear();
+            barList.Add(new Bar(0, 20, 5, 12, 0, DateTime.Now, DateTime.Now));
+            barList.Add(new Bar(0, 25, 10, 17, 0, DateTime.Now, DateTime.Now));
+            barList.Add(new Bar(0, 27, 8, 17, 0, DateTime.Now, DateTime.Now));
+            tb.AppendData(instrument, resolution, barList);
+
+            var rbs = tb.ReadData(instrument, resolution);
+
+            Assert.AreEqual(6, rbs.Count());
+
+        }
+
     }
 }
