@@ -53,10 +53,6 @@
       <Project>{35CEF0FC-636C-4C15-B07C-99C6C5B93439}</Project>
       <Name>Trading.Databases.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Trading.Utilities\Trading.DataManager.Symbols.csproj">
-      <Project>{18fb624d-8845-484a-833a-ff00be65acd9}</Project>
-      <Name>Trading.DataManager.Symbols</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

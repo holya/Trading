@@ -97,6 +97,8 @@ namespace Trading.Brokers.Fxcm
             try
             {
                 barList = GetHistoryPrices(session, symbol, convert_Resolution_To_string(resolution), startDateTime, endDateTime, 1000, responseListener);
+                foreach (var bar in barList)
+                    bar.EndDateTime = Utilities.GetEndDateTime(bar.DateTime, resolution);
             }
             catch (Exception e)
             {

@@ -10,6 +10,7 @@ using Trading.Databases.Interfaces;
 using Trading.DataProviders.Interfaces;
 using Trading.Databases.TextFileDataBase;
 using Trading.Analyzers.Common;
+using System.Xml.Linq;
 
 namespace Trading.DataManager
 {
@@ -89,5 +90,37 @@ namespace Trading.DataManager
                 Environment.Exit(0);
             }
         }
+    }
+
+    public class SymbolsManager
+    {
+        private string docUri = "../../Symbols.xml";
+
+        public SymbolsManager()
+        {
+
+        }
+
+        public IEnumerable<string> GetForexPairsMajor()
+        {
+            return getForexPairs("major");
+        }
+        public IEnumerable<string> GetForexPairsMinor()
+        {
+            return getForexPairs("minor");
+        }
+
+        private IEnumerable<string> getForexPairs(string forexType)
+        {
+            var list = new List<string>();
+            var doc = XDocument.Load(docUri);
+
+            var elements = doc.Element("symbols").Element("forex").Element(forexType).Elements().Attributes("name");
+            foreach (var v in elements)
+                list.Add(v.Value);
+
+            return list;
+        }
+
     }
 }

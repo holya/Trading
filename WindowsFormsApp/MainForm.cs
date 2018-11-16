@@ -14,7 +14,7 @@ using Trading.Analyzers.LegAnalyzer;
 using Trading.Brokers.Fxcm;
 using Trading.Common;
 using WindowsFormsApp.Custom_Views;
-using Trading.DataManager.Symbols;
+using Trading.DataManager;
 using Trading.Databases.TextFileDataBase;
 
 namespace WindowsFormsApp
@@ -189,10 +189,6 @@ namespace WindowsFormsApp
             try
             {
                 var bars = await f.GetHistoricalDataAsync(instrument, resolution, from, to);
-
-                foreach (var b in bars)
-                    b.EndDateTime = Utilities.GetEndDateTime(b.DateTime, resolution);
-
                 return (List<FxBar>)bars;
             }
             catch (Exception e)
