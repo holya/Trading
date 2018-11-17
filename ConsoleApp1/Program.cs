@@ -19,20 +19,21 @@ namespace ConsoleApp1
             //FxcmWrapper f = new FxcmWrapper();
             //f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
             Instrument instrument = new Instrument { Name = "EUR/USD", Type = InstrumentType.Forex };
-            DateTime sd = new DateTime(2018, 11, 16, 9, 0, 0);
-            var ed = new DateTime(2018, 11, 16, 11,0, 0);
+            DateTime sd = new DateTime(2018, 11, 16, 0, 0, 0);
+            var ed = new DateTime(2018, 11, 16, 15,0, 0);
             //var barList = f.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), sd, ed).GetAwaiter().GetResult();
 
             var barList = new List<Bar>();
             try
             {
-                barList.AddRange(dm.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Minute, 5), sd, ed).GetAwaiter().GetResult());
+                barList.AddRange(dm.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Hourly, 1), sd, ed).GetAwaiter().GetResult());
             }
             catch(Exception e)
             {
                 Console.WriteLine(e.Message);
             }
 
+            Console.WriteLine($"Count: {barList.Count}\n");
             foreach (var bar in barList)
             {
                 Console.WriteLine(bar.ToString());
@@ -41,7 +42,7 @@ namespace ConsoleApp1
 
 
 
-            //dm.Dispose();
+            dm.Dispose();
             //f.Logout();
             //f.Dispose();
             Console.ReadLine();

@@ -20,16 +20,10 @@ namespace Trading.Databases.TextFileDataBase
         {
             List<Bar> barList = new List<Bar>();
 
-            string directoryName = $"{getSymbolFolderName(instrument)}";
-            if (!Directory.Exists(directoryName))
+            if (!File.Exists(getFullPath(instrument, resolution)))
                 return barList;
 
-            string fn = getFileName(resolution);
-            string fileFullPath = $"{directoryName}\\{fn}.txt";
-            if (!File.Exists(fileFullPath))
-                return barList;
-
-            using (StreamReader sr = new StreamReader(fileFullPath))
+            using (StreamReader sr = new StreamReader(getFullPath(instrument, resolution)))
             {
                 string line;
                 if (instrument.Type == InstrumentType.Forex)
@@ -65,8 +59,6 @@ namespace Trading.Databases.TextFileDataBase
             {
                 foreach (var bar in barList)
                     sw.WriteLine(bar.ToString());
-
-                sw.Close();
             }
         }
 
@@ -100,25 +92,16 @@ namespace Trading.Databases.TextFileDataBase
 
         private string getFullPath(Instrument instrument, Resolution resolution)
         {
-            string directoryName = $"{getSymbolFolderName(instrument)}";
+            string directoryName = $"{root}{instrument.Type.ToString()}\\";
+            if (instrument.Type == InstrumentType.Forex)
+                directoryName += $"{instrument.Name.Substring(0, 3)}{instrument.Name.Substring(4, 3)}";
+            else
+                directoryName += instrument.Name;
+
             if (!Directory.Exists(directoryName))
                 Directory.CreateDirectory(directoryName);
 
-            string fileFullPath = $"{directoryName}\\{getFileName(resolution)}.txt";
-            return fileFullPath;
+            return $"{directoryName}\\{resolution.TimeFrame.ToString()}_{resolution.Size}.txt";
         }
-
-        private string getSymbolFolderName(Instrument instrument)
-        {
-            string path = $"{root}{instrument.Type.ToString()}";
-            if (instrument.Type == InstrumentType.Forex)
-                path += $"\\{instrument.Name.Substring(0, 3)}{instrument.Name.Substring(4, 3)}";
-            else
-                path += $"\\{instrument.Name}";
-
-            return path;
-        }
-
-        private string getFileName(Resolution resolution) => $"{resolution.TimeFrame.ToString()}_{resolution.Size}";
     }
 }
