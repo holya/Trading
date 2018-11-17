@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Trading.Common;
 
-namespace Trading.Databases.Interfaces
+namespace Trading.DataBases.Interfaces
 {
     public interface IDataBase
     {

@@ -52,7 +52,7 @@
     <Compile Include="LegAnalyzer_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Trading.Analyzers.Common_Tests\Utilities_Tests.cs" />
-    <Compile Include="TextDataBase_Tests.cs" />
+    <Compile Include="Trading.DataBases_Tests\TextDataBase_Tests.cs" />
     <Compile Include="DataManager_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
