@@ -8,7 +8,7 @@ namespace Trading.Databases.TextFileDataBase
 {
     public class TextDataBase : IDataBase
     {
-        public string root = "C:\\DataBase\\";
+        public string root = "C:\\DataBase\\TextFiles\\";
 
         public TextDataBase() { }
         public TextDataBase(string rootPath)
