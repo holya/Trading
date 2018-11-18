@@ -21,7 +21,23 @@ namespace Trading.DataBases.XmlDataBase
 
         public void WriteData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
+            string fileFullPath = getFullPath(instrument, resolution);
 
+            XElement barData;
+
+            foreach (var bar in barList)
+            {
+                barData = new XElement("Bar Data",
+                    new XElement("Open", bar.Open.ToString()),
+                    new XElement("High", bar.High.ToString()),
+                    new XElement("Low", bar.Low.ToString()),
+                    new XElement("Close", bar.Close.ToString()),
+                    new XElement("Volume", bar.Volume.ToString()),
+                    new XElement("DateTime", bar.DateTime.ToString()),
+                    new XElement("End DateTime", bar.EndDateTime.ToString())
+                    );
+                barData.Save(fileFullPath);
+            }
         }
 
         public void PrependData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
@@ -36,26 +52,17 @@ namespace Trading.DataBases.XmlDataBase
 
         private string getFullPath(Instrument instrument, Resolution resolution)
         {
-            string directoryName = $"{getSymbolFolderName(instrument)}";
+            string directoryName = $"{root}{instrument.Type.ToString()}\\";
+            if (instrument.Type == InstrumentType.Forex)
+                directoryName += $"{instrument.Name.Substring(0, 3)}{instrument.Name.Substring(4, 3)}";
+            else
+                directoryName += instrument.Name;
+
             if (!Directory.Exists(directoryName))
                 Directory.CreateDirectory(directoryName);
 
-            string fileFullPath = $"{directoryName}\\{getFileName(resolution)}.xml";
-            return fileFullPath;
+            return $"{directoryName}\\{resolution.TimeFrame.ToString()}_{resolution.Size}.xml";
         }
-
-        private string getSymbolFolderName(Instrument instrument)
-        {
-            string path = $"{root}{instrument.Type.ToString()}";
-            if (instrument.Type == InstrumentType.Forex)
-                path += $"\\{instrument.Name.Substring(0, 3)}{instrument.Name.Substring(4, 3)}";
-            else
-                path += $"\\{instrument.Name}";
-
-            return path;
-        }
-
-        private string getFileName(Resolution resolution) => $"{resolution.TimeFrame.ToString()}_{resolution.Size}";
     }
 
 }
