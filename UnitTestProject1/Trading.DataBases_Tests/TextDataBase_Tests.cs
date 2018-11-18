@@ -10,7 +10,7 @@ namespace UnitTestProject1
     public class TextDataBase_Tests
     {
         [TestMethod]
-        public void WriteData_Forex()
+        public void WriteData_TextDataBase_Forex()
         {
             TextDataBase tb = new TextDataBase();
 
@@ -30,7 +30,7 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void WriteData_Stock()
+        public void WriteData_TextDataBase_Stock()
         {
             TextDataBase tb = new TextDataBase();
 

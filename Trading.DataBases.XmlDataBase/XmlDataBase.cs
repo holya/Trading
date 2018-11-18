@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Xml.Linq;
+using System.Xml;
 using System.Threading.Tasks;
 using Trading.Common;
 using Trading.DataBases.Interfaces;
@@ -16,7 +17,29 @@ namespace Trading.DataBases.XmlDataBase
 
         public IEnumerable<Bar> ReadData(Instrument instrument, Resolution resolution)
         {
-            throw new NotImplementedException();
+            List<Bar> barList = new List<Bar>();
+            Bar temp = new Bar();
+
+            if (!File.Exists(getFullPath(instrument, resolution)))
+                return barList;
+
+            XElement readData = XElement.Load(getFullPath(instrument, resolution));
+            IEnumerable<XElement> barData = from elements in readData.Elements("Bar Data")
+                                            select elements;
+
+            foreach (var b in barData)
+            {
+                temp.Open = Convert.ToDouble(b.Attribute("Open").Value);
+                temp.High = Convert.ToDouble(b.Attribute("High").Value);
+                temp.Low = Convert.ToDouble(b.Attribute("Low").Value);
+                temp.Close = Convert.ToDouble(b.Attribute("Close").Value);
+                temp.Volume = Convert.ToDouble(b.Attribute("Volume").Value);
+                temp.DateTime = Convert.ToDateTime(b.Attribute("DateTime").Value);
+                temp.EndDateTime = Convert.ToDateTime(b.Attribute("End DateTime").Value);
+                barList.Add(temp);
+            }
+
+            return barList;
         }
 
         public void WriteData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
@@ -24,17 +47,17 @@ namespace Trading.DataBases.XmlDataBase
             string fileFullPath = getFullPath(instrument, resolution);
 
             XElement barData;
-
+            
             foreach (var bar in barList)
             {
                 barData = new XElement("Bar Data",
-                    new XElement("Open", bar.Open.ToString()),
-                    new XElement("High", bar.High.ToString()),
-                    new XElement("Low", bar.Low.ToString()),
-                    new XElement("Close", bar.Close.ToString()),
-                    new XElement("Volume", bar.Volume.ToString()),
-                    new XElement("DateTime", bar.DateTime.ToString()),
-                    new XElement("End DateTime", bar.EndDateTime.ToString())
+                    new XAttribute("Open", bar.Open),
+                    new XAttribute("High", bar.High),
+                    new XAttribute("Low", bar.Low),
+                    new XAttribute("Close", bar.Close),
+                    new XAttribute("Volume", bar.Volume),
+                    new XAttribute("DateTime", bar.DateTime),
+                    new XAttribute("End DateTime", bar.EndDateTime)
                     );
                 barData.Save(fileFullPath);
             }
