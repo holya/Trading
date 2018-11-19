@@ -91,41 +91,33 @@ namespace Trading.DataBases.XmlDataBase
 
             if (instrument.Type == InstrumentType.Stock)
             {
-                root.Add(barList.Select(bar => new XElement("bar",
-                                new XAttribute("Open", bar.Open),
-                                new XAttribute("High", bar.High),
-                                new XAttribute("Low", bar.Low),
-                                new XAttribute("Close", bar.Close),
-                                new XAttribute("Volume", bar.Volume),
-                                new XAttribute("DateTime", bar.DateTime),
-                                new XAttribute("EndDateTime", bar.EndDateTime)
-                                )));
+                root.Add(createXElementListFromBarList(barList));
             }
             else
             {
-                root.Add(barList.Select(bar => createXElementFromFxBar(bar)));
+                root.Add(createXElementListFromFxBar(barList));
             }
 
 
             doc.Save(fileFullPath);
         }
 
-        private static XElement createXElementFromBar(Bar bar)
+        private static IEnumerable<XElement> createXElementListFromBarList(IEnumerable<Bar> barList)
         {
-            var e = new XElement("bar",
-                                new XAttribute("Open", bar.Open),
-                                new XAttribute("High", bar.High),
-                                new XAttribute("Low", bar.Low),
-                                new XAttribute("Close", bar.Close),
-                                new XAttribute("Volume", bar.Volume),
-                                new XAttribute("DateTime", bar.DateTime),
-                                new XAttribute("EndDateTime", bar.EndDateTime)
-                                );
-            return e;
+            return barList.Select(bar => new XElement("bar",
+                                            new XAttribute("Open", bar.Open),
+                                            new XAttribute("High", bar.High),
+                                            new XAttribute("Low", bar.Low),
+                                            new XAttribute("Close", bar.Close),
+                                            new XAttribute("Volume", bar.Volume),
+                                            new XAttribute("DateTime", bar.DateTime),
+                                            new XAttribute("EndDateTime", bar.EndDateTime)
+                                            ));
         }
-        private static XElement createXElementFromFxBar(Bar bar)
+
+        private IEnumerable<XElement> createXElementListFromFxBar(IEnumerable<Bar> barList)
         {
-            return new XElement("bar",
+            return barList.Select(bar => new XElement("bar",
                                 new XAttribute("Open", ((FxBar)bar).Open),
                                 new XAttribute("AskOpen", ((FxBar)bar).AskOpen),
                                 new XAttribute("High", ((FxBar)bar).High),
@@ -137,7 +129,7 @@ namespace Trading.DataBases.XmlDataBase
                                 new XAttribute("Volume", bar.Volume),
                                 new XAttribute("DateTime", bar.DateTime),
                                 new XAttribute("EndDateTime", bar.EndDateTime)
-                                );
+                                ));
         }
 
 
@@ -148,32 +140,11 @@ namespace Trading.DataBases.XmlDataBase
             XDocument doc = XDocument.Load(fileFullPath);
             if (instrument.Type == InstrumentType.Stock)
             {
-                doc.Root.AddFirst(barList.Select(bar => new XElement("bar",
-                                        new XAttribute("Open", bar.Open),
-                                        new XAttribute("High", bar.High),
-                                        new XAttribute("Low", bar.Low),
-                                        new XAttribute("Close", bar.Close),
-                                        new XAttribute("Volume", bar.Volume),
-                                        new XAttribute("DateTime", bar.DateTime),
-                                        new XAttribute("EndDateTime", bar.EndDateTime)
-                                        )
-                ));
+                doc.Root.AddFirst(createXElementListFromBarList(barList));
             }
             else
             {
-                doc.Root.AddFirst(barList.Select(bar => new XElement("bar",
-                                new XAttribute("Open", ((FxBar)bar).Open),
-                                new XAttribute("AskOpen", ((FxBar)bar).AskOpen),
-                                new XAttribute("High", ((FxBar)bar).High),
-                                new XAttribute("AskHigh", ((FxBar)bar).AskHigh),
-                                new XAttribute("Low", ((FxBar)bar).Low),
-                                new XAttribute("AskLow", ((FxBar)bar).AskLow),
-                                new XAttribute("Close", ((FxBar)bar).Close),
-                                new XAttribute("AskClose", ((FxBar)bar).AskClose),
-                                new XAttribute("Volume", bar.Volume),
-                                new XAttribute("DateTime", bar.DateTime),
-                                new XAttribute("EndDateTime", bar.EndDateTime)
-                                )));
+                doc.Root.AddFirst(createXElementListFromFxBar(barList));
             }
 
             doc.Save(fileFullPath);
