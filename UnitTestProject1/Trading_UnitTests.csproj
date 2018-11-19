@@ -76,6 +76,10 @@
       <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
       <Name>Trading.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Trading.DataBases.XmlDataBase\Trading.DataBases.XmlDataBase.csproj">
+      <Project>{23781aa0-1b88-414a-8d50-edb0bf4d5aac}</Project>
+      <Name>Trading.DataBases.XmlDataBase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Trading.DataManager\Trading.DataManager.csproj">
       <Project>{e95f8145-b29c-4faf-85af-495c5420c889}</Project>
       <Name>Trading.DataManager</Name>

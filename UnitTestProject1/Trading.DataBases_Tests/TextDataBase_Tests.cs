@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trading.Common;
-using Trading.Databases.TextFileDataBase;
+using Trading.DataBases.TextFileDataBase;
+
 namespace UnitTestProject1
 {
     [TestClass]

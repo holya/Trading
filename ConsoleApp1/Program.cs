@@ -18,9 +18,9 @@ namespace ConsoleApp1
 
             //FxcmWrapper f = new FxcmWrapper();
             //f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
-            Instrument instrument = new Instrument { Name = "EUR/USD", Type = InstrumentType.Forex };
-            DateTime sd = new DateTime(2018, 11, 16, 0, 0, 0);
-            var ed = new DateTime(2018, 11, 16, 15,0, 0);
+            Instrument instrument = new Instrument { Name = "MS", Type = InstrumentType.Stock };
+            DateTime sd = new DateTime(2018, 11, 15, 0, 0, 0);
+            var ed = new DateTime(2018, 11, 17, 15,0, 0);
             //var barList = f.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), sd, ed).GetAwaiter().GetResult();
 
             var barList = new List<Bar>();

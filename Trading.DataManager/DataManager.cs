@@ -8,21 +8,22 @@ using Trading.Common;
 using Trading.Brokers.Fxcm;
 using Trading.DataBases.Interfaces;
 using Trading.DataProviders.Interfaces;
-using Trading.Databases.TextFileDataBase;
+using Trading.DataBases.TextFileDataBase;
 using Trading.Analyzers.Common;
 using System.Xml.Linq;
+using Trading.DataBases.XmlDataBase;
 
 namespace Trading.DataManager
 {
     public class DataManager : IDisposable
     {
-        TextDataBase db;
+        IDataBase db;
         FxcmWrapper dataProvider;
 
         public DataManager()
         {
             dataProvider = new FxcmWrapper();
-            db = new TextDataBase();
+            db = new XmlDataBase();
             logIn();
         }
 
