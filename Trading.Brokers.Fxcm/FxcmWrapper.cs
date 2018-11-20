@@ -113,16 +113,11 @@ namespace Trading.Brokers.Fxcm
             return barList;
         }
 
-        public void SubscribeToRealTime(Instrument instrument)
-        {
-            if (!realTimeInstruments.Contains(instrument.Name))
-                realTimeInstruments.Add(instrument.Name);
-        }
 
         public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
         {
             Task<IEnumerable<Bar>> task = Task.Factory.StartNew(() =>
-            GetHistoricalData(instrument.Name, resolution, startDateTime, endDateTime));
+                    GetHistoricalData(instrument.Name, resolution, startDateTime, endDateTime));
             return await task;
         }
 
@@ -136,9 +131,15 @@ namespace Trading.Brokers.Fxcm
             }
         }
 
-        public void UnsubscibeRealTime(string symbol)
+        public void SubscribeToRealTime(string instrument)
         {
-            realTimeInstruments.Remove(symbol);
+            if (!realTimeInstruments.Contains(instrument))
+                realTimeInstruments.Add(instrument);
+        }
+
+        public void UnsubscribeToRealTime(string instrument)
+        {
+            realTimeInstruments.Remove(instrument);
         }
 
         private static IEnumerable<Bar> normalizeToQuarterlyTimeFrame(List<FxBar> barList)

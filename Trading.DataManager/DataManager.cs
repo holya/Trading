@@ -17,61 +17,69 @@ namespace Trading.DataManager
 {
     public class DataManager : IDisposable
     {
-        IDataBase db;
+        IDataBase repository;
         FxcmWrapper dataProvider;
 
         public DataManager()
         {
             dataProvider = new FxcmWrapper();
-            db = new XmlDataBase();
+            repository = new XmlDataBase();
             logIn();
         }
-
 
         public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
             DateTime beginDate, DateTime endDate)
         {
-            var k = dataProvider.GetServerTime();
-            var data = db.ReadData(instrument, resolution).ToList();
-            List<Bar> returnData = new List<Bar>();
-            if (data.Count() != 0)
-            {
-                var firstBarDt = data.First().DateTime;
-                var lastBarDt = data.Last().DateTime;
+            var localData = repository.ReadData(instrument, resolution).ToList();
 
-                if(beginDate < firstBarDt)
+            if (localData.Count() != 0)
+            {
+                var firstLocalBarDateTime = localData.First().DateTime;
+                var lastLocalBarDateTime = localData.Last().DateTime;
+
+                if(beginDate < firstLocalBarDateTime)
                 {
-                    IEnumerable<Bar> collection = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, firstBarDt);
-                    db.PrependData(instrument, resolution, collection);
-                    data.InsertRange(0, collection);
+                    IEnumerable<Bar> prependBarList = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, firstLocalBarDateTime);
+                    repository.PrependData(instrument, resolution, prependBarList);
+                    localData.InsertRange(0, prependBarList);
                 }
-                else if(beginDate > firstBarDt)
+                else if(beginDate > firstLocalBarDateTime)
                 {
-                    int i = data.FindIndex(p => p.DateTime >= beginDate);
-                    data.RemoveRange(0, i);
+                    int i = localData.FindIndex(p => p.DateTime >= beginDate);
+                    localData.RemoveRange(0, i);
                 }
                 
-                if(endDate > lastBarDt)
+                if(endDate > lastLocalBarDateTime)
                 {
-                    if (endDate > dataProvider.GetServerTime())
-                        endDate = dataProvider.GetServerTime();
-                    var collection = await dataProvider.GetHistoricalDataAsync(instrument, resolution, lastBarDt, endDate);
-                    db.AppendData(instrument, resolution, collection);
-                    data.AddRange(collection);
+                    var appendBarList = await dataProvider.GetHistoricalDataAsync(instrument, resolution, lastLocalBarDateTime, endDate);
+                    repository.AppendData(instrument, resolution, appendBarList);
+                    if (appendBarList.First().DateTime == localData.Last().DateTime)
+                        localData.Remove(localData.Last());
+                    localData.AddRange(appendBarList);
                 }
-                else if(endDate < lastBarDt)
+                else if(endDate < lastLocalBarDateTime)
                 {
-                    int i = data.FindIndex(p => p.DateTime >= endDate);
-                    data.RemoveRange(i, data.Count);
+                    int removeBarIndex = localData.FindIndex(p => p.DateTime >= endDate);
+                    localData.RemoveRange(removeBarIndex, localData.Count - removeBarIndex);
                 }
 
-                return data;
+                return localData;
             }
 
             var list = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate);
-            db.WriteData(instrument, resolution, list);
+            repository.WriteData(instrument, resolution, list);
 
             return list;
+        }
+
+        public void SubscribeToRealTime(string instrument)
+        {
+            dataProvider.SubscribeToRealTime(instrument);
+        }
+
+        public void UnsubscribeToRealTime(string instrument)
+        {
+            dataProvider.UnsubscribeToRealTime(instrument);
         }
    
         public void Dispose()

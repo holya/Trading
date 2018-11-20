@@ -77,6 +77,61 @@ namespace Trading.DataBases_Tests
 
         }
 
+        [TestMethod]
+        public void AppendData_Update_Last_Element()
+        {
+            XmlDataBase tb = new XmlDataBase();
+
+            List<Bar> barList = new List<Bar>();
+            DateTime dt = new DateTime(2018, 1, 1, 0, 0, 0);
+            barList.Add(new Bar(10, 20, 5, 12, 0, dt, dt));
+            barList.Add(new Bar(15, 25, 10, 17, 0, dt.AddDays(1), dt));
+            barList.Add(new Bar(15, 27, 8, 17, 0, dt.AddDays(2), dt));
+
+            var instrument = new Instrument { Type = InstrumentType.Stock, Name = "GLD" };
+            var resolution = new Resolution(TimeFrame.Hourly, 1);
+            tb.WriteData(instrument, resolution, barList);
+
+            barList.Clear();
+            barList.Add(new Bar(1, 20, 5, 12, 0, dt.AddDays(2), dt));
+            barList.Add(new Bar(0, 25, 10, 17, 0, dt.AddDays(3), dt));
+            barList.Add(new Bar(0, 27, 8, 17, 0, dt.AddDays(4), dt));
+            tb.AppendData(instrument, resolution, barList);
+
+            var rbs = tb.ReadData(instrument, resolution);
+
+            Assert.AreEqual(5, rbs.Count());
+            Assert.AreEqual(dt.AddDays(4), rbs.Last().DateTime);
+        }
+
+        [TestMethod]
+        public void AppendData_Last_Element_Intact()
+        {
+            XmlDataBase tb = new XmlDataBase();
+
+            List<Bar> barList = new List<Bar>();
+            DateTime dt = new DateTime(2018, 1, 1, 0, 0, 0);
+            barList.Add(new Bar(10, 20, 5, 12, 0, dt, dt));
+            barList.Add(new Bar(15, 25, 10, 17, 0, dt.AddDays(1), dt));
+            barList.Add(new Bar(15, 27, 8, 17, 0, dt.AddDays(2), dt));
+
+            var instrument = new Instrument { Type = InstrumentType.Stock, Name = "GLD" };
+            var resolution = new Resolution(TimeFrame.Hourly, 1);
+            tb.WriteData(instrument, resolution, barList);
+
+            barList.Clear();
+            barList.Add(new Bar(1, 20, 5, 12, 0, dt.AddDays(3), dt));
+            barList.Add(new Bar(0, 25, 10, 17, 0, dt.AddDays(4), dt));
+            barList.Add(new Bar(0, 27, 8, 17, 0, dt.AddDays(5), dt));
+            tb.AppendData(instrument, resolution, barList);
+
+            var rbs = tb.ReadData(instrument, resolution);
+
+            Assert.AreEqual(6, rbs.Count());
+            Assert.AreEqual(dt.AddDays(3), rbs.ElementAt(3).DateTime);
+        }
+
+
 
     }
 

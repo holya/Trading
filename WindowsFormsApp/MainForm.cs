@@ -23,7 +23,8 @@ namespace WindowsFormsApp
     {
         FxcmWrapper f = new FxcmWrapper();
 
-        TextDataBase dataBase = new TextDataBase();
+        //TextDataBase dataBase = new TextDataBase();
+        DataManager dataManager = new DataManager();
         
         List<HlocLAForm> chartFormList = new List<HlocLAForm>();
 
@@ -161,7 +162,7 @@ namespace WindowsFormsApp
                 return;
             if (selectedSymbolLabel != null)
             {
-                f.UnsubscibeRealTime(selectedSymbolLabel.Text);
+                f.UnsubscribeToRealTime(selectedSymbolLabel.Text);
                 selectedSymbolLabel.BackColor = normalSymbolLabelColor;
             }
 
@@ -180,7 +181,7 @@ namespace WindowsFormsApp
                 c.Chart.LegAnalyzer.AddBarList(barList);
                 c.Chart.DataPopulated = true;
 
-                f.SubscribeToRealTime(instrument);
+                f.SubscribeToRealTime(instrument.Name);
             }
         }
 

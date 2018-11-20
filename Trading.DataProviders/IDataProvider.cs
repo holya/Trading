@@ -12,7 +12,9 @@ namespace Trading.DataProviders.Interfaces
         Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution,
             DateTime beginDateTime, DateTime endDateTime);
 
-        void SubscribeToRealTime(Instrument instrument);
+        void SubscribeToRealTime(string instrument);
+
+        void UnsubscribeToRealTime(string instrument);
 
         void Login();
 

@@ -68,41 +68,17 @@ namespace Trading.DataBases.XmlDataBase
 
         public void WriteData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
-            string fileFullPath = getFullPath(instrument, resolution);
-
-            //XDocument doc = new XDocument(new XElement("root"));
-            //XElement root = doc.Elements().First();
-            //foreach (var bar in barList)
-            //{
-            //root.Add(new XElement("bar",
-            //    new XAttribute("Open", bar.Open),
-            //    new XAttribute("High", bar.High),
-            //    new XAttribute("Low", bar.Low),
-            //    new XAttribute("Close", bar.Close),
-            //    new XAttribute("Volume", bar.Volume),
-            //    new XAttribute("DateTime", bar.DateTime),
-            //    new XAttribute("EndDateTime", bar.EndDateTime)
-            //    ));
-            //}
-            //doc.Save(fileFullPath);
-            //));
-            XElement root = new XElement("root");
-            XDocument doc = new XDocument(root);
+            XDocument doc = new XDocument(new XElement("root"));
 
             if (instrument.Type == InstrumentType.Stock)
-            {
-                root.Add(createXElementListFromBarList(barList));
-            }
+                doc.Root.Add(createXElementListFrom_BarList(barList));
             else
-            {
-                root.Add(createXElementListFromFxBar(barList));
-            }
+                doc.Root.Add(createXElementListFrom_FxBarList(barList));
 
-
-            doc.Save(fileFullPath);
+            doc.Save(getFullPath(instrument, resolution));
         }
 
-        private static IEnumerable<XElement> createXElementListFromBarList(IEnumerable<Bar> barList)
+        private static IEnumerable<XElement> createXElementListFrom_BarList(IEnumerable<Bar> barList)
         {
             return barList.Select(bar => new XElement("bar",
                                             new XAttribute("Open", bar.Open),
@@ -115,7 +91,7 @@ namespace Trading.DataBases.XmlDataBase
                                             ));
         }
 
-        private IEnumerable<XElement> createXElementListFromFxBar(IEnumerable<Bar> barList)
+        private IEnumerable<XElement> createXElementListFrom_FxBarList(IEnumerable<Bar> barList)
         {
             return barList.Select(bar => new XElement("bar",
                                 new XAttribute("Open", ((FxBar)bar).Open),
@@ -132,19 +108,18 @@ namespace Trading.DataBases.XmlDataBase
                                 ));
         }
 
-
         public void PrependData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
             string fileFullPath = getFullPath(instrument, resolution);
-
             XDocument doc = XDocument.Load(fileFullPath);
+
             if (instrument.Type == InstrumentType.Stock)
             {
-                doc.Root.AddFirst(createXElementListFromBarList(barList));
+                doc.Root.AddFirst(createXElementListFrom_BarList(barList));
             }
             else
             {
-                doc.Root.AddFirst(createXElementListFromFxBar(barList));
+                doc.Root.AddFirst(createXElementListFrom_FxBarList(barList));
             }
 
             doc.Save(fileFullPath);
@@ -152,7 +127,23 @@ namespace Trading.DataBases.XmlDataBase
 
         public void AppendData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
+            string fileFullPath = getFullPath(instrument, resolution);
+            XDocument doc = XDocument.Load(fileFullPath);
 
+            var lastElement = doc.Root.Elements().Last();
+            if (barList.First().DateTime == DateTime.Parse(lastElement.Attribute("DateTime").Value))
+                lastElement.Remove();
+
+            if (instrument.Type == InstrumentType.Stock)
+            {
+                doc.Root.Add(createXElementListFrom_BarList(barList));
+            }
+            else
+            {
+                doc.Root.Add(createXElementListFrom_FxBarList(barList));
+            }
+
+            doc.Save(fileFullPath);
         }
 
         private string getFullPath(Instrument instrument, Resolution resolution)
