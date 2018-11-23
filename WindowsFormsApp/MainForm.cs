@@ -16,13 +16,13 @@ using Trading.Common;
 using WindowsFormsApp.Custom_Views;
 using Trading.DataManager;
 using Trading.DataBases.TextFileDataBase;
+using Trading.DataProviders.Common;
 
 namespace WindowsFormsApp
 {
     public partial class MainForm : Form
     {
-        FxcmWrapper f = new FxcmWrapper();
-
+        //FxcmWrapper f = new FxcmWrapper();
         //TextDataBase dataBase = new TextDataBase();
         DataManager dataManager = new DataManager();
         
@@ -68,20 +68,70 @@ namespace WindowsFormsApp
 
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddMinutes(-10), 1, 1);
 
-            f.OffersTableUpdated += OffersTableUpdated;
+            dataManager.DataUpdated += DataManager_DataUpdated;
+        }
+
+
+        private void DataManager_DataUpdated(object sender, DataUpdatedEventArgs e)
+        {
+            var tuple = (Tuple<string, double, double, DateTime, int>) e.Data ;
+            for (int i = 0; i < chartFormList.Count; i++)
+            {
+                var chartForm = chartFormList[i];
+                var chart = chartForm.Chart;
+                if (chart.DataPopulated && chartForm.Chart.Symbol == tuple.Item1)
+                {
+                    FxBar b = (FxBar)chart.LegAnalyzer.LastBar;
+                    if (tuple.Item4 < b.EndDateTime)
+                    {
+                        FxBar newBar = new FxBar
+                        {
+                            Open = tuple.Item2,
+                            AskOpen = tuple.Item3,
+                            High = tuple.Item2,
+                            AskHigh = tuple.Item3,
+                            Low = tuple.Item2,
+                            AskLow = tuple.Item3,
+                            Close = tuple.Item2,
+                            AskClose = tuple.Item3,
+                        };
+
+                        chart.LegAnalyzer.UpdateLastBar(newBar);
+                    }
+                    else
+                    {
+                        var dt = Utilities.NormalizeBarDateTime_FXCM(tuple.Item4, chartForm.Chart.Resolution);
+
+                        FxBar newBar = new FxBar
+                        {
+                            Open = tuple.Item2,
+                            AskOpen = tuple.Item3,
+                            High = tuple.Item2,
+                            AskHigh = tuple.Item3,
+                            Low = tuple.Item2,
+                            AskLow = tuple.Item3,
+                            Close = tuple.Item2,
+                            AskClose = tuple.Item3,
+                            DateTime = dt,
+                            EndDateTime = Utilities.GetEndDateTime(dt, chart.Resolution)
+                        };
+                        chart.LegAnalyzer.AddBar(newBar);
+                    }
+                }
+            }
         }
 
         private void logIn()
         {
-            try
-            {
-                f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-                Environment.Exit(0);
-            }
+            //try
+            //{
+            //    f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
+            //}
+            //catch (Exception e)
+            //{
+            //    MessageBox.Show(e.Message);
+            //    Environment.Exit(0);
+            //}
         }
 
         private void addNewChartFormToRightPanel(Resolution resolution, DateTime fromDateTime, int column, int row)
@@ -162,7 +212,7 @@ namespace WindowsFormsApp
                 return;
             if (selectedSymbolLabel != null)
             {
-                f.UnsubscribeToRealTime(selectedSymbolLabel.Text);
+                dataManager.UnsubscribeToRealTime(selectedSymbolLabel.Text);
                 selectedSymbolLabel.BackColor = normalSymbolLabelColor;
             }
 
@@ -176,12 +226,12 @@ namespace WindowsFormsApp
             {
                 c.Chart.DataPopulated = false;
                 c.Chart.Symbol = symbol;
-                var barList = await getHistoricalDataAsync(instrument, c.Chart.Resolution, c.Chart.FromDateTime, DateTime.UtcNow.AddDays(10));
+                var barList = await getHistoricalDataAsync(instrument, c.Chart.Resolution, c.Chart.FromDateTime, DateTime.Now.AddHours(8));
                 c.Chart.Reset();
                 c.Chart.LegAnalyzer.AddBarList(barList);
                 c.Chart.DataPopulated = true;
 
-                f.SubscribeToRealTime(instrument.Name);
+                dataManager.SubscribeToRealTime(instrument.Name);
             }
         }
 
@@ -189,8 +239,8 @@ namespace WindowsFormsApp
         {
             try
             {
-                var bars = await f.GetHistoricalDataAsync(instrument, resolution, from, to);
-                return (List<FxBar>)bars;
+                var bars =  (await dataManager.GetHistoricalDataAsync(instrument, resolution, from, to)).Cast<FxBar>().ToList();
+                return bars;
             }
             catch (Exception e)
             {
@@ -200,53 +250,53 @@ namespace WindowsFormsApp
         }
 
 
-        private void OffersTableUpdated(object sender, Tuple<string, double, double, DateTime, int> e)
-        {
-            for(int i = 0; i < chartFormList.Count; i++)
-            {
-                var chartForm = chartFormList[i];
-                var chart = chartForm.Chart;
-                if(chart.DataPopulated && chartForm.Chart.Symbol == e.Item1)
-                {
-                    FxBar b = (FxBar)chart.LegAnalyzer.LastBar;
-                    if(e.Item4 < b.EndDateTime)
-                    {
-                        FxBar newBar = new FxBar
-                        {
-                            Open = e.Item2,
-                            AskOpen = e.Item3,
-                            High = e.Item2,
-                            AskHigh = e.Item3,
-                            Low = e.Item2,
-                            AskLow = e.Item3,
-                            Close = e.Item2,
-                            AskClose = e.Item3,
-                        };
+        //private void RealTimeDataUpdated(object sender, Tuple<string, double, double, DateTime, int> e)
+        //{
+        //    for(int i = 0; i < chartFormList.Count; i++)
+        //    {
+        //        var chartForm = chartFormList[i];
+        //        var chart = chartForm.Chart;
+        //        if(chart.DataPopulated && chartForm.Chart.Symbol == e.Item1)
+        //        {
+        //            FxBar b = (FxBar)chart.LegAnalyzer.LastBar;
+        //            if(e.Item4 < b.EndDateTime)
+        //            {
+        //                FxBar newBar = new FxBar
+        //                {
+        //                    Open = e.Item2,
+        //                    AskOpen = e.Item3,
+        //                    High = e.Item2,
+        //                    AskHigh = e.Item3,
+        //                    Low = e.Item2,
+        //                    AskLow = e.Item3,
+        //                    Close = e.Item2,
+        //                    AskClose = e.Item3,
+        //                };
 
-                        chart.LegAnalyzer.UpdateLastBar(newBar);
-                    }
-                    else
-                    {
-                        var dt = Utilities.NormalizeBarDateTime_FXCM(e.Item4, chartForm.Chart.Resolution);
+        //                chart.LegAnalyzer.UpdateLastBar(newBar);
+        //            }
+        //            else
+        //            {
+        //                var dt = Utilities.NormalizeBarDateTime_FXCM(e.Item4, chartForm.Chart.Resolution);
 
-                        FxBar newBar = new FxBar
-                        {
-                            Open = e.Item2,
-                            AskOpen = e.Item3,
-                            High = e.Item2,
-                            AskHigh = e.Item3,
-                            Low = e.Item2,
-                            AskLow = e.Item3,
-                            Close = e.Item2,
-                            AskClose = e.Item3,
-                            DateTime = dt,
-                            EndDateTime = Utilities.GetEndDateTime(dt, chart.Resolution)
-                        };
-                        chart.LegAnalyzer.AddBar(newBar);
-                    }
-                }
-            }
-        }
+        //                FxBar newBar = new FxBar
+        //                {
+        //                    Open = e.Item2,
+        //                    AskOpen = e.Item3,
+        //                    High = e.Item2,
+        //                    AskHigh = e.Item3,
+        //                    Low = e.Item2,
+        //                    AskLow = e.Item3,
+        //                    Close = e.Item2,
+        //                    AskClose = e.Item3,
+        //                    DateTime = dt,
+        //                    EndDateTime = Utilities.GetEndDateTime(dt, chart.Resolution)
+        //                };
+        //                chart.LegAnalyzer.AddBar(newBar);
+        //            }
+        //        }
+        //    }
+        //}
 
 
         private async void newChartToolStripMenuItem_Click(object sender, EventArgs e)
@@ -285,7 +335,7 @@ namespace WindowsFormsApp
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            f.Logout();
+            dataManager.Dispose();
         }
 
     }

@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Trading.Analyzers.Common;
 using Trading.Common;
-using Trading.DataProviders.Interfaces;
+using Trading.DataProviders.Common;
 
 namespace Trading.Brokers.Fxcm
 {
@@ -18,7 +18,9 @@ namespace Trading.Brokers.Fxcm
         public event EventHandler<SessionStatusEnum> SessionStatusChanged = delegate { };
         public SessionStatusEnum SessionStatusEnum { get; private set; } = SessionStatusEnum.Disconnected;
 
-        public event EventHandler<Tuple<string, double, double, DateTime, int>> OffersTableUpdated = delegate { };
+        //public event EventHandler<Tuple<string, double, double, DateTime, int>> DataUpdated = delegate { };
+
+        public event EventHandler<DataUpdatedEventArgs> DataUpdated = delegate { };
 
         private O2GSession session;
         private SessionStatusResponseListener sessionStatusResponseListener;
@@ -43,12 +45,14 @@ namespace Trading.Brokers.Fxcm
         }
 
         #region Login / Logout
-        public void Login(string userID, string password, string url, string connectionType)
+        //public void Login(string userID, string password, string url, string connectionType)
+        public void Login(params string[] loginData)
         {
             session.useTableManager(O2GTableManagerMode.Yes, null);
             try
             {
-                session.login(userID, password, url, connectionType);
+                //session.login(userID, password, url, connectionType);
+                session.login(loginData[0], loginData[1], loginData[2], loginData[3]);
                 sessionStatusResponseListener.WaitEvents();
             }
             catch (Exception e)
@@ -72,8 +76,9 @@ namespace Trading.Brokers.Fxcm
                 throw new Exception("Could not load Table Manager."); 
 
             offersTable = (O2GOffersTable)tableMgr.getTable(O2GTableType.Offers);
-            offersTable.RowChanged += OffersTable_RowChanged;
+            offersTable.RowChanged += offersTableUpdated; ;
         }
+
 
         private void Session_SessionStatusChanged(object sender, SessionStatusEventArgs e)
         {
@@ -121,13 +126,15 @@ namespace Trading.Brokers.Fxcm
             return await task;
         }
 
-        private void OffersTable_RowChanged(object sender, RowEventArgs e)
+        private void offersTableUpdated(object sender, RowEventArgs e)
         {
             O2GOfferTableRow otr = (O2GOfferTableRow)e.RowData;
             if (otr != null && realTimeInstruments.Count > 0)
             {
                 if(realTimeInstruments.Contains(otr.Instrument))
-                    OffersTableUpdated?.Invoke(this, new Tuple<string ,double, double, DateTime, int>(otr.Instrument ,otr.Bid, otr.Ask, otr.Time, otr.Volume));
+                    //DataUpdated?.Invoke(this, new Tuple<string ,double, double, DateTime, int>(otr.Instrument ,otr.Bid, otr.Ask, otr.Time, otr.Volume));
+                    DataUpdated?.Invoke(this, new DataUpdatedEventArgs { Data = new Tuple<string, double, double, DateTime, int>(otr.Instrument, otr.Bid, otr.Ask, otr.Time, otr.Volume) });
+
             }
         }
 

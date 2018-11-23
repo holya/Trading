@@ -70,9 +70,9 @@
       <Project>{23781aa0-1b88-414a-8d50-edb0bf4d5aac}</Project>
       <Name>Trading.DataBases.XmlDataBase</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Trading.DataProviders\Trading.DataProviders.Interfaces.csproj">
+    <ProjectReference Include="..\Trading.DataProviders\Trading.DataProviders.Common.csproj">
       <Project>{f56906e6-e201-4c15-bfb1-980d99bb3884}</Project>
-      <Name>Trading.DataProviders.Interfaces</Name>
+      <Name>Trading.DataProviders.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

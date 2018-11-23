@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
 
-namespace Trading.DataProviders.Interfaces
+namespace Trading.DataProviders.Common
 {
     public interface IDataProvider
     {
@@ -13,10 +13,9 @@ namespace Trading.DataProviders.Interfaces
             DateTime beginDateTime, DateTime endDateTime);
 
         void SubscribeToRealTime(string instrument);
-
         void UnsubscribeToRealTime(string instrument);
-
-        void Login();
+        event EventHandler<DataUpdatedEventArgs> DataUpdated;
+        void Login(params string [] loginData);
 
         void Logout();
     }

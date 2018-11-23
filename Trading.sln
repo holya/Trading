@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.Common", "Trading.Common\Trading.Common.csproj", "{0655B3C3-4B5B-4D2F-B721-8EBA6C74BE2F}"
 EndProject
@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Strategies", "Strategies", "{650C3A51-49D6-43C6-A234-703E96D2F779}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.DataProviders.Interfaces", "Trading.DataProviders\Trading.DataProviders.Interfaces.csproj", "{F56906E6-E201-4C15-BFB1-980D99BB3884}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.DataProviders.Common", "Trading.DataProviders\Trading.DataProviders.Common.csproj", "{F56906E6-E201-4C15-BFB1-980D99BB3884}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.Analyzers.Common", "Trading.Analyzers.Common\Trading.Analyzers.Common.csproj", "{BB95D2E4-9158-43F9-8E25-19483333175C}"
 EndProject

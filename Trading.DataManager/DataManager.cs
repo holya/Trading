@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Trading.Common;
 using Trading.Brokers.Fxcm;
 using Trading.DataBases.Interfaces;
-using Trading.DataProviders.Interfaces;
+using Trading.DataProviders.Common;
 using Trading.DataBases.TextFileDataBase;
 using Trading.Analyzers.Common;
 using System.Xml.Linq;
@@ -17,16 +17,26 @@ namespace Trading.DataManager
 {
     public class DataManager : IDisposable
     {
+        public event EventHandler<DataUpdatedEventArgs> DataUpdated;
+
         IDataBase repository;
-        FxcmWrapper dataProvider;
+        IDataProvider dataProvider;
+
+        public bool IsOnline { get; private set; } = false;
 
         public DataManager()
         {
             dataProvider = new FxcmWrapper();
             repository = new XmlDataBase();
             logIn();
+            dataProvider.DataUpdated += DataProvider_DataUpdated;
         }
 
+        private void DataProvider_DataUpdated(object sender, DataUpdatedEventArgs e)
+        {
+            DataUpdated?.Invoke(sender, e);
+        }
+        
         public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
             DateTime beginDate, DateTime endDate)
         {
@@ -39,9 +49,15 @@ namespace Trading.DataManager
 
                 if(beginDate < firstLocalBarDateTime)
                 {
-                    IEnumerable<Bar> prependBarList = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, firstLocalBarDateTime);
-                    repository.PrependData(instrument, resolution, prependBarList);
-                    localData.InsertRange(0, prependBarList);
+                    var prependBarList = (await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, firstLocalBarDateTime)).ToList();
+
+                    if (prependBarList.Count > 0 && prependBarList.Last().DateTime == firstLocalBarDateTime)
+                        prependBarList.Remove(prependBarList.Last());
+                    if (prependBarList.Count() > 0)
+                    {
+                        repository.PrependData(instrument, resolution, prependBarList);
+                        localData.InsertRange(0, prependBarList);
+                    }
                 }
                 else if(beginDate > firstLocalBarDateTime)
                 {
@@ -54,7 +70,9 @@ namespace Trading.DataManager
                     var appendBarList = await dataProvider.GetHistoricalDataAsync(instrument, resolution, lastLocalBarDateTime, endDate);
                     repository.AppendData(instrument, resolution, appendBarList);
                     if (appendBarList.First().DateTime == localData.Last().DateTime)
+                    {
                         localData.Remove(localData.Last());
+                    }
                     localData.AddRange(appendBarList);
                 }
                 else if(endDate < lastLocalBarDateTime)
@@ -66,10 +84,15 @@ namespace Trading.DataManager
                 return localData;
             }
 
-            var list = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate);
-            repository.WriteData(instrument, resolution, list);
+            localData.AddRange(await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate));
+            repository.WriteData(instrument, resolution, localData);
 
-            return list;
+            return localData;
+        }
+
+        public IEnumerable<Bar> GetLocalData(Instrument instrument, Resolution resolution)
+        {
+            return repository.ReadData(instrument, resolution);
         }
 
         public void SubscribeToRealTime(string instrument)
@@ -81,11 +104,12 @@ namespace Trading.DataManager
         {
             dataProvider.UnsubscribeToRealTime(instrument);
         }
-   
+
+  
         public void Dispose()
         {
             dataProvider.Logout();
-            dataProvider.Dispose();
+            //dataProvider.Dispose();
         }
 
         private void logIn()
