@@ -21,11 +21,11 @@ namespace WindowsFormsApp.Custom_Views
             comboBox_timeFrame.Items.AddRange(Enum.GetNames(typeof(TimeFrame)));
             comboBox_timeFrame.SelectedIndex = 5;
 
-            var sm = new SymbolsManager();
+            var sm = new InstrumentsManager();
             comboBox_symbols.Items.Add("Major Pairs");
-            comboBox_symbols.Items.AddRange(sm.GetForexPairsMajor().ToArray());
+            comboBox_symbols.Items.AddRange(sm.GetForexPairs(ForexTypes.major).ToArray());
             comboBox_symbols.Items.Add("Minor Pairs");
-            comboBox_symbols.Items.AddRange(sm.GetForexPairsMinor().ToArray());
+            comboBox_symbols.Items.AddRange(sm.GetForexPairs(ForexTypes.minor).ToArray());
             comboBox_symbols.SelectedIndex = 1;
 
             dateTimePicker_from.Value = dateTimePicker_to.Value.Date.AddDays(-4);

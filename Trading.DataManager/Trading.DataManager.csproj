@@ -42,7 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataManager.cs" />
-    <Compile Include="SymbolsManager.cs" />
+    <Compile Include="InstrumentsManager\ForexTypes.cs" />
+    <Compile Include="InstrumentsManager\InstrumentsManager.cs" />
+    <Compile Include="InstrumentsManager\IInstrumentsManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

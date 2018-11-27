@@ -28,7 +28,7 @@ namespace WindowsFormsApp
         
         List<HlocLAForm> chartFormList = new List<HlocLAForm>();
 
-        SymbolsManager symbolsManager = new SymbolsManager();
+        InstrumentsManager symbolsManager = new InstrumentsManager();
 
         Label selectedSymbolLabel = null;
         Color selectedSymbolLabelColor = Color.LawnGreen;
@@ -163,9 +163,9 @@ namespace WindowsFormsApp
             //tableLayoutPanel1.RowStyles.RemoveAt(0);
 
             addSymbolLabelRow(creatSymbolLabel("Majors", Color.White, Color.Red));
-            createSymbolRows(symbolsManager.GetForexPairsMajor());
+            createSymbolRows(symbolsManager.GetForexPairs(ForexTypes.major));
             addSymbolLabelRow(creatSymbolLabel("Minors", Color.White, Color.Red));
-            createSymbolRows(symbolsManager.GetForexPairsMinor());
+            createSymbolRows(symbolsManager.GetForexPairs(ForexTypes.minor));
         }
 
         private void createSymbolRows(IEnumerable<string> sList)
