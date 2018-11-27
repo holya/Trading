@@ -9,7 +9,7 @@ namespace Trading.DataManager
 {
     public class InstrumentsManager : IInstrumentsManager
     {
-        private string docUri = "../../Symbols.xml";
+        private string docUri = "C:/DataBase/Symbols.xml";
 
         public InstrumentsManager()
         {
