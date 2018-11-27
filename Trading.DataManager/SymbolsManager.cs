@@ -33,7 +33,7 @@ namespace Trading.DataManager
             var elements = doc.Element("symbols").Element("forex").Element(forexType).Elements().Attributes("name");
             foreach (var v in elements)
                 list.Add(v.Value);
-
+            
             return list;
         }
     }

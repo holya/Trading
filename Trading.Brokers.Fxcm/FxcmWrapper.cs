@@ -76,7 +76,7 @@ namespace Trading.Brokers.Fxcm
                 throw new Exception("Could not load Table Manager."); 
 
             offersTable = (O2GOffersTable)tableMgr.getTable(O2GTableType.Offers);
-            offersTable.RowChanged += offersTableUpdated; ;
+            offersTable.RowChanged += offersTableUpdated;
         }
 
 

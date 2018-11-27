@@ -61,7 +61,20 @@ namespace Trading.DataManager
                 }
                 else if(beginDate > firstLocalBarDateTime)
                 {
-                    int i = localData.FindIndex(p => p.DateTime >= beginDate);
+                    if(beginDate >= lastLocalBarDateTime)
+                    {
+                        var list = (await dataProvider.GetHistoricalDataAsync(instrument, resolution, lastLocalBarDateTime, endDate)).ToList();
+                        repository.AppendData(instrument, resolution, list);
+
+                        int removeIndex = list.FindIndex(bar => bar.DateTime >= beginDate & bar.EndDateTime <= beginDate);
+                        if(removeIndex > 0)
+                        {
+                            list.RemoveRange(0, removeIndex);
+                        }
+
+                        return list;
+                    }
+                    int i = localData.FindIndex(p => p.DateTime <= beginDate && p.EndDateTime >= beginDate);
                     localData.RemoveRange(0, i);
                 }
                 
@@ -120,7 +133,8 @@ namespace Trading.DataManager
             }
             catch (Exception e)
             {
-                Environment.Exit(0);
+                
+                //Environment.Exit(0);
             }
         }
     }

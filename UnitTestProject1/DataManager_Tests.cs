@@ -8,9 +8,9 @@ namespace UnitTestProject1
     public class DataManager_Tests
     {
         [TestMethod]
-        public void RespondToUserDataRequest_LocalData()
+        public void GetHystoricalDataAsync__beginDate_Greater_than_Last_Local_Data()
         {
-            Assert.Fail();
+            
         }
 
     }
