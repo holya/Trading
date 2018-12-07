@@ -12,6 +12,19 @@ namespace Trading.DataBases_Tests
     public class XmlDataBase_Tests
     {
         [TestMethod]
+        public void ReadData()
+        {
+            XmlDataBase tb = new XmlDataBase();
+
+            var instrument = new Instrument { Type = InstrumentType.Forex, Name = "AUD/CAD" };
+            var rbs = tb.ReadData(instrument, new Resolution(TimeFrame.Hourly, 1),
+                new DateTime(2018, 11, 22), new DateTime(2018, 11, 22, 20, 0, 0));
+
+            //Assert.AreEqual(barList.Count, rbs.Count());
+
+        }
+
+        [TestMethod]
         public void WriteData_Stock()
         {
             XmlDataBase tb = new XmlDataBase();
