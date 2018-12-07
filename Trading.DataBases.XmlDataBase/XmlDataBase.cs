@@ -15,7 +15,7 @@ namespace Trading.DataBases.XmlDataBase
     {
         public string root = "C:\\DataBase\\XML\\";
 
-        public IEnumerable<Bar> ReadData(Instrument instrument, Resolution resolution)
+        public IEnumerable<Bar> ReadData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
         {
             List<Bar> barList = new List<Bar>();
 
@@ -23,7 +23,9 @@ namespace Trading.DataBases.XmlDataBase
                 return barList;
 
             XElement readData = XElement.Load(getFullPath(instrument, resolution));
-            IEnumerable<XElement> barData = from elements in readData.Descendants() 
+            IEnumerable<XElement> barData = from elements in readData.Descendants()
+                                            where (Convert.ToDateTime(elements.Attribute("DateTime").Value) >= fromDate 
+                                            && Convert.ToDateTime(elements.Attribute("EndDateTime").Value) <= toDate)
                                             select elements;
 
             if (instrument.Type == InstrumentType.Forex)

@@ -48,7 +48,7 @@ namespace Trading.DataManager
         public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
             DateTime beginDate, DateTime endDate)
         {
-            var localData = repository.ReadData(instrument, resolution).ToList();
+            var localData = repository.ReadData(instrument, resolution, beginDate, endDate).ToList();
 
             if (localData.Count() != 0)
             {
@@ -111,10 +111,10 @@ namespace Trading.DataManager
             return localData;
         }
 
-        public IEnumerable<Bar> GetLocalData(Instrument instrument, Resolution resolution)
-        {
-            return repository.ReadData(instrument, resolution);
-        }
+        //public IEnumerable<Bar> GetLocalData(Instrument instrument, Resolution resolution)
+        //{
+        //    return repository.ReadData(instrument, resolution);
+        //}
 
         public void SubscribeToRealTime(string instrument)
         {

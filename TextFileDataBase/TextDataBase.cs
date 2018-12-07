@@ -16,7 +16,7 @@ namespace Trading.DataBases.TextFileDataBase
             root = rootPath;
         }
 
-        public IEnumerable<Bar> ReadData(Instrument instrument, Resolution resolution)
+        public IEnumerable<Bar> ReadData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
         {
             List<Bar> barList = new List<Bar>();
 
@@ -66,7 +66,7 @@ namespace Trading.DataBases.TextFileDataBase
         {
             string fileFullPath = getFullPath(instrument, resolution);
 
-            var localList = ReadData(instrument, resolution);
+            var localList = ReadData(instrument, resolution, DateTime.Now, DateTime.Now);
 
             using (StreamWriter sw = new StreamWriter(fileFullPath))
             {

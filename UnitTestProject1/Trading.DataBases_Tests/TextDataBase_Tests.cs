@@ -25,7 +25,7 @@ namespace UnitTestProject1
 
             var instrument = new Instrument { Type = InstrumentType.Forex, Name = "USD/CAD" };
             tb.WriteData(instrument, new Resolution(TimeFrame.Hourly, 1), barList);
-            var rbs = tb.ReadData(instrument, new Resolution(TimeFrame.Hourly, 1));
+            var rbs = tb.ReadData(instrument, new Resolution(TimeFrame.Hourly, 1), DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(barList.Count, rbs.Count());
         }
@@ -42,7 +42,7 @@ namespace UnitTestProject1
 
             var instrument = new Instrument { Type = InstrumentType.Stock, Name = "MS" };
             tb.WriteData(instrument, new Resolution(TimeFrame.Hourly, 1), barList);
-            var rbs = tb.ReadData(instrument, new Resolution(TimeFrame.Hourly, 1));
+            var rbs = tb.ReadData(instrument, new Resolution(TimeFrame.Hourly, 1), DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(barList.Count, rbs.Count());
         }
@@ -67,7 +67,7 @@ namespace UnitTestProject1
             barList.Add(new Bar(0, 27, 8, 17, 0, DateTime.Now, DateTime.Now));
             tb.PrependData(instrument, resolution, barList);
 
-            var rbs = tb.ReadData(instrument, resolution);
+            var rbs = tb.ReadData(instrument, resolution, DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(6, rbs.Count());
         }
@@ -92,7 +92,7 @@ namespace UnitTestProject1
             barList.Add(new Bar(0, 27, 8, 17, 0, DateTime.Now, DateTime.Now));
             tb.AppendData(instrument, resolution, barList);
 
-            var rbs = tb.ReadData(instrument, resolution);
+            var rbs = tb.ReadData(instrument, resolution, DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(6, rbs.Count());
 
