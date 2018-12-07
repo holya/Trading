@@ -24,7 +24,7 @@ namespace Trading.DataBases_Tests
             var instrument = new Instrument { Type = InstrumentType.Stock, Name = "TSLA" };
             var resolution = new Resolution(TimeFrame.Hourly, 1);
             tb.WriteData(instrument, new Resolution(TimeFrame.Hourly, 1), barList);
-            var rbs = tb.ReadData(instrument, resolution);
+            var rbs = tb.ReadData(instrument, resolution, DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(barList.Count, rbs.Count());
 
@@ -45,7 +45,7 @@ namespace Trading.DataBases_Tests
 
             var instrument = new Instrument { Type = InstrumentType.Forex, Name = "USD/CAD" };
             tb.WriteData(instrument, new Resolution(TimeFrame.Hourly, 1), barList);
-            var rbs = tb.ReadData(instrument, new Resolution(TimeFrame.Hourly, 1));
+            var rbs = tb.ReadData(instrument, new Resolution(TimeFrame.Hourly, 1), DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(barList.Count, rbs.Count());
 
@@ -71,7 +71,7 @@ namespace Trading.DataBases_Tests
             barList.Add(new Bar(0, 27, 8, 17, 0, DateTime.Now, DateTime.Now));
             tb.PrependData(instrument, resolution, barList);
 
-            var rbs = tb.ReadData(instrument, resolution);
+            var rbs = tb.ReadData(instrument, resolution, DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(6, rbs.Count());
 
@@ -98,7 +98,7 @@ namespace Trading.DataBases_Tests
             barList.Add(new Bar(0, 27, 8, 17, 0, dt.AddDays(4), dt));
             tb.AppendData(instrument, resolution, barList);
 
-            var rbs = tb.ReadData(instrument, resolution);
+            var rbs = tb.ReadData(instrument, resolution, dt, dt.AddDays(4));
 
             Assert.AreEqual(5, rbs.Count());
             Assert.AreEqual(dt.AddDays(4), rbs.Last().DateTime);
@@ -125,7 +125,7 @@ namespace Trading.DataBases_Tests
             barList.Add(new Bar(0, 27, 8, 17, 0, dt.AddDays(5), dt));
             tb.AppendData(instrument, resolution, barList);
 
-            var rbs = tb.ReadData(instrument, resolution);
+            var rbs = tb.ReadData(instrument, resolution, dt, dt.AddDays(5));
 
             Assert.AreEqual(6, rbs.Count());
             Assert.AreEqual(dt.AddDays(3), rbs.ElementAt(3).DateTime);
