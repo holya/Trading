@@ -39,10 +39,7 @@ namespace Trading.Brokers.Fxcm
             session.SessionStatusChanged += Session_SessionStatusChanged;
         }
 
-        public DateTime GetServerTime()
-        {
-            return session.getServerTime();
-        }
+        public DateTime GetServerTime() => session.getServerTime();
 
         #region Login / Logout
         //public void Login(string userID, string password, string url, string connectionType)
@@ -334,10 +331,7 @@ namespace Trading.Brokers.Fxcm
             }
         }
 
-        public void Dispose()
-        {
-            session.Dispose();
-        }
+        public void Dispose() => session.Dispose();
 
         public void Login()
         {

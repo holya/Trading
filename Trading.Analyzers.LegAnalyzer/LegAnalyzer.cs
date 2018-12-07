@@ -25,7 +25,7 @@ namespace Trading.Analyzers.LegAnalyzer
 
         public List<Reference> RefList { get; } = new List<Reference>();
         #endregion
-        public LegAnalyzer() { addBar = addFirstBar; }
+        public LegAnalyzer() => addBar = addFirstBar;
 
         public void AddBarList(IEnumerable<Bar> barList)
         {

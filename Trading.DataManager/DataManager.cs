@@ -26,8 +26,16 @@ namespace Trading.DataManager
 
         public DataManager()
         {
-            dataProvider = new FxcmWrapper();
             repository = new XmlDataBase();
+            dataProvider = new FxcmWrapper();
+            logIn();
+            dataProvider.DataUpdated += DataProvider_DataUpdated;
+        }
+
+        public DataManager(IDataProvider dataProvider, IDataBase dataBase)
+        {
+            this.dataProvider = dataProvider;
+            repository = dataBase;
             logIn();
             dataProvider.DataUpdated += DataProvider_DataUpdated;
         }

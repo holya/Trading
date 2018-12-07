@@ -23,7 +23,7 @@ namespace Trading.DataBases.XmlDataBase
                 return barList;
 
             XElement readData = XElement.Load(getFullPath(instrument, resolution));
-            IEnumerable<XElement> barData = from elements in readData.Descendants()
+            IEnumerable<XElement> barData = from elements in readData.Descendants() 
                                             select elements;
 
             if (instrument.Type == InstrumentType.Forex)
