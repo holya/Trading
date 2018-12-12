@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E95F8145-B29C-4FAF-85AF-495C5420C889}</ProjectGuid>
+    <ProjectGuid>{13885792-59CB-494B-8D91-2E5455FA9D20}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Trading.DataManager</RootNamespace>
-    <AssemblyName>Trading.DataManager</AssemblyName>
+    <RootNamespace>Trading</RootNamespace>
+    <AssemblyName>Trading</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -69,28 +69,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataManager.cs" />
-    <Compile Include="InstrumentsManager\ForexTypes.cs" />
-    <Compile Include="InstrumentsManager\InstrumentsManager.cs" />
-    <Compile Include="InstrumentsManager\IInstrumentsManager.cs" />
+    <Compile Include="ContainerBootStrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TextFileDataBase\Trading.DataBases.TextFileDataBase.csproj">
-      <Project>{a555290a-9076-4a96-9162-083f56c59548}</Project>
-      <Name>Trading.DataBases.TextFileDataBase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trading.Analyzers.Common\Trading.Analyzers.Common.csproj">
-      <Project>{bb95d2e4-9158-43f9-8e25-19483333175c}</Project>
-      <Name>Trading.Analyzers.Common</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Trading.Brokers.Fxcm\Trading.Brokers.Fxcm.csproj">
       <Project>{38995aff-7180-4f8c-a902-a68d268138bf}</Project>
       <Name>Trading.Brokers.Fxcm</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trading.Common\Trading.Common.csproj">
-      <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
-      <Name>Trading.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Interfaces.csproj">
       <Project>{35cef0fc-636c-4c15-b07c-99c6c5b93439}</Project>
@@ -100,20 +88,14 @@
       <Project>{23781aa0-1b88-414a-8d50-edb0bf4d5aac}</Project>
       <Name>Trading.DataBases.XmlDataBase</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Trading.DataManager\Trading.DataManager.csproj">
+      <Project>{e95f8145-b29c-4faf-85af-495c5420c889}</Project>
+      <Name>Trading.DataManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Trading.DataProviders\Trading.DataProviders.Common.csproj">
       <Project>{f56906e6-e201-4c15-bfb1-980d99bb3884}</Project>
       <Name>Trading.DataProviders.Common</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

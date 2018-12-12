@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trading.Analyzers.Common;
 using Trading.DataManager;
+using Trading;
+using Unity;
 
 namespace ConsoleApp1
 {
@@ -14,7 +16,11 @@ namespace ConsoleApp1
     {
         public static void Main(string[] args)
         {
-            DataManager dm = new DataManager();
+            var container = new UnityContainer();
+            ContainerBootStrapper.RegisterTypes(container);
+
+            //DataManager dm = new DataManager();
+            var dm = container.Resolve<DataManager>();
 
             //FxcmWrapper f = new FxcmWrapper();
             //f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
@@ -28,7 +34,6 @@ namespace ConsoleApp1
             {
                 barList.AddRange(dm.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Hourly, 1), sd, ed).GetAwaiter().GetResult());
 
-                barList = dm.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Hourly, 1), sd, ed.AddHours(10)).GetAwaiter().GetResult().ToList();
             }
             catch(Exception e)
             {
