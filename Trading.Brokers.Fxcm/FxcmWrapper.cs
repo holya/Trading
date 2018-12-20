@@ -15,12 +15,10 @@ namespace Trading.Brokers.Fxcm
     {
         private List<string> realTimeInstruments = new List<string>();
 
-        public event EventHandler<SessionStatusEnum> SessionStatusChanged = delegate { };
-        public SessionStatusEnum SessionStatusEnum { get; private set; } = SessionStatusEnum.Disconnected;
+        public event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged = delegate { };
+        public bool IsOnline { get; private set; } = false;
 
-        //public event EventHandler<Tuple<string, double, double, DateTime, int>> DataUpdated = delegate { };
-
-        public event EventHandler<DataUpdatedEventArgs> DataUpdated = delegate { };
+        public event EventHandler<RealTimeDataUpdatedEventArgs> RealTimeDataUpdated = delegate { };
 
         private O2GSession session;
         private SessionStatusResponseListener sessionStatusResponseListener;
@@ -54,12 +52,13 @@ namespace Trading.Brokers.Fxcm
             }
             catch (Exception e)
             {
-                throw e;
+                this.IsOnline = false;
             }
 
             if (sessionStatusResponseListener.Error)
             {
-                throw new Exception(sessionStatusResponseListener.ErrorMessage);
+                //throw new Exception(sessionStatusResponseListener.ErrorMessage);
+                this.IsOnline = false;
             }
 
             tableMgr = session.getTableManager();
@@ -69,8 +68,8 @@ namespace Trading.Brokers.Fxcm
                 Thread.Sleep(50);
                 managerStatus = tableMgr.getStatus();
             }
-            if (managerStatus == O2GTableManagerStatus.TablesLoadFailed)
-                throw new Exception("Could not load Table Manager."); 
+            //if (managerStatus == O2GTableManagerStatus.TablesLoadFailed)
+            //    throw new Exception("Could not load Table Manager."); 
 
             offersTable = (O2GOffersTable)tableMgr.getTable(O2GTableType.Offers);
             offersTable.RowChanged += offersTableUpdated;
@@ -79,8 +78,39 @@ namespace Trading.Brokers.Fxcm
 
         private void Session_SessionStatusChanged(object sender, SessionStatusEventArgs e)
         {
-            SessionStatusEnum = (SessionStatusEnum)e.SessionStatus;
-            SessionStatusChanged?.Invoke(this, SessionStatusEnum);
+            var sse = convertO2GSessionStatusCodeToSessionStatusEnum(e.SessionStatus);
+            if (sse == SessionStatusEnum.Connected)
+                this.IsOnline = true;
+            else
+                this.IsOnline = false;
+
+            SessionStatusChanged?.Invoke(this, new SessionStatusChangedEventArgs() { SessionStatus = sse });
+        }
+        private SessionStatusEnum convertO2GSessionStatusCodeToSessionStatusEnum(O2GSessionStatusCode sessionStatusCode)
+        {
+            switch (sessionStatusCode)
+            {
+                case O2GSessionStatusCode.Disconnected:
+                    return SessionStatusEnum.Disconnected;
+                case O2GSessionStatusCode.Connecting:
+                    return SessionStatusEnum.MSG1; 
+                case O2GSessionStatusCode.TradingSessionRequested:
+                    return SessionStatusEnum.MSG2;
+                case O2GSessionStatusCode.Connected:
+                    return SessionStatusEnum.Connected;
+                case O2GSessionStatusCode.Reconnecting:
+                    return SessionStatusEnum.MSG3;
+                case O2GSessionStatusCode.Disconnecting:
+                    return SessionStatusEnum.MSG4;
+                case O2GSessionStatusCode.SessionLost:
+                    return SessionStatusEnum.SessionLost;
+                case O2GSessionStatusCode.PriceSessionReconnecting:
+                    return SessionStatusEnum.MSG5;
+                case O2GSessionStatusCode.Unknown:
+                    return SessionStatusEnum.MSG6;
+                default:
+                    return SessionStatusEnum.MSG7;
+            }
         }
 
         public void Logout()
@@ -88,10 +118,12 @@ namespace Trading.Brokers.Fxcm
             session.logout();
             sessionStatusResponseListener.WaitEvents();
             session.unsubscribeSessionStatus(sessionStatusResponseListener);
+
+            this.IsOnline = false;
         }
         #endregion
 
-        private IEnumerable<Bar> GetHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
+        private IEnumerable<Bar> getHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
         {
             GetHistoricalDataResponseListener responseListener = new GetHistoricalDataResponseListener(session);
             session.subscribeResponse(responseListener);
@@ -112,6 +144,8 @@ namespace Trading.Brokers.Fxcm
                 return normalizeToQuarterlyTimeFrame(barList);
             }
 
+            session.unsubscribeResponse(responseListener);
+
             return barList;
         }
 
@@ -119,7 +153,7 @@ namespace Trading.Brokers.Fxcm
         public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
         {
             Task<IEnumerable<Bar>> task = Task.Factory.StartNew(() =>
-                    GetHistoricalData(instrument.Name, resolution, startDateTime, endDateTime));
+                    getHistoricalData(instrument.Name, resolution, startDateTime, endDateTime));
             return await task;
         }
 
@@ -129,8 +163,8 @@ namespace Trading.Brokers.Fxcm
             if (otr != null && realTimeInstruments.Count > 0)
             {
                 if(realTimeInstruments.Contains(otr.Instrument))
-                    //DataUpdated?.Invoke(this, new Tuple<string ,double, double, DateTime, int>(otr.Instrument ,otr.Bid, otr.Ask, otr.Time, otr.Volume));
-                    DataUpdated?.Invoke(this, new DataUpdatedEventArgs { Data = new Tuple<string, double, double, DateTime, int>(otr.Instrument, otr.Bid, otr.Ask, otr.Time, otr.Volume) });
+                    //RealTimeDataUpdated?.Invoke(this, new Tuple<string ,double, double, DateTime, int>(otr.Instrument ,otr.Bid, otr.Ask, otr.Time, otr.Volume));
+                    RealTimeDataUpdated?.Invoke(this, new RealTimeDataUpdatedEventArgs { Data = new Tuple<string, double, double, DateTime, int>(otr.Instrument, otr.Bid, otr.Ask, otr.Time, otr.Volume) });
 
             }
         }
@@ -295,47 +329,7 @@ namespace Trading.Brokers.Fxcm
             return str;
         }
 
-        private SessionStatusEnum convert_O2GSessionStatusCode_To_SessionStatusEnum(O2GSessionStatusCode statusCode)
-        {
-            switch (statusCode)
-            {
-                case O2GSessionStatusCode.Disconnected:
-                    return SessionStatusEnum.Disconnected;
-
-                case O2GSessionStatusCode.Connecting:
-                    return SessionStatusEnum.Connecting;
-
-                case O2GSessionStatusCode.TradingSessionRequested:
-                    return SessionStatusEnum.TradingSessionRequested;
-
-                case O2GSessionStatusCode.Connected:
-                    return SessionStatusEnum.Connected;
-
-                case O2GSessionStatusCode.Reconnecting:
-                    return SessionStatusEnum.Reconnecting;
-
-                case O2GSessionStatusCode.Disconnecting:
-                    return SessionStatusEnum.Disconnecting;
-
-                case O2GSessionStatusCode.SessionLost:
-                    return SessionStatusEnum.SessionLost;
-
-                case O2GSessionStatusCode.PriceSessionReconnecting:
-                    return SessionStatusEnum.PriceSessionReconnecting;
-
-                case O2GSessionStatusCode.Unknown:
-                    return SessionStatusEnum.Unknown;
-
-                default:
-                    return SessionStatusEnum.Unknown;
-            }
-        }
-
         public void Dispose() => session.Dispose();
 
-        public void Login()
-        {
-
-        }
     }
 }

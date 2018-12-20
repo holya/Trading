@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Trading.DataProviders.Common
 {
-    class SessionStatusChangedEventArgs : EventArgs
+    public class SessionStatusChangedEventArgs : EventArgs
     {
         public SessionStatusEnum SessionStatus { get; set; }
     }

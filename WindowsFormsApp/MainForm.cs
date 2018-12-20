@@ -38,8 +38,6 @@ namespace WindowsFormsApp
         {
             InitializeComponent();
 
-            logIn();
-
             populateSymbols();
 
             //???????????????????????? 225
@@ -49,13 +47,13 @@ namespace WindowsFormsApp
             //});
 
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Monthly, 1), DateTime.UtcNow.AddMonths(-24), 0, 0);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Monthly, 1), DateTime.UtcNow.AddMonths(-24), 0, 0);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), DateTime.UtcNow.AddMonths(-2), 0, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), DateTime.UtcNow.AddMonths(-2), 0, 1);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), DateTime.UtcNow.AddMonths(-1), 1, 0);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), DateTime.UtcNow.AddMonths(-1), 1, 0);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 4), DateTime.UtcNow.AddDays(-6), 1, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 4), DateTime.UtcNow.AddDays(-6), 1, 1);
 
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddHours(-24), 2, 0);
 
@@ -72,7 +70,7 @@ namespace WindowsFormsApp
         }
 
 
-        private void DataManager_DataUpdated(object sender, DataUpdatedEventArgs e)
+        private void DataManager_DataUpdated(object sender, RealTimeDataUpdatedEventArgs e)
         {
             var tuple = (Tuple<string, double, double, DateTime, int>) e.Data ;
             for (int i = 0; i < chartFormList.Count; i++)

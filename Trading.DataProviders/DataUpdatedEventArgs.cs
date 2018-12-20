@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Trading.DataProviders.Common
 {
-    public class DataUpdatedEventArgs : EventArgs
+    public class RealTimeDataUpdatedEventArgs : EventArgs
     {
         public object Data { get; set; }
     }

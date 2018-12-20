@@ -17,7 +17,7 @@ namespace Trading.DataManager
 {
     public class DataManager : IDisposable
     {
-        public event EventHandler<DataUpdatedEventArgs> DataUpdated;
+        public event EventHandler<RealTimeDataUpdatedEventArgs> DataUpdated;
 
         IDataBase repository;
         IDataProvider dataProvider;
@@ -29,7 +29,7 @@ namespace Trading.DataManager
             repository = new XmlDataBase();
             dataProvider = new FxcmWrapper();
             logIn();
-            dataProvider.DataUpdated += DataProvider_DataUpdated;
+            dataProvider.RealTimeDataUpdated += DataProvider_DataUpdated;
         }
 
         public DataManager(IDataProvider dataProvider, IDataBase dataBase)
@@ -37,10 +37,10 @@ namespace Trading.DataManager
             this.dataProvider = dataProvider;
             repository = dataBase;
             logIn();
-            dataProvider.DataUpdated += DataProvider_DataUpdated;
+            dataProvider.RealTimeDataUpdated += DataProvider_DataUpdated;
         }
 
-        private void DataProvider_DataUpdated(object sender, DataUpdatedEventArgs e)
+        private void DataProvider_DataUpdated(object sender, RealTimeDataUpdatedEventArgs e)
         {
             DataUpdated?.Invoke(sender, e);
         }
