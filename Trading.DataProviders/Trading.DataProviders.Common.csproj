@@ -46,6 +46,8 @@
     <Compile Include="DataUpdatedEventArgs.cs" />
     <Compile Include="IDataProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SessionStatusChangedEventArgs.cs" />
+    <Compile Include="SessionStatusEnum.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trading.Common\Trading.Common.csproj">

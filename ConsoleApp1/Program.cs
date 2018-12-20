@@ -16,11 +16,17 @@ namespace ConsoleApp1
     {
         public static void Main(string[] args)
         {
-            var container = new UnityContainer();
-            ContainerBootStrapper.RegisterTypes(container);
+            Lazy<IUnityContainer> container = new Lazy<IUnityContainer>(() =>
+                {
+                    var c = new UnityContainer();
+                    ContainerBootStrapper.RegisterTypes(c);
+                    return c;
+                });
+            //var container = new UnityContainer();
+            //ContainerBootStrapper.RegisterTypes(container);
 
             //DataManager dm = new DataManager();
-            var dm = container.Resolve<DataManager>();
+            var dm = container.Value.Resolve<DataManager>();
 
             //FxcmWrapper f = new FxcmWrapper();
             //f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Trading.Brokers.Fxcm
+namespace Trading.DataProviders.Common
 {
     public enum SessionStatusEnum
     {
