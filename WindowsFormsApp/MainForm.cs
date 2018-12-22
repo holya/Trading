@@ -17,14 +17,20 @@ using WindowsFormsApp.Custom_Views;
 using Trading.DataManager;
 using Trading.DataBases.TextFileDataBase;
 using Trading.DataProviders.Common;
+using Unity;
+using Trading;
 
 namespace WindowsFormsApp
 {
     public partial class MainForm : Form
     {
-        //FxcmWrapper f = new FxcmWrapper();
-        //TextDataBase dataBase = new TextDataBase();
-        DataManager dataManager = new DataManager();
+        Lazy<IUnityContainer> container = new Lazy<IUnityContainer>(() =>
+        {
+            var c = new UnityContainer();
+            ContainerBootStrapper.RegisterTypes(c);
+            return c;
+        });
+        DataManager dataManager;
         
         List<HlocLAForm> chartFormList = new List<HlocLAForm>();
 
@@ -37,6 +43,11 @@ namespace WindowsFormsApp
         public MainForm()
         {
             InitializeComponent();
+
+            dataManager = container.Value.Resolve<DataManager>();
+
+            string isOnline = dataManager.IsOnline ? "Online" : "Offline";
+            this.Text = $"Trading App({isOnline})";
 
             populateSymbols();
 
@@ -62,9 +73,9 @@ namespace WindowsFormsApp
 
 
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-4), 2, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-4), 3, 0);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddMinutes(-10), 1, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddMinutes(-10), 3, 1);
 
             dataManager.DataUpdated += DataManager_DataUpdated;
         }
