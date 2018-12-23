@@ -175,6 +175,10 @@
       <Project>{f56906e6-e201-4c15-bfb1-980d99bb3884}</Project>
       <Name>Trading.DataProviders.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Trading\Trading.csproj">
+      <Project>{13885792-59cb-494b-8d91-2e5455fa9d20}</Project>
+      <Name>Trading</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

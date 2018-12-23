@@ -11,6 +11,7 @@ namespace Trading.DataProviders.Common
     {
         void Login(params string [] loginData);
         void Logout();
+        bool IsOnline { get; }
         event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged;
 
         Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution,

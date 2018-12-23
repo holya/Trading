@@ -22,14 +22,12 @@ namespace Trading.DataManager
         IDataBase repository;
         IDataProvider dataProvider;
 
-        public bool IsOnline { get; private set; } = false;
-
-        public DataManager()
+        public bool IsOnline
         {
-            repository = new XmlDataBase();
-            dataProvider = new FxcmWrapper();
-            logIn();
-            dataProvider.RealTimeDataUpdated += DataProvider_DataUpdated;
+            get
+            {
+                return dataProvider.IsOnline;
+            }
         }
 
         public DataManager(IDataProvider dataProvider, IDataBase dataBase)
