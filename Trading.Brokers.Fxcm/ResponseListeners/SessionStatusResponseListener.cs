@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Trading.DataProviders;
 
 namespace Trading.Brokers.Fxcm
 {
@@ -61,15 +62,13 @@ namespace Trading.Brokers.Fxcm
                             session.setTradingSession(sessionId, pin);
                         }
                         break;
-                    case O2GSessionStatusCode.Connected:
-                        waitHandle.Set();
-                        break;
-                    case O2GSessionStatusCode.Disconnected:
-                        waitHandle.Set();
-                        break;
+                    case O2GSessionStatusCode.SessionLost:
+                        throw new DataProvidersExceptions("Session has been lost, Data Provider is offline...");
+                    case O2GSessionStatusCode.Unknown:
+                        throw new DataProvidersExceptions("Data Provider offline...");
                 }
             }
-            catch (Exception)
+            catch (DataProvidersExceptions)
             {
                 throw;
             }
