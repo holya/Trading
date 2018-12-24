@@ -63,12 +63,12 @@ namespace Trading.Brokers.Fxcm
                         }
                         break;
                     case O2GSessionStatusCode.SessionLost:
-                        throw new DataProvidersExceptions("Session has been lost, Data Provider is offline...");
+                        throw new DataProvidersException("Session has been lost, Data Provider is offline...");
                     case O2GSessionStatusCode.Unknown:
-                        throw new DataProvidersExceptions("Data Provider offline...");
+                        throw new DataProvidersException("Data Provider offline...");
                 }
             }
-            catch (DataProvidersExceptions)
+            catch (DataProvidersException)
             {
                 throw;
             }

@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataProvidersExceptions.cs" />
+    <Compile Include="DataProvidersException.cs" />
     <Compile Include="DataUpdatedEventArgs.cs" />
     <Compile Include="IDataProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
