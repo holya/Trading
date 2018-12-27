@@ -37,12 +37,21 @@
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.5.8.13\lib\net46\CommonServiceLocator.dll</HintPath>
     </Reference>
+    <Reference Include="DnsClient, Version=1.0.7.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
+      <HintPath>..\packages\DnsClient.1.0.7\lib\net45\DnsClient.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.3.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.ConfigurationManager, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Configuration.ConfigurationManager.4.4.1\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.0.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -96,9 +105,21 @@
       <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
       <Name>Trading.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Interfaces.csproj">
+      <Project>{35CEF0FC-636C-4C15-B07C-99C6C5B93439}</Project>
+      <Name>Trading.DataBases.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trading.DataBases.MongoDb\Trading.DataBases.MongoDb.csproj">
+      <Project>{f8ea47f5-da2c-4405-afc5-589adc4c3292}</Project>
+      <Name>Trading.DataBases.MongoDb</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Trading.DataManager\Trading.DataManager.csproj">
       <Project>{e95f8145-b29c-4faf-85af-495c5420c889}</Project>
       <Name>Trading.DataManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trading.DataProviders\Trading.DataProviders.Common.csproj">
+      <Project>{F56906E6-E201-4C15-BFB1-980D99BB3884}</Project>
+      <Name>Trading.DataProviders.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trading\Trading.csproj">
       <Project>{13885792-59cb-494b-8d91-2e5455fa9d20}</Project>

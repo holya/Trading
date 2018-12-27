@@ -128,7 +128,6 @@ namespace Trading.DataManager
         public void Dispose()
         {
             dataProvider.Logout();
-            //dataProvider.Dispose();
         }
 
         private void logIn()

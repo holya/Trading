@@ -9,6 +9,7 @@ using Trading.Analyzers.Common;
 using Trading.DataManager;
 using Trading;
 using Unity;
+using Trading.DataBases.MongoDb;
 
 namespace ConsoleApp1
 {
@@ -16,17 +17,17 @@ namespace ConsoleApp1
     {
         public static void Main(string[] args)
         {
-            Lazy<IUnityContainer> container = new Lazy<IUnityContainer>(() =>
-                {
-                    var c = new UnityContainer();
-                    ContainerBootStrapper.RegisterTypes(c);
-                    return c;
-                });
+            //Lazy<IUnityContainer> container = new Lazy<IUnityContainer>(() =>
+            //    {
+            //        var c = new UnityContainer();
+            //        ContainerBootStrapper.RegisterTypes(c);
+            //        return c;
+            //    });
             //var container = new UnityContainer();
             //ContainerBootStrapper.RegisterTypes(container);
 
-            //DataManager dm = new DataManager();
-            var dm = container.Value.Resolve<DataManager>();
+            DataManager dm = new DataManager(new FxcmWrapper(), new MongoDb());
+            //var dm = container.Value.Resolve<DataManager>();
 
             //FxcmWrapper f = new FxcmWrapper();
             //f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
@@ -50,8 +51,10 @@ namespace ConsoleApp1
             foreach (var bar in barList)
                 Console.WriteLine(bar.ToString());
 
-            dm.Dispose();
             Console.ReadLine();
+            dm.Dispose();
+            Console.WriteLine("done");
+
 
             //try
             //{

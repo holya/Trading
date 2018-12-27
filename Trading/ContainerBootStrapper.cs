@@ -11,6 +11,7 @@ using Unity.Lifetime;
 using Trading.DataBases.Interfaces;
 using Trading.DataBases.XmlDataBase;
 using Trading.DataManager;
+using Trading.DataBases.MongoDb;
 
 namespace Trading.Common
 {

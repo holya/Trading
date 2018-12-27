@@ -51,7 +51,7 @@ namespace Trading.Brokers.Fxcm
                 sessionStatusResponseListener.WaitEvents();
             }
             catch (Exception e)
-            {
+            { 
                 this.IsOnline = false;
             }
 

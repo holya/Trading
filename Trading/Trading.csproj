@@ -84,6 +84,10 @@
       <Project>{35cef0fc-636c-4c15-b07c-99c6c5b93439}</Project>
       <Name>Trading.DataBases.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Trading.DataBases.MongoDb\Trading.DataBases.MongoDb.csproj">
+      <Project>{f8ea47f5-da2c-4405-afc5-589adc4c3292}</Project>
+      <Name>Trading.DataBases.MongoDb</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Trading.DataBases.XmlDataBase\Trading.DataBases.XmlDataBase.csproj">
       <Project>{23781aa0-1b88-414a-8d50-edb0bf4d5aac}</Project>
       <Name>Trading.DataBases.XmlDataBase</Name>
