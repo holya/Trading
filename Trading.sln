@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading", "Trading\Trading.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.DataBases.MongoDb", "Trading.DataBases.MongoDb\Trading.DataBases.MongoDb.csproj", "{F8EA47F5-DA2C-4405-AFC5-589ADC4C3292}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.DataManager.Common", "Trading.DataManager.Common\Trading.DataManager.Common.csproj", "{2E901633-5C28-4CCC-91A8-8E30D2B512C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,10 @@ Global
 		{F8EA47F5-DA2C-4405-AFC5-589ADC4C3292}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8EA47F5-DA2C-4405-AFC5-589ADC4C3292}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8EA47F5-DA2C-4405-AFC5-589ADC4C3292}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E901633-5C28-4CCC-91A8-8E30D2B512C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E901633-5C28-4CCC-91A8-8E30D2B512C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E901633-5C28-4CCC-91A8-8E30D2B512C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E901633-5C28-4CCC-91A8-8E30D2B512C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -132,6 +138,7 @@ Global
 		{E95F8145-B29C-4FAF-85AF-495C5420C889} = {901DDDA7-1F0A-404B-B44F-4BC8F123E4A9}
 		{23781AA0-1B88-414A-8D50-EDB0BF4D5AAC} = {A7C7D23A-84B0-4A3C-BD9C-C8175DC3010D}
 		{F8EA47F5-DA2C-4405-AFC5-589ADC4C3292} = {A7C7D23A-84B0-4A3C-BD9C-C8175DC3010D}
+		{2E901633-5C28-4CCC-91A8-8E30D2B512C5} = {901DDDA7-1F0A-404B-B44F-4BC8F123E4A9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FD5A9B62-3E83-4145-9C10-7C452B8FA9F0}

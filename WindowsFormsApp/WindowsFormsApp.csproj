@@ -167,6 +167,14 @@
       <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
       <Name>Trading.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Interfaces.csproj">
+      <Project>{35CEF0FC-636C-4C15-B07C-99C6C5B93439}</Project>
+      <Name>Trading.DataBases.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trading.DataManager.Common\Trading.DataManager.Common.csproj">
+      <Project>{2E901633-5C28-4CCC-91A8-8E30D2B512C5}</Project>
+      <Name>Trading.DataManager.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Trading.DataManager\Trading.DataManager.csproj">
       <Project>{e95f8145-b29c-4faf-85af-495c5420c889}</Project>
       <Name>Trading.DataManager</Name>

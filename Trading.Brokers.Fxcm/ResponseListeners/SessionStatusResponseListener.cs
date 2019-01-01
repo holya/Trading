@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Trading.DataProviders;
+using Trading.DataProviders.Common;
 
 namespace Trading.Brokers.Fxcm
 {
@@ -46,62 +47,33 @@ namespace Trading.Brokers.Fxcm
         }
         public void onSessionStatusChanged(O2GSessionStatusCode status)
         {
-            try
-            {////////////////////////////////////////////////////
-                SessionStatus = status;
+            SessionStatus = status;
 
-                switch (status)
-                {
-                    case O2GSessionStatusCode.Disconnected:
-                        waitHandle.Set();
-                        break;
-                    //case O2GSessionStatusCode.Connecting:
-                    //    break;
-                    //case O2GSessionStatusCode.TradingSessionRequested:
-                    //    break;
-                    case O2GSessionStatusCode.Connected:
-                        waitHandle.Set();
-                        break;
-                    case O2GSessionStatusCode.Reconnecting:
-                        break;
-                    case O2GSessionStatusCode.Disconnecting:
-                        break;
-                    case O2GSessionStatusCode.SessionLost:
-                        throw new Exception("SessionLost");
-                    case O2GSessionStatusCode.PriceSessionReconnecting:
-                        break;
-                    case O2GSessionStatusCode.Unknown:
-                        throw new Exception("Unknown");
-                    default:
-                        break;
-                }
-
-                //    switch (status)
-                //    {
-                //        case O2GSessionStatusCode.TradingSessionRequested:
-                //            if (string.IsNullOrEmpty(sessionId))
-                //            {
-                //                throw new Exception("Argument for trading session ID is missing");
-                //            }
-                //            else
-                //            {
-                //                session.setTradingSession(sessionId, pin);
-                //            }
-                //            break;
-                //        case O2GSessionStatusCode.SessionLost:
-                //            throw new DataProvidersExceptions("Session has been lost, Data Provider is offline...");
-                //        case O2GSessionStatusCode.Unknown:
-                //            throw new DataProvidersExceptions("Data Provider offline...");
-                //    }
-                //}
-                //catch (DataProvidersExceptions)
-                //{
-                //    throw;
-                //}
-            }
-            catch (Exception)
+            switch (status)
             {
-                throw;
+                case O2GSessionStatusCode.Disconnected:
+                    waitHandle.Set();
+                    break;
+                //case O2GSessionStatusCode.Connecting:
+                //    break;
+                //case O2GSessionStatusCode.TradingSessionRequested:
+                //    break;
+                case O2GSessionStatusCode.Connected:
+                    waitHandle.Set();
+                    break;
+                case O2GSessionStatusCode.Reconnecting:
+                    break;
+                case O2GSessionStatusCode.Disconnecting:
+                    break;
+                case O2GSessionStatusCode.SessionLost:
+                    waitHandle.Set();
+                    break;
+                case O2GSessionStatusCode.PriceSessionReconnecting:
+                    waitHandle.Set();
+                    break;
+                case O2GSessionStatusCode.Unknown:
+                    waitHandle.Set();
+                    break;
             }
         }
 

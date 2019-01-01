@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Trading.Analyzers.Common;
@@ -19,18 +18,20 @@ using Trading.DataBases.TextFileDataBase;
 using Trading.DataProviders.Common;
 using Unity;
 using Trading;
+using Trading.DataManager.Common;
 
 namespace WindowsFormsApp
 {
     public partial class MainForm : Form
     {
-        Lazy<IUnityContainer> container = new Lazy<IUnityContainer>(() =>
-        {
-            var c = new UnityContainer();
-            ContainerBootStrapper.RegisterTypes(c);
-            return c;
-        });
-        DataManager dataManager;
+        //Lazy<IUnityContainer> container = new Lazy<IUnityContainer>(() =>
+        //{
+        //    var c = new UnityContainer();
+        //    ContainerBootStrapper.RegisterTypes(c);
+        //    return c;
+        //});
+        private IUnityContainer myContainer;
+        IDataManager dataManager;
         
         List<HlocLAForm> chartFormList = new List<HlocLAForm>();
 
@@ -40,12 +41,23 @@ namespace WindowsFormsApp
         Color selectedSymbolLabelColor = Color.LawnGreen;
         Color normalSymbolLabelColor = Color.FromArgb(192, 192, 255);
 
-        public MainForm()
+        public MainForm(IDataManager dataManager)
+        //public MainForm(IUnityContainer container)
         {
             InitializeComponent();
 
-            dataManager = container.Value.Resolve<DataManager>();
-
+            //this.myContainer = container;
+            try
+            {
+                //dataManager = myContainer.Resolve<DataManager>();
+                this.dataManager = dataManager;
+                dataManager.Login();
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+                Application.Exit(new CancelEventArgs { Cancel = true });
+            }
             string isOnline = dataManager.IsOnline ? "Online" : "Offline";
             this.Text = $"Trading App({isOnline})";
 
@@ -60,28 +72,27 @@ namespace WindowsFormsApp
 
             addNewChartFormToRightPanel(new Resolution(TimeFrame.Monthly, 1), DateTime.UtcNow.AddMonths(-24), 0, 0);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), DateTime.UtcNow.AddMonths(-2), 0, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), DateTime.UtcNow.AddMonths(-2), 0, 1);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), DateTime.UtcNow.AddMonths(-1), 1, 0);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), DateTime.UtcNow.AddMonths(-1), 1, 0);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 4), DateTime.UtcNow.AddDays(-6), 1, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 4), DateTime.UtcNow.AddDays(-6), 1, 1);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddHours(-24), 2, 0);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddHours(-24), 2, 0);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-5), 2, 1);
-
-
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-5), 2, 1);
 
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-4), 3, 0);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddMinutes(-10), 3, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-4), 3, 0);
 
-            dataManager.DataUpdated += DataManager_DataUpdated;
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddMinutes(-10), 3, 1);
+
+            dataManager.RealTimeDataUpdated += DataManager_RealTimeDataUpdated;
         }
 
 
-        private void DataManager_DataUpdated(object sender, RealTimeDataUpdatedEventArgs e)
+        private void DataManager_RealTimeDataUpdated(object sender, RealTimeDataUpdatedEventArgs e)
         {
             var tuple = (Tuple<string, double, double, DateTime, int>) e.Data ;
             for (int i = 0; i < chartFormList.Count; i++)
@@ -259,53 +270,53 @@ namespace WindowsFormsApp
         }
 
 
-        //private void RealTimeDataUpdated(object sender, Tuple<string, double, double, DateTime, int> e)
-        //{
-        //    for(int i = 0; i < chartFormList.Count; i++)
-        //    {
-        //        var chartForm = chartFormList[i];
-        //        var chart = chartForm.Chart;
-        //        if(chart.DataPopulated && chartForm.Chart.Symbol == e.Item1)
-        //        {
-        //            FxBar b = (FxBar)chart.LegAnalyzer.LastBar;
-        //            if(e.Item4 < b.EndDateTime)
-        //            {
-        //                FxBar newBar = new FxBar
-        //                {
-        //                    Open = e.Item2,
-        //                    AskOpen = e.Item3,
-        //                    High = e.Item2,
-        //                    AskHigh = e.Item3,
-        //                    Low = e.Item2,
-        //                    AskLow = e.Item3,
-        //                    Close = e.Item2,
-        //                    AskClose = e.Item3,
-        //                };
+        private void RealTimeDataUpdated(object sender, Tuple<string, double, double, DateTime, int> e)
+        {
+            for (int i = 0; i < chartFormList.Count; i++)
+            {
+                var chartForm = chartFormList[i];
+                var chart = chartForm.Chart;
+                if (chart.DataPopulated && chartForm.Chart.Symbol == e.Item1)
+                {
+                    FxBar b = (FxBar)chart.LegAnalyzer.LastBar;
+                    if (e.Item4 < b.EndDateTime)
+                    {
+                        FxBar newBar = new FxBar
+                        {
+                            Open = e.Item2,
+                            AskOpen = e.Item3,
+                            High = e.Item2,
+                            AskHigh = e.Item3,
+                            Low = e.Item2,
+                            AskLow = e.Item3,
+                            Close = e.Item2,
+                            AskClose = e.Item3,
+                        };
 
-        //                chart.LegAnalyzer.UpdateLastBar(newBar);
-        //            }
-        //            else
-        //            {
-        //                var dt = Utilities.NormalizeBarDateTime_FXCM(e.Item4, chartForm.Chart.Resolution);
+                        chart.LegAnalyzer.UpdateLastBar(newBar);
+                    }
+                    else
+                    {
+                        var dt = Utilities.NormalizeBarDateTime_FXCM(e.Item4, chartForm.Chart.Resolution);
 
-        //                FxBar newBar = new FxBar
-        //                {
-        //                    Open = e.Item2,
-        //                    AskOpen = e.Item3,
-        //                    High = e.Item2,
-        //                    AskHigh = e.Item3,
-        //                    Low = e.Item2,
-        //                    AskLow = e.Item3,
-        //                    Close = e.Item2,
-        //                    AskClose = e.Item3,
-        //                    DateTime = dt,
-        //                    EndDateTime = Utilities.GetEndDateTime(dt, chart.Resolution)
-        //                };
-        //                chart.LegAnalyzer.AddBar(newBar);
-        //            }
-        //        }
-        //    }
-        //}
+                        FxBar newBar = new FxBar
+                        {
+                            Open = e.Item2,
+                            AskOpen = e.Item3,
+                            High = e.Item2,
+                            AskHigh = e.Item3,
+                            Low = e.Item2,
+                            AskLow = e.Item3,
+                            Close = e.Item2,
+                            AskClose = e.Item3,
+                            DateTime = dt,
+                            EndDateTime = Utilities.GetEndDateTime(dt, chart.Resolution)
+                        };
+                        chart.LegAnalyzer.AddBar(newBar);
+                    }
+                }
+            }
+        }
 
 
         private async void newChartToolStripMenuItem_Click(object sender, EventArgs e)

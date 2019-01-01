@@ -12,15 +12,38 @@ using Trading.DataBases.TextFileDataBase;
 using Trading.Analyzers.Common;
 using System.Xml.Linq;
 using Trading.DataBases.XmlDataBase;
+using Trading.DataManager.Common;
 
 namespace Trading.DataManager
 {
-    public class DataManager : IDisposable
+    public class DataManager : IDataManager
     {
-        public event EventHandler<RealTimeDataUpdatedEventArgs> DataUpdated;
+        public event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged;
+        public event EventHandler<RealTimeDataUpdatedEventArgs> RealTimeDataUpdated;
 
-        IDataBase repository;
-        IDataProvider dataProvider;
+        private IDataBase repository;
+        private IDataProvider dataProvider;
+
+        public DataManager(IDataProvider dataProvider, IDataBase dataBase)
+        {
+            this.dataProvider = dataProvider;
+            repository = dataBase;
+
+            dataProvider.SessionStatusChanged += DataProvider_SessionStatusChanged;
+            dataProvider.RealTimeDataUpdated += DataProvider_RealTimeDataUpdated;
+        }
+
+        #region IDataProvider implementations
+
+        public void Login(params string[] loginData)
+        {
+            dataProvider.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
+        }
+
+        public void Logout()
+        {
+            this.dataProvider.Logout();
+        }
 
         public bool IsOnline
         {
@@ -29,90 +52,6 @@ namespace Trading.DataManager
                 return dataProvider.IsOnline;
             }
         }
-
-        public DataManager(IDataProvider dataProvider, IDataBase dataBase)
-        {
-            this.dataProvider = dataProvider;
-            repository = dataBase;
-            logIn();
-            dataProvider.RealTimeDataUpdated += DataProvider_DataUpdated;
-        }
-
-        private void DataProvider_DataUpdated(object sender, RealTimeDataUpdatedEventArgs e)
-        {
-            DataUpdated?.Invoke(sender, e);
-        }
-        
-        public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
-            DateTime beginDate, DateTime endDate)
-        {
-            var localData = repository.ReadData(instrument, resolution, beginDate, endDate).ToList();
-
-            if (localData.Count() != 0)
-            {
-                var firstLocalBarDateTime = localData.First().DateTime;
-                var lastLocalBarDateTime = localData.Last().DateTime;
-
-                if(beginDate < firstLocalBarDateTime)
-                {
-                    var prependBarList = (await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, firstLocalBarDateTime)).ToList();
-
-                    if (prependBarList.Count > 0 && prependBarList.Last().DateTime == firstLocalBarDateTime)
-                        prependBarList.Remove(prependBarList.Last());
-                    if (prependBarList.Count() > 0)
-                    {
-                        repository.PrependData(instrument, resolution, prependBarList);
-                        localData.InsertRange(0, prependBarList);
-                    }
-                }
-                else if(beginDate > firstLocalBarDateTime)
-                {
-                    if(beginDate >= lastLocalBarDateTime)
-                    {
-                        var list = (await dataProvider.GetHistoricalDataAsync(instrument, resolution, lastLocalBarDateTime, endDate)).ToList();
-                        repository.AppendData(instrument, resolution, list);
-
-                        int removeIndex = list.FindIndex(bar => bar.DateTime >= beginDate & bar.EndDateTime <= beginDate);
-                        if(removeIndex > 0)
-                        {
-                            list.RemoveRange(0, removeIndex);
-                        }
-
-                        return list;
-                    }
-                    int i = localData.FindIndex(p => p.DateTime <= beginDate && p.EndDateTime >= beginDate);
-                    localData.RemoveRange(0, i);
-                }
-                
-                if(endDate > lastLocalBarDateTime)
-                {
-                    var appendBarList = await dataProvider.GetHistoricalDataAsync(instrument, resolution, lastLocalBarDateTime, endDate);
-                    repository.AppendData(instrument, resolution, appendBarList);
-                    if (appendBarList.First().DateTime == localData.Last().DateTime)
-                    {
-                        localData.Remove(localData.Last());
-                    }
-                    localData.AddRange(appendBarList);
-                }
-                else if(endDate < lastLocalBarDateTime)
-                {
-                    int removeBarIndex = localData.FindIndex(p => p.DateTime >= endDate);
-                    localData.RemoveRange(removeBarIndex, localData.Count - removeBarIndex);
-                }
-
-                return localData;
-            }
-
-            localData.AddRange(await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate));
-            repository.WriteData(instrument, resolution, localData);
-
-            return localData;
-        }
-
-        //public IEnumerable<Bar> GetLocalData(Instrument instrument, Resolution resolution)
-        //{
-        //    return repository.ReadData(instrument, resolution);
-        //}
 
         public void SubscribeToRealTime(string instrument)
         {
@@ -124,23 +63,114 @@ namespace Trading.DataManager
             dataProvider.UnsubscribeToRealTime(instrument);
         }
 
-  
+        private void DataProvider_SessionStatusChanged(object sender, SessionStatusChangedEventArgs e)
+        {
+            this.SessionStatusChanged?.Invoke(sender, e);
+        }
+
+        private void DataProvider_RealTimeDataUpdated(object sender, RealTimeDataUpdatedEventArgs e)
+        {
+            RealTimeDataUpdated?.Invoke(sender, e);
+        }
+        
+        public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
+            DateTime beginDate, DateTime endDate)
+        {
+            var localData = repository.ReadLocalData(instrument, resolution, beginDate, endDate).ToList();
+
+            if (!IsOnline)
+                return localData;
+
+            if(localData.Count == 0)
+            {
+                localData.AddRange(await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate));
+                repository.WriteLocalData(instrument, resolution, localData);
+                return localData;
+            }
+
+
+            var firstLocalBarDateTime = localData.First().DateTime;
+            var lastLocalBarDateTime = localData.Last().DateTime;
+
+            if(beginDate < firstLocalBarDateTime)
+            {
+                var prependBarList = (await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, firstLocalBarDateTime)).ToList();
+
+                if (prependBarList.Count > 0 && prependBarList.Last().DateTime == firstLocalBarDateTime)
+                    prependBarList.Remove(prependBarList.Last());
+                if (prependBarList.Count() > 0)
+                {
+                    repository.PrependLocalData(instrument, resolution, prependBarList);
+                    localData.InsertRange(0, prependBarList);
+                }
+            }
+            else if(beginDate > firstLocalBarDateTime)
+            {
+                if(beginDate >= lastLocalBarDateTime)
+                {
+                    var list = (await dataProvider.GetHistoricalDataAsync(instrument, resolution, lastLocalBarDateTime, endDate)).ToList();
+                    repository.AppendLocalData(instrument, resolution, list);
+
+                    int removeIndex = list.FindIndex(bar => bar.DateTime >= beginDate & bar.EndDateTime <= beginDate);
+                    if(removeIndex > 0)
+                    {
+                        list.RemoveRange(0, removeIndex);
+                    }
+
+                    return list;
+                }
+                int i = localData.FindIndex(p => p.DateTime <= beginDate && p.EndDateTime >= beginDate);
+                localData.RemoveRange(0, i);
+            }
+                
+            if(endDate > lastLocalBarDateTime)
+            {
+                var appendBarList = await dataProvider.GetHistoricalDataAsync(instrument, resolution, lastLocalBarDateTime, endDate);
+                repository.AppendLocalData(instrument, resolution, appendBarList);
+                if (appendBarList.First().DateTime == localData.Last().DateTime)
+                {
+                    localData.Remove(localData.Last());
+                }
+                localData.AddRange(appendBarList);
+            }
+            else if(endDate < lastLocalBarDateTime)
+            {
+                int removeBarIndex = localData.FindIndex(p => p.DateTime >= endDate);
+                localData.RemoveRange(removeBarIndex, localData.Count - removeBarIndex);
+            }
+
+            return localData;
+        }
+
+        #endregion
+
+        #region IDataBase implementations
+
+        public IEnumerable<Bar> ReadLocalData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
+        {
+            return this.repository.ReadLocalData(instrument, resolution, fromDate, toDate);
+        }
+
+        public void WriteLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        {
+            this.repository.WriteLocalData(instrument, resolution, barList);
+        }
+
+        public void PrependLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        {
+            this.repository.PrependLocalData(instrument, resolution, barList);
+        }
+
+        public void AppendLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        {
+            this.repository.PrependLocalData(instrument, resolution, barList);
+        }
+
+        #endregion
+
         public void Dispose()
         {
             dataProvider.Logout();
-        }
-
-        private void logIn()
-        {
-            try
-            {
-                dataProvider.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
-            }
-            catch (Exception e)
-            {
-                
-                //Environment.Exit(0);
-            }
         }
     }
 }

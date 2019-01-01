@@ -16,7 +16,7 @@ namespace Trading.DataBases.TextFileDataBase
             root = rootPath;
         }
 
-        public IEnumerable<Bar> ReadData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
+        public IEnumerable<Bar> ReadLocalData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
         {
             List<Bar> barList = new List<Bar>();
 
@@ -51,7 +51,7 @@ namespace Trading.DataBases.TextFileDataBase
             return barList;
         }
 
-        public void WriteData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        public void WriteLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
             string fileFullPath = getFullPath(instrument, resolution);
 
@@ -62,11 +62,11 @@ namespace Trading.DataBases.TextFileDataBase
             }
         }
 
-        public void PrependData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        public void PrependLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
             string fileFullPath = getFullPath(instrument, resolution);
 
-            var localList = ReadData(instrument, resolution, DateTime.Now, DateTime.Now);
+            var localList = ReadLocalData(instrument, resolution, DateTime.Now, DateTime.Now);
 
             using (StreamWriter sw = new StreamWriter(fileFullPath))
             {
@@ -79,7 +79,7 @@ namespace Trading.DataBases.TextFileDataBase
             }
         }
 
-        public void AppendData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        public void AppendLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
             string path = getFullPath(instrument, resolution);
 

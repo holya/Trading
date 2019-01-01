@@ -24,8 +24,8 @@ namespace UnitTestProject1
             barList.Add(Helper.GetUpBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
 
             var instrument = new Instrument { Type = InstrumentType.Forex, Name = "USD/CAD" };
-            tb.WriteData(instrument, new Resolution(TimeFrame.Hourly, 1), barList);
-            var rbs = tb.ReadData(instrument, new Resolution(TimeFrame.Hourly, 1), DateTime.Now, DateTime.Now);
+            tb.WriteLocalData(instrument, new Resolution(TimeFrame.Hourly, 1), barList);
+            var rbs = tb.ReadLocalData(instrument, new Resolution(TimeFrame.Hourly, 1), DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(barList.Count, rbs.Count());
         }
@@ -41,8 +41,8 @@ namespace UnitTestProject1
             barList.Add(new Bar(15, 27, 8, 17, 0, DateTime.Now, DateTime.Now));
 
             var instrument = new Instrument { Type = InstrumentType.Stock, Name = "MS" };
-            tb.WriteData(instrument, new Resolution(TimeFrame.Hourly, 1), barList);
-            var rbs = tb.ReadData(instrument, new Resolution(TimeFrame.Hourly, 1), DateTime.Now, DateTime.Now);
+            tb.WriteLocalData(instrument, new Resolution(TimeFrame.Hourly, 1), barList);
+            var rbs = tb.ReadLocalData(instrument, new Resolution(TimeFrame.Hourly, 1), DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(barList.Count, rbs.Count());
         }
@@ -59,15 +59,15 @@ namespace UnitTestProject1
 
             var instrument = new Instrument { Type = InstrumentType.Stock, Name = "TSLA" };
             var resolution = new Resolution(TimeFrame.Hourly, 1);
-            tb.WriteData(instrument, resolution, barList);
+            tb.WriteLocalData(instrument, resolution, barList);
 
             barList.Clear();
             barList.Add(new Bar(1, 20, 5, 12, 0, DateTime.Now, DateTime.Now));
             barList.Add(new Bar(0, 25, 10, 17, 0, DateTime.Now, DateTime.Now));
             barList.Add(new Bar(0, 27, 8, 17, 0, DateTime.Now, DateTime.Now));
-            tb.PrependData(instrument, resolution, barList);
+            tb.PrependLocalData(instrument, resolution, barList);
 
-            var rbs = tb.ReadData(instrument, resolution, DateTime.Now, DateTime.Now);
+            var rbs = tb.ReadLocalData(instrument, resolution, DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(6, rbs.Count());
         }
@@ -84,15 +84,15 @@ namespace UnitTestProject1
 
             var instrument = new Instrument { Type = InstrumentType.Stock, Name = "TSLA" };
             var resolution = new Resolution(TimeFrame.Hourly, 1);
-            tb.WriteData(instrument, resolution, barList);
+            tb.WriteLocalData(instrument, resolution, barList);
 
             barList.Clear();
             barList.Add(new Bar(0, 20, 5, 12, 0, DateTime.Now, DateTime.Now));
             barList.Add(new Bar(0, 25, 10, 17, 0, DateTime.Now, DateTime.Now));
             barList.Add(new Bar(0, 27, 8, 17, 0, DateTime.Now, DateTime.Now));
-            tb.AppendData(instrument, resolution, barList);
+            tb.AppendLocalData(instrument, resolution, barList);
 
-            var rbs = tb.ReadData(instrument, resolution, DateTime.Now, DateTime.Now);
+            var rbs = tb.ReadLocalData(instrument, resolution, DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(6, rbs.Count());
 

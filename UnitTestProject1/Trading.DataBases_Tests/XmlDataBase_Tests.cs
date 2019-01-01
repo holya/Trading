@@ -17,7 +17,7 @@ namespace Trading.DataBases_Tests
             XmlDataBase tb = new XmlDataBase();
 
             var instrument = new Instrument { Type = InstrumentType.Forex, Name = "AUD/CAD" };
-            var rbs = tb.ReadData(instrument, new Resolution(TimeFrame.Hourly, 1),
+            var rbs = tb.ReadLocalData(instrument, new Resolution(TimeFrame.Hourly, 1),
                 new DateTime(2018, 11, 22), new DateTime(2018, 11, 22, 20, 0, 0));
 
             //Assert.AreEqual(barList.Count, rbs.Count());
@@ -36,8 +36,8 @@ namespace Trading.DataBases_Tests
 
             var instrument = new Instrument { Type = InstrumentType.Stock, Name = "TSLA" };
             var resolution = new Resolution(TimeFrame.Hourly, 1);
-            tb.WriteData(instrument, new Resolution(TimeFrame.Hourly, 1), barList);
-            var rbs = tb.ReadData(instrument, resolution, DateTime.Now, DateTime.Now);
+            tb.WriteLocalData(instrument, new Resolution(TimeFrame.Hourly, 1), barList);
+            var rbs = tb.ReadLocalData(instrument, resolution, DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(barList.Count, rbs.Count());
 
@@ -57,8 +57,8 @@ namespace Trading.DataBases_Tests
             barList.Add(Helper.GetUpBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
 
             var instrument = new Instrument { Type = InstrumentType.Forex, Name = "USD/CAD" };
-            tb.WriteData(instrument, new Resolution(TimeFrame.Hourly, 1), barList);
-            var rbs = tb.ReadData(instrument, new Resolution(TimeFrame.Hourly, 1), DateTime.Now, DateTime.Now);
+            tb.WriteLocalData(instrument, new Resolution(TimeFrame.Hourly, 1), barList);
+            var rbs = tb.ReadLocalData(instrument, new Resolution(TimeFrame.Hourly, 1), DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(barList.Count, rbs.Count());
 
@@ -76,15 +76,15 @@ namespace Trading.DataBases_Tests
 
             var instrument = new Instrument { Type = InstrumentType.Stock, Name = "GLD" };
             var resolution = new Resolution(TimeFrame.Hourly, 1);
-            tb.WriteData(instrument, resolution, barList);
+            tb.WriteLocalData(instrument, resolution, barList);
 
             barList.Clear();
             barList.Add(new Bar(1, 20, 5, 12, 0, DateTime.Now, DateTime.Now));
             barList.Add(new Bar(0, 25, 10, 17, 0, DateTime.Now, DateTime.Now));
             barList.Add(new Bar(0, 27, 8, 17, 0, DateTime.Now, DateTime.Now));
-            tb.PrependData(instrument, resolution, barList);
+            tb.PrependLocalData(instrument, resolution, barList);
 
-            var rbs = tb.ReadData(instrument, resolution, DateTime.Now, DateTime.Now);
+            var rbs = tb.ReadLocalData(instrument, resolution, DateTime.Now, DateTime.Now);
 
             Assert.AreEqual(6, rbs.Count());
 
@@ -103,15 +103,15 @@ namespace Trading.DataBases_Tests
 
             var instrument = new Instrument { Type = InstrumentType.Stock, Name = "GLD" };
             var resolution = new Resolution(TimeFrame.Hourly, 1);
-            tb.WriteData(instrument, resolution, barList);
+            tb.WriteLocalData(instrument, resolution, barList);
 
             barList.Clear();
             barList.Add(new Bar(1, 20, 5, 12, 0, dt.AddDays(2), dt));
             barList.Add(new Bar(0, 25, 10, 17, 0, dt.AddDays(3), dt));
             barList.Add(new Bar(0, 27, 8, 17, 0, dt.AddDays(4), dt));
-            tb.AppendData(instrument, resolution, barList);
+            tb.AppendLocalData(instrument, resolution, barList);
 
-            var rbs = tb.ReadData(instrument, resolution, dt, dt.AddDays(4));
+            var rbs = tb.ReadLocalData(instrument, resolution, dt, dt.AddDays(4));
 
             Assert.AreEqual(5, rbs.Count());
             Assert.AreEqual(dt.AddDays(4), rbs.Last().DateTime);
@@ -130,15 +130,15 @@ namespace Trading.DataBases_Tests
 
             var instrument = new Instrument { Type = InstrumentType.Stock, Name = "GLD" };
             var resolution = new Resolution(TimeFrame.Hourly, 1);
-            tb.WriteData(instrument, resolution, barList);
+            tb.WriteLocalData(instrument, resolution, barList);
 
             barList.Clear();
             barList.Add(new Bar(1, 20, 5, 12, 0, dt.AddDays(3), dt));
             barList.Add(new Bar(0, 25, 10, 17, 0, dt.AddDays(4), dt));
             barList.Add(new Bar(0, 27, 8, 17, 0, dt.AddDays(5), dt));
-            tb.AppendData(instrument, resolution, barList);
+            tb.AppendLocalData(instrument, resolution, barList);
 
-            var rbs = tb.ReadData(instrument, resolution, dt, dt.AddDays(5));
+            var rbs = tb.ReadLocalData(instrument, resolution, dt, dt.AddDays(5));
 
             Assert.AreEqual(6, rbs.Count());
             Assert.AreEqual(dt.AddDays(3), rbs.ElementAt(3).DateTime);

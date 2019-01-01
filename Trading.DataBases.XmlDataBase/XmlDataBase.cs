@@ -15,7 +15,7 @@ namespace Trading.DataBases.XmlDataBase
     {
         public string root = "C:\\DataBase\\XML\\";
 
-        public IEnumerable<Bar> ReadData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
+        public IEnumerable<Bar> ReadLocalData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
         {
             List<Bar> barList = new List<Bar>();
 
@@ -68,7 +68,7 @@ namespace Trading.DataBases.XmlDataBase
             return barList;
         }
 
-        public void WriteData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        public void WriteLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
             XDocument doc = new XDocument(new XElement("root"));
 
@@ -110,7 +110,7 @@ namespace Trading.DataBases.XmlDataBase
                                 ));
         }
 
-        public void PrependData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        public void PrependLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
             string fileFullPath = getFullPath(instrument, resolution);
             XDocument doc = XDocument.Load(fileFullPath);
@@ -127,7 +127,7 @@ namespace Trading.DataBases.XmlDataBase
             doc.Save(fileFullPath);
         }
 
-        public void AppendData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        public void AppendLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
             string fileFullPath = getFullPath(instrument, resolution);
             XDocument doc = XDocument.Load(fileFullPath);

@@ -6,9 +6,9 @@ namespace Trading.DataBases.Interfaces
 {
     public interface IDataBase
     {
-        IEnumerable<Bar> ReadData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate);
-        void WriteData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList);
-        void PrependData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList);
-        void AppendData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList);
+        IEnumerable<Bar> ReadLocalData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate);
+        void WriteLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList);
+        void PrependLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList);
+        void AppendLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList);
     }
 }

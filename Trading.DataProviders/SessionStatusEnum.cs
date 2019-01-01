@@ -10,23 +10,15 @@ namespace Trading.DataProviders.Common
     {
         Connected = 0,
         Disconnected = 1,
-        SessionLost = 2,
-        MSG1 = 3,
-        MSG2 = 4,
-        MSG3 = 5,
-        MSG4 = 6,
-        MSG5 = 7,
-        MSG6 = 8,
-        MSG7 = 9,
-        MSG8 = 10
-        //Disconnected = 0,
-        //Connecting = 1,
-        //TradingSessionRequested = 2,
-        //Connected = 3,
-        //Reconnecting = 4,
-        //Disconnecting = 5,
-        //SessionLost = 6,
-        //PriceSessionReconnecting = 7,
-        //Unknown = 8
+        MSG1 = 2,
+        MSG2 = 3,
+        MSG3 = 4,
+        MSG4 = 5,
+        MSG5 = 6,
+        MSG6 = 7,
+        MSG7 = 8,
+        MSG8 = 9,
+        MSG9 = 10,
+        MSG10 = 11
     }
 }

@@ -41,7 +41,7 @@ namespace Trading.DataBases.MongoDb
             return collection;
         }
 
-        public void WriteData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        public void WriteLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
             var col = getCollection(instrument, resolution);
 
@@ -51,7 +51,7 @@ namespace Trading.DataBases.MongoDb
             }
         }
 
-        public IEnumerable<Bar> ReadData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
+        public IEnumerable<Bar> ReadLocalData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
         {
             var collection = getCollection(instrument, resolution);
 
@@ -60,12 +60,12 @@ namespace Trading.DataBases.MongoDb
             return list;
         }
 
-        public void AppendData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        public void AppendLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
             throw new NotImplementedException();
         }
 
-        public void PrependData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        public void PrependLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
             throw new NotImplementedException();
         }

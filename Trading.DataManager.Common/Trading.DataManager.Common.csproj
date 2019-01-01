@@ -4,14 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F56906E6-E201-4C15-BFB1-980D99BB3884}</ProjectGuid>
+    <ProjectGuid>{2E901633-5C28-4CCC-91A8-8E30D2B512C5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Trading.DataProviders</RootNamespace>
-    <AssemblyName>Trading.DataProviders</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>Trading.DataManager.Common</RootNamespace>
+    <AssemblyName>Trading.DataManager.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,7 +29,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -43,17 +41,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataUpdatedEventArgs.cs" />
-    <Compile Include="IDataProvider.cs" />
+    <Compile Include="IDataManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SessionStatusChangedEventArgs.cs" />
-    <Compile Include="SessionStatusEnum.cs" />
-    <Compile Include="SessionStatusException.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trading.Common\Trading.Common.csproj">
-      <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
+      <Project>{0655B3C3-4B5B-4D2F-B721-8EBA6C74BE2F}</Project>
       <Name>Trading.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Interfaces.csproj">
+      <Project>{35CEF0FC-636C-4C15-B07C-99C6C5B93439}</Project>
+      <Name>Trading.DataBases.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trading.DataProviders\Trading.DataProviders.Common.csproj">
+      <Project>{F56906E6-E201-4C15-BFB1-980D99BB3884}</Project>
+      <Name>Trading.DataProviders.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
