@@ -26,5 +26,11 @@ namespace Trading.DataProviders.Common
         {
             this.Status = status;
         }
+
+        public SessionStatusException(SessionStatusEnum status, string message, Exception innerException) 
+            : base(message, innerException)
+        {
+            this.Status = status;
+        }
     }
 }

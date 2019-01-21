@@ -20,6 +20,7 @@ namespace WindowsFormsApp.Custom_Views
         public string Symbol { get; set; }
         public Resolution Resolution { get; set; }
         public DateTime FromDateTime { get; set; }
+        public DateTime ToDateTime { get; set; }
         public bool DataPopulated { get; set; } = false;
         public HlocLACustomChart()
         {
@@ -161,7 +162,6 @@ namespace WindowsFormsApp.Custom_Views
             g.DrawString("" + LegAnalyzer.Close, f, db, xCoord, yCoord - 10);
             
         }
-
 
         protected override void OnPaint(PaintEventArgs pe)
         {

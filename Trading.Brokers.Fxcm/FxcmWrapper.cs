@@ -16,7 +16,15 @@ namespace Trading.Brokers.Fxcm
         private List<string> realTimeInstruments = new List<string>();
 
         public event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged = delegate { };
-        public bool IsOnline { get; private set; } = false;
+        //public bool IsOnline { get; private set; } = false;
+        public bool IsOnline
+        {
+            get
+            {
+                return session.getSessionStatus() == O2GSessionStatusCode.Connected ? true : false;
+            }
+        }
+
 
         public event EventHandler<RealTimeDataUpdatedEventArgs> RealTimeDataUpdated = delegate { };
 
@@ -32,64 +40,88 @@ namespace Trading.Brokers.Fxcm
 
             sessionStatusResponseListener = new SessionStatusResponseListener(session, "", "");
             session.subscribeSessionStatus(sessionStatusResponseListener);
-
-
             session.SessionStatusChanged += Session_SessionStatusChanged;
         }
 
         public DateTime GetServerTime() => session.getServerTime();
 
         #region Login / Logout
-        public void Login(params string[] loginData)
+        public async Task Login(params string[] loginData)
         {
+            session.subscribeSessionStatus(sessionStatusResponseListener);
+
             session.useTableManager(O2GTableManagerMode.Yes, null);
             try
             {
                 session.login(loginData[0], loginData[1], loginData[2], loginData[3]);
-                sessionStatusResponseListener.WaitEvents();
+                await Task.Run(() =>
+                {
+                    sessionStatusResponseListener.WaitEvents();
+                    session.login(loginData[0], loginData[1], loginData[2], loginData[3]);
+                });
             }
-            catch (Exception)
+            catch (Exception e)
             { 
-                this.IsOnline = false;
-                throw; 
+                throw new SessionStatusException(SessionStatusEnum.ERROR10, $"{SessionStatusEnum.ERROR10.ToString()}. An error has occured", e); 
             }
 
             if (sessionStatusResponseListener.SessionStatus == O2GSessionStatusCode.SessionLost)
-                throw new SessionStatusException(this.convertO2GSessionStatusCodeToSessionStatusEnum(sessionStatusResponseListener.SessionStatus), "Session has been lost.");
+            {
+                var ss = this.convertO2GSessionStatusCodeToSessionStatusEnum(sessionStatusResponseListener.SessionStatus);
+                throw new SessionStatusException(ss, $"{ss.ToString()}. Session has been lost.");
+            }
 
             if (sessionStatusResponseListener.SessionStatus == O2GSessionStatusCode.Unknown)
-                throw new SessionStatusException(this.convertO2GSessionStatusCodeToSessionStatusEnum(sessionStatusResponseListener.SessionStatus), "Uknown Error.");
-
-
+            {
+                var ss = this.convertO2GSessionStatusCodeToSessionStatusEnum(sessionStatusResponseListener.SessionStatus);
+                throw new SessionStatusException(ss, $"{ss.ToString()}. Uknown Error.");
+            }
 
             if (sessionStatusResponseListener.Error)
             {
-                this.IsOnline = false;
-                throw new SessionStatusException(SessionStatusEnum.MSG8, $"Login Failed. Message{sessionStatusResponseListener.ErrorMessage}");
+                throw new SessionStatusException(SessionStatusEnum.ERROR9, $"{SessionStatusEnum.ERROR9.ToString()}. {sessionStatusResponseListener.ErrorMessage}.");
             }
 
             tableMgr = session.getTableManager();
+            //await Task.Delay(3000);
+            if (tableMgr == null)
+                throw new SessionStatusException(SessionStatusEnum.ERROR10, $"{SessionStatusEnum.ERROR10.ToString()}. Could not load Table manager from Session.");
+
             O2GTableManagerStatus managerStatus = tableMgr.getStatus();
-            while (managerStatus == O2GTableManagerStatus.TablesLoading)
+
+            int i = 0;
+            while ((managerStatus == O2GTableManagerStatus.TablesLoading))
             {
-                Thread.Sleep(50);
+                Thread.Sleep(200);
                 managerStatus = tableMgr.getStatus();
+                if (i > 5)
+                    break;
             }
             if (managerStatus == O2GTableManagerStatus.TablesLoadFailed)
-                throw new SessionStatusException(SessionStatusEnum.MSG9,"Could not load Table Manager.");
+            {
+                //this.Logout();
+                throw new SessionStatusException(SessionStatusEnum.ERROR11, $"{SessionStatusEnum.ERROR9.ToString()}. Could not load Table Manager.");
+            }
+            //if (count >= 70)
+            //{
+            ////this.Logout();
+            //    throw new SessionStatusException(SessionStatusEnum.ERROR8, $"{SessionStatusEnum.ERROR8.ToString()}. Could not load Table Manager. Maximum waiting time of {max} milli-seconds has been reached.");
+            //}
 
             offersTable = (O2GOffersTable)tableMgr.getTable(O2GTableType.Offers);
             offersTable.RowChanged += offersTableUpdated;
         }
 
+        public void Logout()
+        {
+            session.logout();
+            sessionStatusResponseListener.WaitEvents();
+            session.unsubscribeSessionStatus(sessionStatusResponseListener);
+        }
 
         private void Session_SessionStatusChanged(object sender, SessionStatusEventArgs e)
         {
             var sse = convertO2GSessionStatusCodeToSessionStatusEnum(e.SessionStatus);
-            if (sse == SessionStatusEnum.Connected)
-                this.IsOnline = true;
-            else
-                this.IsOnline = false;
 
             SessionStatusChanged?.Invoke(this, new SessionStatusChangedEventArgs() { SessionStatus = sse });
         }
@@ -101,11 +133,11 @@ namespace Trading.Brokers.Fxcm
                 case O2GSessionStatusCode.Connected:
                     return SessionStatusEnum.Connected;
 
-                case O2GSessionStatusCode.Connecting:
-                    return SessionStatusEnum.MSG1; 
-
                 case O2GSessionStatusCode.Disconnected:
                     return SessionStatusEnum.Disconnected;
+
+                case O2GSessionStatusCode.Connecting:
+                    return SessionStatusEnum.MSG1; 
 
                 case O2GSessionStatusCode.Disconnecting:
                     return SessionStatusEnum.MSG2;
@@ -120,24 +152,16 @@ namespace Trading.Brokers.Fxcm
                     return SessionStatusEnum.MSG5;
 
                 case O2GSessionStatusCode.SessionLost:
-                    return SessionStatusEnum.MSG6;
+                    return SessionStatusEnum.ERROR1;
 
                 case O2GSessionStatusCode.Unknown:
-                    return SessionStatusEnum.MSG7;
+                    return SessionStatusEnum.ERROR2;
 
                 default:
-                    return SessionStatusEnum.MSG8;
+                    return SessionStatusEnum.MSG10;
             }
         }
 
-        public void Logout()
-        {
-            session.logout();
-            sessionStatusResponseListener.WaitEvents();
-            session.unsubscribeSessionStatus(sessionStatusResponseListener);
-
-            this.IsOnline = false;
-        }
         #endregion
 
         private IEnumerable<Bar> getHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime)

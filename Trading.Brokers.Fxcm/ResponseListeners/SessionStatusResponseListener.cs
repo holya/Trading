@@ -54,10 +54,10 @@ namespace Trading.Brokers.Fxcm
                 case O2GSessionStatusCode.Disconnected:
                     waitHandle.Set();
                     break;
-                //case O2GSessionStatusCode.Connecting:
-                //    break;
-                //case O2GSessionStatusCode.TradingSessionRequested:
-                //    break;
+                case O2GSessionStatusCode.Connecting:
+                    break;
+                case O2GSessionStatusCode.TradingSessionRequested:
+                    break;
                 case O2GSessionStatusCode.Connected:
                     waitHandle.Set();
                     break;

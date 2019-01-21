@@ -19,6 +19,18 @@ namespace Trading.DataProviders.Common
         MSG7 = 8,
         MSG8 = 9,
         MSG9 = 10,
-        MSG10 = 11
+        MSG10 = 11,
+        ERROR1 = 12,
+        ERROR2 = 13,
+        ERROR3 = 14,
+        ERROR4 = 15,
+        ERROR5 = 16,
+        ERROR6 = 17,
+        ERROR7 = 18,
+        ERROR8 = 19,
+        ERROR9 = 20,
+        ERROR10 = 21,
+        ERROR11 = 22,
+        ERROR12 = 23
     }
 }
