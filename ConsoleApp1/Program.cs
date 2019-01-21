@@ -17,20 +17,18 @@ namespace ConsoleApp1
     {
         public static void Main(string[] args)
         {
-            //Lazy<IUnityContainer> container = new Lazy<IUnityContainer>(() =>
-            //    {
-            //        var c = new UnityContainer();
-            //        ContainerBootStrapper.RegisterTypes(c);
-            //        return c;
-            //    });
+            Lazy<IUnityContainer> container = new Lazy<IUnityContainer>(() =>
+                {
+                    var c = new UnityContainer();
+                    ContainerBootStrapper.RegisterTypes(c);
+                    return c;
+                });
             //var container = new UnityContainer();
             //ContainerBootStrapper.RegisterTypes(container);
 
-            DataManager dm = new DataManager(new FxcmWrapper(), new MongoDb());
-            //var dm = container.Value.Resolve<DataManager>();
+            //DataManager dm = new DataManager(new FxcmWrapper(), new MongoDb());
+            var dm = container.Value.Resolve<DataManager>();
 
-            //FxcmWrapper f = new FxcmWrapper();
-            //f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
             Instrument instrument = new Instrument { Name = "USD/CAD", Type = InstrumentType.Forex };
             DateTime sd = new DateTime(2018, 11, 19, 20, 0, 0);
             var ed = new DateTime(2018, 11, 19, 23, 0, 0);
