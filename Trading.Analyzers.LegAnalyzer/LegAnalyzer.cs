@@ -10,7 +10,7 @@ namespace Trading.Analyzers.LegAnalyzer
     public partial class LegAnalyzer
     {
         #region Properties
-        public Resolution Resolution { get; set; }
+        //public Resolution Resolution { get; set; }
         public Bar LastBar => LastLeg.LastBar;
         public Leg LastLeg => LegList.Last();
         public double Close => LastBar.Close;
@@ -25,7 +25,11 @@ namespace Trading.Analyzers.LegAnalyzer
 
         public List<Reference> RefList { get; } = new List<Reference>();
         #endregion
-        public LegAnalyzer() => addBar = addFirstBar;
+
+        public LegAnalyzer()
+        {
+            addBar = addFirstBar;
+        }
 
         public void AddBarList(IEnumerable<Bar> barList)
         {
@@ -153,19 +157,19 @@ namespace Trading.Analyzers.LegAnalyzer
         }
 
 
-        private bool lastBarShouldBeUpdated(double open, double newBarHigh, double newBarLow, double newBarClose)
-        {
-            if(newBarHigh > this.LastBar.High || newBarLow < this.LastBar.Low)
-                return true;
+        //private bool lastBarShouldBeUpdated(double open, double newBarHigh, double newBarLow, double newBarClose)
+        //{
+        //    if(newBarHigh > this.LastBar.High || newBarLow < this.LastBar.Low)
+        //        return true;
 
-            if(this.LastBar.Direction == BarDirection.OutsideUp && newBarClose < this.LastBar.Open)
-                return true;
+        //    if(this.LastBar.Direction == BarDirection.OutsideUp && newBarClose < this.LastBar.Open)
+        //        return true;
 
-            if(this.LastBar.Direction == BarDirection.OutsideDown && newBarClose >= this.LastBar.Open)
-                return true;
+        //    if(this.LastBar.Direction == BarDirection.OutsideDown && newBarClose >= this.LastBar.Open)
+        //        return true;
 
-            return false;
-        }
+        //    return false;
+        //}
 
         public Leg LegsBack(int legsBack)
         {
