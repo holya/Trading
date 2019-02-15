@@ -23,6 +23,9 @@ namespace Trading.Analyzers.LegAnalyzer
         //public List<double> AdvanceList { get; private set; }
         //public List<double> DeclineList { get; private set; }
 
+        public List<Pattern> PatternsList { get; } = new List<Pattern>();
+        
+
         public List<Reference> RefList { get; } = new List<Reference>();
         #endregion
 
@@ -47,18 +50,32 @@ namespace Trading.Analyzers.LegAnalyzer
             d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime, d.EndDateTime);
             LegList.Add(new Leg(d));
 
+            PatternsList.Add(new Pattern(LegList.Last()));
             addBar = addBarContiued;
         }
         private void addBarContiued(Bar newBar)
         {
             newBar.PreviousBar = LastBar;
-            if((LastLeg.Direction == LegDirection.Up && newBar.Low >= LastBar.Low) ||
-               (LastLeg.Direction == LegDirection.Down && newBar.High <= LastBar.High))
+            if (!LastLeg.AddBar(newBar))
             {
-                LegList.Last().AddBar(newBar);
+                LegList.Add(new Leg(newBar));
+                //create new reference point of the last Leg
             }
-            else
-                LegList.Add(new Leg(newBar) { PreviousLeg = LegList.Last() });
+
+            if (!PatternsList.Last().LastLeg.AddBar(newBar))
+            {
+                PatternsList.Add(new Pattern(new Leg(newBar)));
+            }
+
+            #region bar add 
+            //if((LastLeg.Direction == LegDirection.Up && newBar.Low >= LastBar.Low) ||
+            //   (LastLeg.Direction == LegDirection.Down && newBar.High <= LastBar.High))
+            //{
+            //    LegList.Last().AddBar(newBar);
+            //}
+            //else
+            //    LegList.Add(new Leg(newBar) { PreviousLeg = LegList.Last() });
+            #endregion
 
             //if(LastLeg.Direction == LegDirection.Up)
             //{
