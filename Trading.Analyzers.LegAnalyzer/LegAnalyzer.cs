@@ -146,15 +146,15 @@ namespace Trading.Analyzers.LegAnalyzer
             addBar = this.addFirstBar;
         }
 
-        private void addReferenceForHighOfThisBar(Bar bar)
-        {
-            this.RefList.Add(new Reference { Price = bar.High, DateTime = bar.DateTime, Owner = bar });
-        }
+        //private void addReferenceForHighOfThisBar(Bar bar)
+        //{
+        //    this.RefList.Add(new Reference { Price = bar.High, DateTime = bar.DateTime, Owner = bar });
+        //}
 
-        private void addReferenceForLowOfThisBar(Bar bar)
-        {
-            this.RefList.Add(new Reference { Price = bar.Low, DateTime = bar.DateTime, Owner = bar });
-        }
+        //private void addReferenceForLowOfThisBar(Bar bar)
+        //{
+        //    this.RefList.Add(new Reference { Price = bar.Low, DateTime = bar.DateTime, Owner = bar });
+        //}
 
 
         //private bool lastBarShouldBeUpdated(double open, double newBarHigh, double newBarLow, double newBarClose)
