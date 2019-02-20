@@ -47,19 +47,16 @@ namespace Trading.Analyzers.LegAnalyzer
         private void addBarContinued(Bar newBar)
         {
             newBar.PreviousBar = LastBar;
-            if ((LastPattern.Direction.Equals(LegDirection.Up) && newBar.Low >= LastBar.Low) ||
-               (LastPattern.Direction.Equals(LegDirection.Down) && newBar.High <= LastBar.High))
+            if (!PatternList.Last().AddBar(newBar))
             {
-                PatternList.Last().AddBar(newBar);
-                return;
+                PatternList.Add(new Pattern(newBar));
             }
-
-            PatternList.Add(new Leg(newBar) { PreviousLeg = PatternList.Last() });
         }
 
 
         public void AddBar(Bar newBar)
         {
+            addBar(newBar);
         }
 
         public void UpdateLastBar(Bar updatedBar)
