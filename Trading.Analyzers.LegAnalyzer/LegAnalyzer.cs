@@ -52,9 +52,9 @@ namespace Trading.Analyzers.LegAnalyzer
             LegList.Add(newLeg);
 
             PatternsList.Add(new Pattern(newLeg));
-            addBar = addBarContiued;
+            addBar = addBarContinued;
         }
-        private void addBarContiued(Bar newBar)
+        private void addBarContinued(Bar newBar)
         {
             newBar.PreviousBar = LastBar;
             if (!LastLeg.AddBar(newBar))

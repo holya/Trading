@@ -12,7 +12,7 @@ namespace UnitTestProject1.Trading.PatternAnalyzer_Tests
     class PatternAnalyzer_Tests
     {
         [TestMethod]
-        void testerMethod()
+        void addBarContinued_Valid_Directions()
         {
 
         }
