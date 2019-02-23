@@ -10,10 +10,10 @@ using UnitTestProject1;
 namespace Trading.PatternAnalyzer_Tests
 {
     [TestClass]
-    class PatternAnalyzer_Tests
+    public class PatternAnalyzer_Tests
     {
         [TestMethod]
-        void AddBar_Valid_Directions()
+        public void AddBar_Valid_Directions()
         {
             Pattern p = new Pattern();
             List<Bar> barlist = new List<Bar>();
@@ -24,7 +24,7 @@ namespace Trading.PatternAnalyzer_Tests
 
             foreach (var b in barlist)
             {
-                p.LegList.Add(new Leg(b));
+                p.AddBar(b);
             }
 
             Assert.AreEqual(p.Direction, LegDirection.Down);
