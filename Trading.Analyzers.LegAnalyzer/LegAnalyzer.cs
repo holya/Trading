@@ -47,13 +47,14 @@ namespace Trading.Analyzers.LegAnalyzer
         private void addFirstBar(Bar newBar)
         {
             var d = newBar;
+            var newLeg = new Leg(d);
             d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime, d.EndDateTime);
-            LegList.Add(new Leg(d));
+            LegList.Add(newLeg);
 
-            PatternsList.Add(new Pattern(LegList.Last()));
-            addBar = addBarContiued;
+            PatternsList.Add(new Pattern(newLeg));
+            addBar = addBarContinued;
         }
-        private void addBarContiued(Bar newBar)
+        private void addBarContinued(Bar newBar)
         {
             newBar.PreviousBar = LastBar;
             if (!LastLeg.AddBar(newBar))
@@ -62,9 +63,9 @@ namespace Trading.Analyzers.LegAnalyzer
                 //create new reference point of the last Leg
             }
 
-            if (!PatternsList.Last().LastLeg.AddBar(newBar))
+            if (!PatternsList.Last().AddBar(newBar))
             {
-                PatternsList.Add(new Pattern(new Leg(newBar)));
+                PatternsList.Add(new Pattern());
             }
 
             #region bar add 

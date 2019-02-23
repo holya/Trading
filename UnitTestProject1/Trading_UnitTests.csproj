@@ -56,6 +56,7 @@
     <Compile Include="DataManager_Tests.cs" />
     <Compile Include="Trading.DataBases_Tests\XmlDataBase_Tests.cs" />
     <Compile Include="InstrumentsManager_Tests.cs" />
+    <Compile Include="Trading.PatternAnalyzer_Tests\PatternAnalyzer_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TextFileDataBase\Trading.DataBases.TextFileDataBase.csproj">
@@ -69,6 +70,10 @@
     <ProjectReference Include="..\Trading.Analyzers.LegAnalyzer\Trading.Analyzers.LegAnalyzer.csproj">
       <Project>{28108a74-5d38-4c8d-8389-4c0561c7fd93}</Project>
       <Name>Trading.Analyzers.LegAnalyzer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trading.Analyzers.PatternAnalyzer\Trading.Analyzers.PatternAnalyzer.csproj">
+      <Project>{4db58e7c-0b17-49cc-aba8-763f25428817}</Project>
+      <Name>Trading.Analyzers.PatternAnalyzer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trading.Common\Trading.Common.csproj">
       <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
