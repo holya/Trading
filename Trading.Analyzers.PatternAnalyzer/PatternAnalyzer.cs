@@ -5,7 +5,7 @@ using System.Text;
 using Trading.Common;
 using Trading.Analyzers.Common;
 
-namespace Trading.Analyzers.LegAnalyzer
+namespace Trading.Analyzers.PatternAnalyzer
 {
     public partial class PatternAnalyzer
     {
