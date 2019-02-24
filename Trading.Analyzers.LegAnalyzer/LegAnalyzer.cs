@@ -65,7 +65,7 @@ namespace Trading.Analyzers.LegAnalyzer
 
             if (!PatternsList.Last().AddBar(newBar))
             {
-                PatternsList.Add(new Pattern());
+                PatternsList.Add(new Pattern(newBar));
             }
 
             #region bar add 

@@ -5,29 +5,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
+using Trading.Analyzers.PatternAnalyzer;
 using UnitTestProject1;
 
 namespace Trading.PatternAnalyzer_Tests
 {
     [TestClass]
-    public class PatternAnalyzer_Tests
+    public class Pattern_Tests
     {
         [TestMethod]
         public void AddBar_Valid_Directions()
         {
-            Pattern p = new Pattern();
-            List<Bar> barlist = new List<Bar>();
-            barlist.Add(Helper.GetUpBar());
-            barlist.Add(Helper.GetUpBar(barlist.Last(), barlist.Last().DateTime.AddDays(1)));
-            barlist.Add(Helper.GetUpBar(barlist.Last(), barlist.Last().DateTime.AddDays(1)));
-            barlist.Add(Helper.GetDownBar());
+            var b1 = Helper.GetUpBar();
+            Pattern p = new Pattern(b1);
+            var b2 = (Helper.GetUpBar(b1, b1.DateTime.AddDays(1)));
+            p.AddBar(b2);
+            var b3 = (Helper.GetUpBar(b2, b2.DateTime.AddDays(1)));
+            p.AddBar(b3);
+            p.AddBar(Helper.GetDownBar());
 
-            foreach (var b in barlist)
-            {
-                p.AddBar(b);
-            }
-
-            Assert.AreEqual(p.Direction, LegDirection.Down);
+            Assert.AreEqual(PatternDirection.Up, p.Direction);
         }
     }
 }

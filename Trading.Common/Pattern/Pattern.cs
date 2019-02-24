@@ -14,7 +14,7 @@ namespace Trading.Common
        
         public Leg LastLeg => LegList.Last();
         public Bar LastBar => LastLeg.LastBar;
-        public Pattern()
+        private Pattern()
         {
             LegList = new List<Leg>();
         }
