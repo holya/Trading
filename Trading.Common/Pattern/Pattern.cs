@@ -54,13 +54,10 @@ namespace Trading.Common
                         else
                             return PatternType.PullBack2;
                     }
+                    if (LastLeg.PreviousLeg.FirstBar.High >= LastLeg.LastBar.High)
+                        return PatternType.Continuation1;
                     else
-                    {
-                        if (LastLeg.PreviousLeg.FirstBar.High >= LastLeg.LastBar.High)
-                            return PatternType.Continuation1;
-                        else
-                            return PatternType.Continuation2;
-                    }
+                        return PatternType.Continuation2;
                 }
                 else
                 {
@@ -71,13 +68,10 @@ namespace Trading.Common
                         else
                             return PatternType.PullBack2;
                     }
+                    if (LastLeg.PreviousLeg.FirstBar.Low <= LastLeg.LastBar.Low)
+                        return PatternType.Continuation1;
                     else
-                    {
-                        if (LastLeg.PreviousLeg.FirstBar.Low <= LastLeg.LastBar.Low)
-                            return PatternType.Continuation1;
-                        else
-                            return PatternType.Continuation2;
-                    }
+                        return PatternType.Continuation2;
                 }
             }
         }
