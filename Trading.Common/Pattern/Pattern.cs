@@ -23,6 +23,7 @@ namespace Trading.Common
             LegList.Add(new Leg(bar));
         }
         public Pattern(Leg leg) : this() { LegList.Add(leg); }
+
         public PatternDirection Direction
         {
             get
