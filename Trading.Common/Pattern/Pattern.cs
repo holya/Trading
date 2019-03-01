@@ -14,15 +14,25 @@ namespace Trading.Common
        
         public Leg LastLeg => LegList.Last();
         public Bar LastBar => LastLeg.LastBar;
+
         private Pattern()
         {
             LegList = new List<Leg>();
         }
-        public Pattern(Bar bar) : this()
-        {
-            LegList.Add(new Leg(bar));
-        }
+        public Pattern(Bar bar) : this() { LegList.Add(new Leg(bar)); }
         public Pattern(Leg leg) : this() { LegList.Add(leg); }
+
+        private double PatternStart
+        {
+            get
+            {
+                if (LegList.First().Direction == LegDirection.Up)
+                    return LegList.First().FirstBar.Low;
+                else
+                    return LegList.First().FirstBar.High;
+            }
+        }
+
         public PatternDirection Direction
         {
             get
@@ -38,17 +48,36 @@ namespace Trading.Common
                 if (Direction == PatternDirection.Up)
                 {
                     if (LastLeg.Direction == LegDirection.Down)
-                        return PatternType.PullBack1;
-
-                    return PatternType.Continuation1;
-
+                    {
+                        if (LastLeg.LastBar.Low >= PatternStart)
+                            return PatternType.PullBack1;
+                        else
+                            return PatternType.PullBack2;
+                    }
+                    else
+                    {
+                        if (LastLeg.PreviousLeg.FirstBar.High >= LastLeg.LastBar.High)
+                            return PatternType.Continuation1;
+                        else
+                            return PatternType.Continuation2;
+                    }
                 }
                 else
                 {
                     if (LastLeg.Direction == LegDirection.Up)
-                        return PatternType.PullBack1;
-
-                    return PatternType.Continuation1;
+                    {
+                        if (LastLeg.LastBar.High < PatternStart && LastLeg.LastBar.High == PatternStart)
+                            return PatternType.PullBack1;
+                        else
+                            return PatternType.PullBack2;
+                    }
+                    else
+                    {
+                        if (LastLeg.PreviousLeg.FirstBar.Low <= LastLeg.LastBar.Low)
+                            return PatternType.Continuation1;
+                        else
+                            return PatternType.Continuation2;
+                    }
                 }
             }
         }

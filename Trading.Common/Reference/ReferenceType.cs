@@ -7,6 +7,7 @@ namespace Trading.Common
 {
     public enum ReferenceType
     {
-
+        Resistance,
+        Support
     }
 }
