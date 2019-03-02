@@ -13,8 +13,6 @@ namespace Trading.Common
         public short HitCount;
         public ReferenceType Type;
         public Bar Owner;
-
-        //public Reference(double price,  )
-
+        public bool Relevance;
     }
 }
