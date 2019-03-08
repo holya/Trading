@@ -7,7 +7,7 @@ using Trading.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTestProject1;
 
-namespace Trading.Patterns_Tests
+namespace Trading.Pattern_Tests
 {
     [TestClass]
     public class Pattern_Tests
@@ -27,5 +27,20 @@ namespace Trading.Patterns_Tests
             p.AddBar(bar5);
             Assert.AreEqual(PatternType.PullBack1, p.Type);
         }
+
+        [TestMethod]
+        public void AddBar_Valid_Directions()
+        {
+            var b1 = Helper.GetUpBar();
+            Pattern p = new Pattern(b1);
+            var b2 = (Helper.GetUpBar(b1, b1.DateTime.AddDays(1)));
+            p.AddBar(b2);
+            var b3 = (Helper.GetUpBar(b2, b2.DateTime.AddDays(1)));
+            p.AddBar(b3);
+            p.AddBar(Helper.GetDownBar());
+
+            Assert.AreEqual(PatternDirection.Up, p.Direction);
+        }
+
     }
 }

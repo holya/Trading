@@ -9,7 +9,7 @@ namespace Trading.Common
     public enum PatternDirection
     {
         Up,
-        Down,
-        Sideways
+        Down
+        //Sideways
     }
 }
