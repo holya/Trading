@@ -47,11 +47,58 @@ namespace Trading.Analyzers.PatternAnalyzer
         private void addBarContinued(Bar newBar)
         {
             newBar.PreviousBar = LastBar;
-            if (!PatternList.Last().AddBar(newBar))
+            //if (!PatternList.Last().AddBar(newBar))
+            //{
+            //    PatternList.Add(new Pattern(newBar));
+            //}
+
+            if (LastPattern.Direction == PatternDirection.Up)
             {
-                PatternList.Add(new Pattern(newBar));
+                if (newBar.Direction < BarDirection.Balance)
+                {
+                    createReferenceForHighOfThisBar(LastPattern.LastLeg.HighestBar);
+                    PatternList.Add(new Pattern(newBar));
+                    createReferenceForLowOfThisBar(newBar);
+                }
+                else
+                {
+                    PatternList.Last().AddBar(newBar);
+                    if (newBar.High > LastPattern.LastLeg.HighestBar.High)
+                        createReferenceForHighOfThisBar(newBar);
+                }
             }
+            else
+            {
+                if (newBar.Direction > BarDirection.Balance)
+                {
+                    createReferenceForLowOfThisBar(LastPattern.LastLeg.LowestBar);
+                    PatternList.Add(new Pattern(newBar));
+                    createReferenceForHighOfThisBar(newBar);
+                }
+                else
+                {
+                    PatternList.Last().AddBar(newBar);
+                    if (newBar.Low < LastPattern.LastLeg.LowestBar.Low)
+                        createReferenceForLowOfThisBar(newBar);
+                }
+            }
+
         }
+
+        private void createReferenceForLowOfThisBar(Bar bar)
+        {
+            createReference(bar.Low, bar.DateTime, bar);
+        }
+        private void createReferenceForHighOfThisBar(Bar bar)
+        {
+            createReference(bar.High, bar.DateTime, bar);
+        }
+
+        private void createReference(double price, DateTime dateTime, Bar owner)
+        {
+            RefList.Add(new Reference { Price = price, DateTime = dateTime, Owner = owner });
+        }
+
 
 
         public void AddBar(Bar newBar)
