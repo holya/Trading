@@ -54,33 +54,13 @@ namespace Trading.Analyzers.PatternAnalyzer
 
             if (LastPattern.Direction == PatternDirection.Up)
             {
-                if (newBar.Direction < BarDirection.Balance)
+                switch(LastPattern.State)
                 {
-                    createReferenceForHighOfThisBar(LastPattern.LastLeg.HighestBar);
-                    PatternList.Add(new Pattern(newBar));
-                    createReferenceForLowOfThisBar(newBar);
-                }
-                else
-                {
-                    PatternList.Last().AddBar(newBar);
-                    if (newBar.High > LastPattern.LastLeg.HighestBar.High)
-                        createReferenceForHighOfThisBar(newBar);
+
                 }
             }
             else
             {
-                if (newBar.Direction > BarDirection.Balance)
-                {
-                    createReferenceForLowOfThisBar(LastPattern.LastLeg.LowestBar);
-                    PatternList.Add(new Pattern(newBar));
-                    createReferenceForHighOfThisBar(newBar);
-                }
-                else
-                {
-                    PatternList.Last().AddBar(newBar);
-                    if (newBar.Low < LastPattern.LastLeg.LowestBar.Low)
-                        createReferenceForLowOfThisBar(newBar);
-                }
             }
 
         }

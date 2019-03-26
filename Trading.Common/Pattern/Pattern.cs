@@ -41,7 +41,7 @@ namespace Trading.Common
             }
         }
 
-        public PatternType Type
+        public State State
         {
             get
             {
@@ -50,28 +50,28 @@ namespace Trading.Common
                     if (LastLeg.Direction == LegDirection.Down)
                     {
                         if (LastLeg.LastBar.Low >= PatternStart)
-                            return PatternType.PullBack1;
+                            return State.PullBack1;
                         else
-                            return PatternType.PullBack2;
+                            return State.PullBack2;
                     }
                     if (LastLeg.PreviousLeg.FirstBar.High >= LastLeg.LastBar.High)
-                        return PatternType.Continuation1;
+                        return State.Continuation1;
                     else
-                        return PatternType.Continuation2;
+                        return State.Continuation2;
                 }
                 else
                 {
                     if (LastLeg.Direction == LegDirection.Up)
                     {
                         if (LastLeg.LastBar.High < PatternStart && LastLeg.LastBar.High == PatternStart)
-                            return PatternType.PullBack1;
+                            return State.PullBack1;
                         else
-                            return PatternType.PullBack2;
+                            return State.PullBack2;
                     }
                     if (LastLeg.PreviousLeg.FirstBar.Low <= LastLeg.LastBar.Low)
-                        return PatternType.Continuation1;
+                        return State.Continuation1;
                     else
-                        return PatternType.Continuation2;
+                        return State.Continuation2;
                 }
             }
         }
