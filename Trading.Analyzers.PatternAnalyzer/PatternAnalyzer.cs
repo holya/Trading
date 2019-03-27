@@ -12,15 +12,8 @@ namespace Trading.Analyzers.PatternAnalyzer
         #region Properties
         public Bar LastBar => LastPattern.LastBar;
         public Pattern LastPattern => PatternList.Last();
-        //public double Close => LastBar.Close;
-        //public double BarVolitility { get { return this.LastBar.High - this.LastBar.Low / 100; } }
-        //public double LastSupport { get { return this.RefList.FirstOrDefault(r => r.Price < this.Close).Price; } }
-        //public double LastResistance { get { return this.RefList.FirstOrDefault(r => r.Price < this.Close).Price; } }
         public List<Pattern> PatternList { get; } = new List<Pattern>();
         public int LegsCount => PatternList.Count;
-        //public int BarsCount => PatternList.Sum(p => p.BarCount);
-        //public List<double> AdvanceList { get; private set; }
-        //public List<double> DeclineList { get; private set; }
 
         public List<Reference> RefList { get; } = new List<Reference>();
         #endregion
@@ -47,10 +40,6 @@ namespace Trading.Analyzers.PatternAnalyzer
         private void addBarContinued(Bar newBar)
         {
             newBar.PreviousBar = LastBar;
-            //if (!PatternList.Last().AddBar(newBar))
-            //{
-            //    PatternList.Add(new Pattern(newBar));
-            //}
 
             if (LastPattern.Direction == PatternDirection.Up)
             {

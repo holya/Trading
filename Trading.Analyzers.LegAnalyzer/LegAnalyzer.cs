@@ -61,6 +61,17 @@ namespace Trading.Analyzers.LegAnalyzer
             {
                 LegList.Add(new Leg(newBar));
                 //create new reference point of the last Leg
+
+                if(LastLeg.Direction == LegDirection.Up)
+                {
+                    createReferenceForLowOfThisBar(LastLeg.PreviousLeg.LowestBar);
+                    createReferenceForHighOfThisBar(newBar);
+                }
+                else
+                {
+                    createReferenceForHighOfThisBar(LastLeg.PreviousLeg.HighestBar);
+                    createReferenceForLowOfThisBar(newBar);
+                }
             }
 
             if (!PatternsList.Last().AddBar(newBar))
