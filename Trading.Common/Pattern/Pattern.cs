@@ -30,13 +30,7 @@ namespace Trading.Common
             }
         }
 
-        public State State
-        {
-            get
-            {
-                return 0;
-            }
-        }
+        public State State { get; set; }
 
         public bool AddBar(Bar bar)
         {
@@ -81,5 +75,7 @@ namespace Trading.Common
                 return true;
             }
         }
+
+
     }
 }
