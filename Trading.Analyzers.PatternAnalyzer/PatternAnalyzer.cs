@@ -12,15 +12,9 @@ namespace Trading.Analyzers.PatternAnalyzer
         #region Properties
         public Bar LastBar => LastPattern.LastBar;
         public Pattern LastPattern => PatternList.Last();
-        //public double Close => LastBar.Close;
-        //public double BarVolitility { get { return this.LastBar.High - this.LastBar.Low / 100; } }
-        //public double LastSupport { get { return this.RefList.FirstOrDefault(r => r.Price < this.Close).Price; } }
-        //public double LastResistance { get { return this.RefList.FirstOrDefault(r => r.Price < this.Close).Price; } }
         public List<Pattern> PatternList { get; } = new List<Pattern>();
         public int LegsCount => PatternList.Count;
-        //public int BarsCount => PatternList.Sum(p => p.BarCount);
-        //public List<double> AdvanceList { get; private set; }
-        //public List<double> DeclineList { get; private set; }
+        private State PatternState;
 
         public List<Reference> RefList { get; } = new List<Reference>();
         #endregion
@@ -47,56 +41,52 @@ namespace Trading.Analyzers.PatternAnalyzer
         private void addBarContinued(Bar newBar)
         {
             newBar.PreviousBar = LastBar;
-            //if (!PatternList.Last().AddBar(newBar))
-            //{
-            //    PatternList.Add(new Pattern(newBar));
-            //}
 
             if (LastPattern.Direction == PatternDirection.Up)
             {
-                if (newBar.Direction < BarDirection.Balance)
+                createReferenceForLowOfThisBar(LastPattern.LastLeg.FirstBar);
+                //First leg of pattern is up
+                if (LastPattern.LastLeg.Direction == LegDirection.Up)
                 {
-                    createReferenceForHighOfThisBar(LastPattern.LastLeg.HighestBar);
-                    PatternList.Add(new Pattern(newBar));
-                    createReferenceForLowOfThisBar(newBar);
+                    if (newBar.Direction >= BarDirection.Balance)
+                    {
+                        LastPattern.LastLeg.AddBar(newBar);
+                        createReferenceForHighOfThisBar(newBar);
+                        PatternState = State.Continuation1;
+                    }
+                    
+                    if (newBar.Direction <= BarDirection.Balance)
+                    {
+                        PatternList.Add(new Pattern(newBar));
+                        createReferenceForHighOfThisBar(newBar.PreviousBar);
+                        PatternState = newBar.Low > LastPattern.LastLeg.PreviousLeg.FirstBar.Low ?
+                            State.PullBack1 : State.PullBack2;
+                    }
                 }
                 else
                 {
-                    PatternList.Last().AddBar(newBar);
-                    if (newBar.High > LastPattern.LastLeg.HighestBar.High)
-                        createReferenceForHighOfThisBar(newBar);
+
                 }
             }
             else
             {
-                if (newBar.Direction > BarDirection.Balance)
-                {
-                    createReferenceForLowOfThisBar(LastPattern.LastLeg.LowestBar);
-                    PatternList.Add(new Pattern(newBar));
-                    createReferenceForHighOfThisBar(newBar);
-                }
-                else
-                {
-                    PatternList.Last().AddBar(newBar);
-                    if (newBar.Low < LastPattern.LastLeg.LowestBar.Low)
-                        createReferenceForLowOfThisBar(newBar);
-                }
+
             }
 
         }
 
         private void createReferenceForLowOfThisBar(Bar bar)
         {
-            createReference(bar.Low, bar.DateTime, bar);
+            createReference(bar.Low, bar.DateTime, bar, ReferenceType.Support);
         }
         private void createReferenceForHighOfThisBar(Bar bar)
         {
-            createReference(bar.High, bar.DateTime, bar);
+            createReference(bar.High, bar.DateTime, bar, ReferenceType.Resistance);
         }
 
-        private void createReference(double price, DateTime dateTime, Bar owner)
+        private void createReference(double price, DateTime dateTime, Bar owner, ReferenceType type)
         {
-            RefList.Add(new Reference { Price = price, DateTime = dateTime, Owner = owner });
+            RefList.Add(new Reference { Price = price, DateTime = dateTime, Owner = owner, Type = type });
         }
 
 

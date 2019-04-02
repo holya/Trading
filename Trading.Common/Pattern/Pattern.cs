@@ -22,17 +22,6 @@ namespace Trading.Common
         public Pattern(Bar bar) : this() { LegList.Add(new Leg(bar)); }
         public Pattern(Leg leg) : this() { LegList.Add(leg); }
 
-        private double PatternStart
-        {
-            get
-            {
-                if (LegList.First().Direction == LegDirection.Up)
-                    return LegList.First().FirstBar.Low;
-                else
-                    return LegList.First().FirstBar.High;
-            }
-        }
-
         public PatternDirection Direction
         {
             get
@@ -41,40 +30,7 @@ namespace Trading.Common
             }
         }
 
-        public PatternType Type
-        {
-            get
-            {
-                if (Direction == PatternDirection.Up)
-                {
-                    if (LastLeg.Direction == LegDirection.Down)
-                    {
-                        if (LastLeg.LastBar.Low >= PatternStart)
-                            return PatternType.PullBack1;
-                        else
-                            return PatternType.PullBack2;
-                    }
-                    if (LastLeg.PreviousLeg.FirstBar.High >= LastLeg.LastBar.High)
-                        return PatternType.Continuation1;
-                    else
-                        return PatternType.Continuation2;
-                }
-                else
-                {
-                    if (LastLeg.Direction == LegDirection.Up)
-                    {
-                        if (LastLeg.LastBar.High < PatternStart && LastLeg.LastBar.High == PatternStart)
-                            return PatternType.PullBack1;
-                        else
-                            return PatternType.PullBack2;
-                    }
-                    if (LastLeg.PreviousLeg.FirstBar.Low <= LastLeg.LastBar.Low)
-                        return PatternType.Continuation1;
-                    else
-                        return PatternType.Continuation2;
-                }
-            }
-        }
+        public State State { get; set; }
 
         public bool AddBar(Bar bar)
         {
@@ -119,5 +75,7 @@ namespace Trading.Common
                 return true;
             }
         }
+
+
     }
 }

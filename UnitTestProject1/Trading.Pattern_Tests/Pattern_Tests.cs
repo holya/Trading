@@ -25,7 +25,7 @@ namespace Trading.Pattern_Tests
             p.AddBar(bar4);
             var bar5 = Helper.GetDownBar(bar4, bar4.DateTime.AddDays(1));
             p.AddBar(bar5);
-            Assert.AreEqual(PatternType.PullBack1, p.Type);
+            Assert.AreEqual(State.PullBack1, p.State);
         }
 
         [TestMethod]
