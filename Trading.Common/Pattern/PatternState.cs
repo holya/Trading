@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Trading.Common
 {
-    public enum State
+    public enum PatternState
     {
         Continuation1,
         Continuation2,

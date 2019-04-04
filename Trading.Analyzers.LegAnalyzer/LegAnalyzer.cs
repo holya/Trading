@@ -74,10 +74,6 @@ namespace Trading.Analyzers.LegAnalyzer
                 }
             }
 
-            if (!PatternsList.Last().AddBar(newBar))
-            {
-                PatternsList.Add(new Pattern(newBar));
-            }
 
             #region bar add 
             //if((LastLeg.Direction == LegDirection.Up && newBar.Low >= LastBar.Low) ||

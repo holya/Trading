@@ -57,7 +57,6 @@
     <Compile Include="Trading.DataBases_Tests\XmlDataBase_Tests.cs" />
     <Compile Include="InstrumentsManager_Tests.cs" />
     <Compile Include="Trading.Pattern_Tests\PatternAnalyzer_Tests.cs" />
-    <Compile Include="Trading.Pattern_Tests\Pattern_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TextFileDataBase\Trading.DataBases.TextFileDataBase.csproj">

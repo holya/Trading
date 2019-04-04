@@ -8,17 +8,21 @@ using Trading.Analyzers.Common;
 namespace Trading.Analyzers.PatternAnalyzer
 {
     public partial class PatternAnalyzer
-    {
+    {        
         #region Properties
+
+        public List<Pattern> PatternList { get; } = new List<Pattern>();
         public Bar LastBar => LastPattern.LastBar;
         public Pattern LastPattern => PatternList.Last();
-        public List<Pattern> PatternList { get; } = new List<Pattern>();
         public int LegsCount => PatternList.Count;
-        private State PatternState;
-
+        public double LastPrice => LastPattern.LastBar.Close;
         public List<Reference> RefList { get; } = new List<Reference>();
+        protected Reference LastSupport => RefList.Last(r => r.Price <= LastPrice);
+        protected Reference LastResistance => RefList.Last(r => r.Price >= LastPrice);
+
         #endregion
         public PatternAnalyzer() { addBar = addFirstBar; }
+
 
         public void AddBarList(IEnumerable<Bar> barList)
         {
@@ -26,53 +30,63 @@ namespace Trading.Analyzers.PatternAnalyzer
             {
                 addBar(barList.ElementAt(i));
             }
-            //_onAnalyzerPopulated(this, new AnalyzerPopulatedEventArgs { LegList = this.LegList });
         }
 
         private Action<Bar> addBar;
         private void addFirstBar(Bar newBar)
         {
-            var d = newBar;
-            d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime, d.EndDateTime);
-            PatternList.Add(new Pattern(new Leg(d)));
+            var bar0 = new Bar(newBar.Open, newBar.Open, newBar.Open, newBar.Open, newBar.Volume, newBar.DateTime, newBar.EndDateTime);
+            var leg0 = new Leg(bar0);
+
+            newBar.PreviousBar = bar0;
+            var leg = new Leg(newBar, leg0);
+
+            var pattern = new Pattern(leg);
+            pattern.Direction = leg.Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
+            pattern.State = PatternState.Continuation1;
+            PatternList.Add(pattern);
+
+            if (newBar.Direction < BarDirection.Balance)
+                this.createReferenceForHighOfThisBar(newBar);
+            else
+                this.createReferenceForLowOfThisBar(newBar);
 
             addBar = addBarContinued;
         }
+
         private void addBarContinued(Bar newBar)
         {
             newBar.PreviousBar = LastBar;
 
+
+
             if (LastPattern.Direction == PatternDirection.Up)
             {
-                createReferenceForLowOfThisBar(LastPattern.LastLeg.FirstBar);
-                //First leg of pattern is up
-                if (LastPattern.LastLeg.Direction == LegDirection.Up)
+                if(newBar.Low < LastSupport.Price)
                 {
-                    if (newBar.Direction >= BarDirection.Balance)
-                    {
-                        LastPattern.LastLeg.AddBar(newBar);
-                        createReferenceForHighOfThisBar(newBar);
-                        PatternState = State.Continuation1;
-                    }
-                    
-                    if (newBar.Direction <= BarDirection.Balance)
-                    {
-                        PatternList.Add(new Pattern(newBar));
-                        createReferenceForHighOfThisBar(newBar.PreviousBar);
-                        PatternState = newBar.Low > LastPattern.LastLeg.PreviousLeg.FirstBar.Low ?
-                            State.PullBack1 : State.PullBack2;
-                    }
+                    // Create a new down pattern, setting up all its props
                 }
-                else
+                switch (LastPattern.State)
                 {
+                    case PatternState.Continuation1:
+                        break;
+                    case PatternState.Continuation2:
+                        break;
+                    case PatternState.PullBack1:
+                        break;
+                    case PatternState.PullBack2:
+                        break;
+                    case PatternState.HeadAndShoulder:
+                        break;
+                    default:
+                        break;
+                }
 
-                }
             }
             else
             {
 
             }
-
         }
 
         private void createReferenceForLowOfThisBar(Bar bar)
