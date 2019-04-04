@@ -41,8 +41,8 @@ namespace Trading.Analyzers.PatternAnalyzer
             newBar.PreviousBar = bar0;
             var leg = new Leg(newBar, leg0);
 
+            //var pattern = new Pattern(newBar);
             var pattern = new Pattern(leg);
-            pattern.Direction = leg.Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
             pattern.State = PatternState.Continuation1;
             PatternList.Add(pattern);
 
@@ -66,6 +66,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                 {
                     // Create a new down pattern, setting up all its props
                 }
+
                 switch (LastPattern.State)
                 {
                     case PatternState.Continuation1:

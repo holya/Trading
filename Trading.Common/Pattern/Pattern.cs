@@ -18,10 +18,19 @@ namespace Trading.Common
         {
             LegList = new List<Leg>();
         }
-        public Pattern(Bar bar) : this() { LegList.Add(new Leg(bar)); }
-        public Pattern(Leg leg) : this() { LegList.Add(leg); }
+        public Pattern(Bar bar) : this()
+        {
+            var newLeg = new Leg(bar);
+            LegList.Add(newLeg);
+            this.Direction = newLeg.Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
+        }
+        public Pattern(Leg leg) : this()
+        {
+            LegList.Add(leg);
+            this.Direction = leg.Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
+        }
 
-        public PatternDirection Direction { get; set; }
+        public PatternDirection Direction { get; private set; }
 
         public PatternState State { get; set; }
 

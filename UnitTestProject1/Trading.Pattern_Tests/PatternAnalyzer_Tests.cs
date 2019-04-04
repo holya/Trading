@@ -14,13 +14,14 @@ namespace Trading.Pattern_Tests
     public class PatternAnalyzer_Tests
     {
         [TestMethod]
-        public void FirstBar_creates_firs_pattern()
+        public void FirstBar_creates_first_pattern()
         {
             var pa = new PatternAnalyzer();
 
             pa.AddBar(Helper.GetUpBar());
 
-            Assert.AreEqual(PatternState.Continuation1 ,pa.LastPattern.State);
+            Assert.AreEqual(PatternState.Continuation1, pa.LastPattern.State);
+            Assert.AreEqual(PatternDirection.Up, pa.LastPattern.Direction);
         }
     }
 }
