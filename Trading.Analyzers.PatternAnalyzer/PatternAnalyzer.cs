@@ -65,12 +65,39 @@ namespace Trading.Analyzers.PatternAnalyzer
                 if(newBar.Low < LastSupport.Price)
                 {
                     // Create a new down pattern, setting up all its props
+                    PatternList.Add(new Pattern(newBar));
+                    this.createReferenceForLowOfThisBar(newBar);
+                    return;
                 }
 
                 switch (LastPattern.State)
                 {
                     case PatternState.Continuation1:
+                        if (newBar.Direction > BarDirection.Balance)
+                        {
+                            if (newBar.High > LastResistance.Price)
+                            {
+                                var changedPattern = new Pattern(newBar);
+                                PatternList.Add(changedPattern);
+                                changedPattern.State = PatternState.Continuation2;
+                                return;
+                            }
+
+                            LastPattern.LastLeg.AddBar(newBar);
+                            return;
+                        }
+
+                        if (newBar.Direction < BarDirection.Balance)
+                        {
+                            var changedPattern = new Pattern(newBar);
+                            PatternList.Add(changedPattern);
+                            changedPattern.State = PatternState.PullBack1;
+                            return;
+                        }
+
+                        LastPattern.LastLeg.AddBar(newBar);
                         break;
+
                     case PatternState.Continuation2:
                         break;
                     case PatternState.PullBack1:
