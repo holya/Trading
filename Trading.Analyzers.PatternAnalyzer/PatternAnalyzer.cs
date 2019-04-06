@@ -41,8 +41,8 @@ namespace Trading.Analyzers.PatternAnalyzer
             newBar.PreviousBar = bar0;
             var leg = new Leg(newBar, leg0);
 
-            //var pattern = new Pattern(newBar);
             var pattern = new Pattern(leg);
+            var patternDirection = pattern.Direction = leg.Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
             pattern.State = PatternState.Continuation1;
             PatternList.Add(pattern);
 
@@ -75,13 +75,13 @@ namespace Trading.Analyzers.PatternAnalyzer
                     case PatternState.Continuation1:
                         if (newBar.Direction > BarDirection.Balance)
                         {
-                            if (newBar.High > LastResistance.Price)
-                            {
-                                var changedPattern = new Pattern(newBar);
-                                PatternList.Add(changedPattern);
-                                changedPattern.State = PatternState.Continuation2;
-                                return;
-                            }
+                            //if (newBar.High > LastResistance.Price)
+                            //{
+                            //    var changedPattern = new Pattern(newBar);
+                            //    PatternList.Add(changedPattern);
+                            //    changedPattern.State = PatternState.Continuation2;
+                            //    return;
+                            //}
 
                             LastPattern.LastLeg.AddBar(newBar);
                             return;
@@ -92,15 +92,51 @@ namespace Trading.Analyzers.PatternAnalyzer
                             var changedPattern = new Pattern(newBar);
                             PatternList.Add(changedPattern);
                             changedPattern.State = PatternState.PullBack1;
+                            this.createReferenceForHighOfThisBar(LastBar);
                             return;
                         }
 
-                        LastPattern.LastLeg.AddBar(newBar);
+                        if (newBar.Direction == BarDirection.Balance)
+                            LastPattern.LastLeg.AddBar(newBar);
                         break;
 
                     case PatternState.Continuation2:
                         break;
                     case PatternState.PullBack1:
+                        if (LastPattern.LastLeg.PreviousLeg.Direction == LegDirection.Up)
+                        {
+                            if (newBar.Direction > BarDirection.Balance)
+                            {
+                                if (newBar.High < LastResistance.Price)
+                                {
+                                    var changedPattern = new Pattern(newBar);
+                                    PatternList.Add(changedPattern);
+                                    changedPattern.State = PatternState.Continuation1;
+                                    this.createReferenceForLowOfThisBar(LastBar);
+                                    return;
+                                }
+                                else
+                                {
+                                    var changedPattern = new Pattern(newBar);
+                                    PatternList.Add(changedPattern);
+                                    changedPattern.State = PatternState.Continuation2;
+                                    this.createReferenceForLowOfThisBar(LastBar);
+                                    return;
+                                }
+                            }
+
+                            if (newBar.Direction <= BarDirection.Balance)
+                            {
+                                LastPattern.LastLeg.AddBar(newBar);
+                                return;
+                            }
+
+                        }
+                        else
+                        {
+
+                        }
+
                         break;
                     case PatternState.PullBack2:
                         break;
@@ -130,8 +166,6 @@ namespace Trading.Analyzers.PatternAnalyzer
         {
             RefList.Add(new Reference { Price = price, DateTime = dateTime, Owner = owner, Type = type });
         }
-
-
 
         public void AddBar(Bar newBar)
         {

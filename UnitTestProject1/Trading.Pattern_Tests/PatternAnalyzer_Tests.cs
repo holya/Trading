@@ -25,7 +25,7 @@ namespace Trading.Pattern_Tests
         }
 
         [TestMethod]
-        public void UpBar_added_to_Continuation1_unchanged()
+        public void UpBar_added_to_Continuation1_state_unchanged()
         {
             var pa = new PatternAnalyzer();
             var bar1 = Helper.GetUpBar();
