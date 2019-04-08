@@ -65,7 +65,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                 if(newBar.Low < LastSupport.Price)
                 {
                     // Create a new down pattern, setting up all its props
-                    PatternList.Add(new Pattern(newBar));
+                    PatternList.Add(new Pattern(newBar, LastPattern));
                     this.createReferenceForLowOfThisBar(newBar);
                     return;
                 }
@@ -73,11 +73,13 @@ namespace Trading.Analyzers.PatternAnalyzer
                 switch (LastPattern.State)
                 {
                     case PatternState.Continuation1:
+
+                        #region Contiuation1
                         if (newBar.Direction > BarDirection.Balance)
                         {
                             //if (newBar.High > LastResistance.Price)
                             //{
-                            //    var changedPattern = new Pattern(newBar);
+                            //    var changedPattern = new Pattern(newBar, LastPattern);
                             //    PatternList.Add(changedPattern);
                             //    changedPattern.State = PatternState.Continuation2;
                             //    return;
@@ -89,7 +91,7 @@ namespace Trading.Analyzers.PatternAnalyzer
 
                         if (newBar.Direction < BarDirection.Balance)
                         {
-                            var changedPattern = new Pattern(newBar);
+                            var changedPattern = new Pattern(newBar, LastPattern);
                             PatternList.Add(changedPattern);
                             changedPattern.State = PatternState.PullBack1;
                             this.createReferenceForHighOfThisBar(LastBar);
@@ -99,17 +101,20 @@ namespace Trading.Analyzers.PatternAnalyzer
                         if (newBar.Direction == BarDirection.Balance)
                             LastPattern.LastLeg.AddBar(newBar);
                         break;
+                    #endregion
 
                     case PatternState.Continuation2:
                         break;
                     case PatternState.PullBack1:
-                        if (LastPattern.LastLeg.PreviousLeg.Direction == LegDirection.Up)
+
+                        #region PullBack1
+                        if (LastPattern.PreviousPattern.LastLeg.Direction == LegDirection.Up)
                         {
                             if (newBar.Direction > BarDirection.Balance)
                             {
                                 if (newBar.High < LastResistance.Price)
                                 {
-                                    var changedPattern = new Pattern(newBar);
+                                    var changedPattern = new Pattern(newBar, LastPattern);
                                     PatternList.Add(changedPattern);
                                     changedPattern.State = PatternState.Continuation1;
                                     this.createReferenceForLowOfThisBar(LastBar);
@@ -117,7 +122,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                                 }
                                 else
                                 {
-                                    var changedPattern = new Pattern(newBar);
+                                    var changedPattern = new Pattern(newBar, LastPattern);
                                     PatternList.Add(changedPattern);
                                     changedPattern.State = PatternState.Continuation2;
                                     this.createReferenceForLowOfThisBar(LastBar);
@@ -132,12 +137,9 @@ namespace Trading.Analyzers.PatternAnalyzer
                             }
 
                         }
-                        else
-                        {
-
-                        }
-
                         break;
+                    #endregion
+
                     case PatternState.PullBack2:
                         break;
                     case PatternState.HeadAndShoulder:
