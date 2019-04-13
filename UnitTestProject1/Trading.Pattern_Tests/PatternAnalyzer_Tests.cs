@@ -39,5 +39,35 @@ namespace Trading.Pattern_Tests
 
             Assert.AreEqual(PatternState.Continuation1, pa.LastPattern.State);
         }
+
+        [TestMethod]
+        public void Continuation1_changed_to_Continuation2()
+        {
+            var pa = new PatternAnalyzer();
+            var bar1 = Helper.GetUpBar();
+            pa.AddBar(bar1);
+            var bar2 = Helper.GetUpBar(bar1, DateTime.Now);
+            pa.AddBar(bar2);
+            var bar3 = Helper.GetDownBar(bar2, DateTime.Now);
+            pa.AddBar(bar3);
+            var bar4 = Helper.GetUpBar(bar3, DateTime.Now);
+            pa.AddBar(bar4);
+
+            Assert.AreEqual(PatternState.Continuation2, pa.LastPattern.State);
+        }
+
+        [TestMethod]
+        public void Continuation1_changed_to_PullBack1()
+        {
+            var pa = new PatternAnalyzer();
+            var bar1 = Helper.GetUpBar();
+            pa.AddBar(bar1);
+            var bar2 = Helper.GetUpBar(bar1, DateTime.Now);
+            pa.AddBar(bar2);
+            var bar3 = Helper.GetDownBar(bar2, DateTime.Now);
+            pa.AddBar(bar3);
+
+            Assert.AreEqual(PatternState.PullBack1, pa.LastPattern.State);
+        }
     }
 }

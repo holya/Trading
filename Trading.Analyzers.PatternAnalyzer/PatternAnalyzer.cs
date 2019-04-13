@@ -62,13 +62,13 @@ namespace Trading.Analyzers.PatternAnalyzer
 
             if (LastPattern.Direction == PatternDirection.Up)
             {
-                if(newBar.Low < LastSupport.Price)
-                {
-                    // Create a new down pattern, setting up all its props
-                    PatternList.Add(new Pattern(newBar, LastPattern));
-                    this.createReferenceForLowOfThisBar(newBar);
-                    return;
-                }
+                //if(newBar.Low < LastSupport.Price)
+                //{
+                //    // Create a new down pattern, setting up all its props
+                //    PatternList.Add(new Pattern(newBar, LastPattern));
+                //    this.createReferenceForLowOfThisBar(newBar);
+                //    return;
+                //}
 
                 switch (LastPattern.State)
                 {
