@@ -28,13 +28,13 @@ namespace Trading.Pattern_Tests
         public void UpBar_added_to_Continuation1_state_unchanged()
         {
             var pa = new PatternAnalyzer();
-            var bar1 = Helper.GetUpBar();
+            var bar1 = new Bar(30, 100, 20, 50, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar1);
-            var bar2 = Helper.GetUpBar();
+            var bar2 = new Bar(50, 140, 40, 60, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar2);
-            var bar3 = Helper.GetDownBar();
+            var bar3 = new Bar(10, 90, 5, 30, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar3);
-            var bar4 = Helper.GetUpBar();
+            var bar4 = new Bar(20, 120, 30, 40, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar4);
 
             Assert.AreEqual(PatternState.Continuation1, pa.LastPattern.State);
@@ -44,13 +44,13 @@ namespace Trading.Pattern_Tests
         public void Continuation1_changed_to_Continuation2()
         {
             var pa = new PatternAnalyzer();
-            var bar1 = Helper.GetUpBar();
+            var bar1 = new Bar(30, 100, 20, 50, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar1);
-            var bar2 = Helper.GetUpBar(bar1, DateTime.Now);
+            var bar2 = new Bar(50, 140, 40, 60, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar2);
-            var bar3 = Helper.GetDownBar(bar2, DateTime.Now);
+            var bar3 = new Bar(40, 90, 25, 30, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar3);
-            var bar4 = Helper.GetUpBar(bar3, DateTime.Now);
+            var bar4 = new Bar(40, 150, 30, 60, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar4);
 
             Assert.AreEqual(PatternState.Continuation2, pa.LastPattern.State);
@@ -60,11 +60,11 @@ namespace Trading.Pattern_Tests
         public void Continuation1_changed_to_PullBack1()
         {
             var pa = new PatternAnalyzer();
-            var bar1 = Helper.GetUpBar();
+            var bar1 = new Bar(30, 100, 20, 50, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar1);
-            var bar2 = Helper.GetUpBar(bar1, DateTime.Now);
+            var bar2 = new Bar(35, 105, 25, 55, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar2);
-            var bar3 = Helper.GetDownBar(bar2, DateTime.Now);
+            var bar3 = new Bar(40, 90, 25, 30, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar3);
 
             Assert.AreEqual(PatternState.PullBack1, pa.LastPattern.State);

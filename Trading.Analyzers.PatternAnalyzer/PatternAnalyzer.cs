@@ -42,11 +42,12 @@ namespace Trading.Analyzers.PatternAnalyzer
             var leg = new Leg(newBar, leg0);
 
             var pattern = new Pattern(leg);
-            var patternDirection = pattern.Direction = leg.Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
+            var patternDirection = pattern.Direction = leg.Direction == LegDirection.Up ? 
+                PatternDirection.Up : PatternDirection.Down;
             pattern.State = PatternState.Continuation1;
             PatternList.Add(pattern);
 
-            if (newBar.Direction > BarDirection.Balance)
+            if (newBar.Direction < BarDirection.Balance)
                 this.createReferenceForHighOfThisBar(newBar);
             else
                 this.createReferenceForLowOfThisBar(newBar);
@@ -62,13 +63,13 @@ namespace Trading.Analyzers.PatternAnalyzer
 
             if (LastPattern.Direction == PatternDirection.Up)
             {
-                //if(newBar.Low < LastSupport.Price)
-                //{
-                //    // Create a new down pattern, setting up all its props
-                //    PatternList.Add(new Pattern(newBar, LastPattern));
-                //    this.createReferenceForLowOfThisBar(newBar);
-                //    return;
-                //}
+                if (newBar.Low < LastSupport.Price)
+                {
+                    // Create a new down pattern, setting up all its props
+                    PatternList.Add(new Pattern(newBar, LastPattern));
+                    this.createReferenceForLowOfThisBar(newBar);
+                    return;
+                }
 
                 switch (LastPattern.State)
                 {
@@ -77,19 +78,18 @@ namespace Trading.Analyzers.PatternAnalyzer
                         #region Continuation1
                         if (newBar.Direction >= BarDirection.Balance)
                         {
-                            //if (newBar.High > LastResistance.Price)
-                            //{
-                            //    var changedPattern = new Pattern(newBar, LastPattern);
-                            //    PatternList.Add(changedPattern);
-                            //    changedPattern.State = PatternState.Continuation2;
-                            //    return;
-                            //}
+                            if (RefList.Exists(r => r.Price >= LastPrice) && newBar.High > LastResistance.Price)
+                            {
+                                var changedPattern = new Pattern(newBar, LastPattern);
+                                PatternList.Add(changedPattern);
+                                changedPattern.State = PatternState.Continuation2;
+                                return;
+                            }
 
                             LastPattern.LastLeg.AddBar(newBar);
                             return;
                         }
-
-                        if (newBar.Direction < BarDirection.Balance)
+                        else
                         {
                             var changedPattern = new Pattern(newBar, LastPattern);
                             PatternList.Add(changedPattern);
