@@ -64,7 +64,7 @@ namespace Trading.Pattern_Tests
             pa.AddBar(bar1);
             var bar2 = new Bar(35, 105, 25, 55, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar2);
-            var bar3 = new Bar(40, 90, 25, 30, 0, DateTime.Now, DateTime.Now);
+            var bar3 = new Bar(40, 90, 22, 35, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar3);
 
             Assert.AreEqual(PatternState.PullBack1, pa.LastPattern.State);

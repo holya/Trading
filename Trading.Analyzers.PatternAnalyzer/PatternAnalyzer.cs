@@ -87,7 +87,6 @@ namespace Trading.Analyzers.PatternAnalyzer
                             }
 
                             LastPattern.LastLeg.AddBar(newBar);
-                            return;
                         }
                         else
                         {
@@ -107,8 +106,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                         {
                             LastPattern.LastLeg.AddBar(newBar);
                         }
-
-                        if (newBar.Direction < BarDirection.Balance)
+                        else
                         {
                             if (newBar.Low > LastSupport.Price)
                             {
@@ -136,7 +134,11 @@ namespace Trading.Analyzers.PatternAnalyzer
                         #region PullBack1
                         if (LastPattern.PreviousPattern.LastLeg.Direction == LegDirection.Up)
                         {
-                            if (newBar.Direction > BarDirection.Balance)
+                            if (newBar.Direction <= BarDirection.Balance)
+                            {
+                                LastPattern.LastLeg.AddBar(newBar);
+                            }
+                            else
                             {
                                 if (newBar.High < LastResistance.Price)
                                 {
@@ -155,13 +157,6 @@ namespace Trading.Analyzers.PatternAnalyzer
                                     return;
                                 }
                             }
-
-                            if (newBar.Direction <= BarDirection.Balance)
-                            {
-                                LastPattern.LastLeg.AddBar(newBar);
-                                return;
-                            }
-
                         }
                         break;
                     #endregion
@@ -182,8 +177,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                                 LastPattern.LastLeg.AddBar(newBar);
                             }
                         }
-
-                        if (newBar.Direction > BarDirection.Balance)
+                        else
                         {
                             if (newBar.High < LastResistance.Price)
                             {
