@@ -69,5 +69,17 @@ namespace Trading.Pattern_Tests
 
             Assert.AreEqual(PatternState.PullBack1, pa.LastPattern.State);
         }
+
+        [TestMethod]
+        public void Up_Pattern_to_Down_Pattern_Support_Violated()
+        {
+            var pa = new PatternAnalyzer();
+            var bar1 = new Bar(30, 100, 20, 50, 0, DateTime.Now, DateTime.Now);
+            pa.AddBar(bar1);
+            var bar2 = new Bar(40, 50, 10, 20, 0, DateTime.Now, DateTime.Now);
+            pa.AddBar(bar2);
+
+            Assert.AreEqual(PatternDirection.Down, pa.LastPattern.Direction);
+        }
     }
 }
