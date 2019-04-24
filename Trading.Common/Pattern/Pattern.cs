@@ -12,6 +12,7 @@ namespace Trading.Common
         public List<Leg> LegList { get; private set; }
        
         public Leg LastLeg => LegList.Last();
+        public Leg FirstLeg => LegList.First();
         public Bar LastBar => LastLeg.LastBar;
         public Pattern PreviousPattern { get; set; }
 

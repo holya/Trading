@@ -76,8 +76,10 @@ namespace Trading.Pattern_Tests
             var pa = new PatternAnalyzer();
             var bar1 = new Bar(30, 100, 20, 50, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar1);
-            var bar2 = new Bar(40, 50, 10, 20, 0, DateTime.Now, DateTime.Now);
+            var bar2 = new Bar(40, 110, 30, 60, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar2);
+            var bar3 = new Bar(40, 50, 10, 20, 0, DateTime.Now, DateTime.Now);
+            pa.AddBar(bar3);
 
             Assert.AreEqual(PatternDirection.Down, pa.LastPattern.Direction);
         }
