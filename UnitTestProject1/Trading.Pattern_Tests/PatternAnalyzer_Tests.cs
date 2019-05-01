@@ -82,8 +82,10 @@ namespace Trading.Pattern_Tests
             pa.AddBar(bar3);
             var bar4 = new Bar(50, 120, 40, 70, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar4);
-            var bar5 = new Bar(65, 115, 41, 45, 0, DateTime.Now, DateTime.Now);
+            var bar5 = new Bar(60, 130, 50, 80, 0, DateTime.Now, DateTime.Now);
             pa.AddBar(bar5);
+            var bar6 = new Bar(75, 125, 45, 55, 0, DateTime.Now, DateTime.Now);
+            pa.AddBar(bar6);
 
             Assert.AreEqual(PatternState.PullBack1, pa.LastPattern.State);
         }
@@ -100,6 +102,17 @@ namespace Trading.Pattern_Tests
             pa.AddBar(bar3);
 
             Assert.AreEqual(PatternDirection.Down, pa.LastPattern.Direction);
+        }
+
+        [TestMethod]
+        public void Pattern_AddBar_Two_UpBars()
+        {
+            var bar1 = new Bar(30, 100, 20, 50, 0, DateTime.Now, DateTime.Now);
+            var p = new Pattern(bar1);
+            var bar2 = new Bar(40, 110, 30, 60, 0, DateTime.Now, DateTime.Now);
+            var result = p.AddBar(bar2);
+
+            Assert.AreEqual(result, true);
         }
     }
 }

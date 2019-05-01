@@ -14,7 +14,7 @@ namespace Trading.Common
         public Leg LastLeg => LegList.Last();
         public Leg FirstLeg => LegList.First();
         public Bar LastBar => LastLeg.LastBar;
-        public Pattern PreviousPattern { get; set; }
+        public Pattern PreviousPattern { get; }
 
         private Pattern()
         {
@@ -28,6 +28,13 @@ namespace Trading.Common
         public PatternDirection Direction { get; set; }
 
         public PatternState State { get; set; }
+
+        public bool AddBar(Bar newBar)
+        {
+            if (LastLeg.Direction == LegDirection.Up && newBar.Direction > BarDirection.Balance) return true;
+            else if (LastLeg.Direction == LegDirection.Down && newBar.Direction < BarDirection.Balance) return true;
+            else return false;
+        }
 
     }
 }
