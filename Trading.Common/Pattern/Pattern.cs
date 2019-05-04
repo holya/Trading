@@ -31,9 +31,13 @@ namespace Trading.Common
 
         public bool AddBar(Bar newBar)
         {
-            if (LastLeg.Direction == LegDirection.Up && newBar.Direction > BarDirection.Balance) return true;
-            else if (LastLeg.Direction == LegDirection.Down && newBar.Direction < BarDirection.Balance) return true;
-            else return false;
+            if ((LastLeg.Direction == LegDirection.Up && newBar.Direction > BarDirection.Balance) ||
+            (LastLeg.Direction == LegDirection.Down && newBar.Direction < BarDirection.Balance))
+            {
+                LastLeg.AddBar(newBar);
+                return true;
+            }
+            return false;
         }
 
     }

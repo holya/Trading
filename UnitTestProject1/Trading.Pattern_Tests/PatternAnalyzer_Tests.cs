@@ -104,15 +104,5 @@ namespace Trading.Pattern_Tests
             Assert.AreEqual(PatternDirection.Down, pa.LastPattern.Direction);
         }
 
-        [TestMethod]
-        public void Pattern_AddBar_Two_UpBars()
-        {
-            var bar1 = new Bar(30, 100, 20, 50, 0, DateTime.Now, DateTime.Now);
-            var p = new Pattern(bar1);
-            var bar2 = new Bar(40, 110, 30, 60, 0, DateTime.Now, DateTime.Now);
-            var result = p.AddBar(bar2);
-
-            Assert.AreEqual(result, true);
-        }
     }
 }
