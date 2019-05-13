@@ -66,7 +66,6 @@ namespace Trading.Analyzers.PatternAnalyzer
                 if (newBar.Low < LastSupport.Price)
                 {
                     var downPattern = new Pattern(newBar, LastPattern);
-                    downPattern.Direction = PatternDirection.Down;
                     PatternList.Add(downPattern);
                     this.createReferenceForLowOfThisBar(newBar);
                     return;

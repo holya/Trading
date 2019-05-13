@@ -10,10 +10,16 @@ namespace Trading.Common
     public class Pattern
     {
         public List<Leg> LegList { get; private set; }
-       
+        public List<Pattern> PatternList { get; } = new List<Pattern>();
+
         public Leg LastLeg => LegList.Last();
         public Leg FirstLeg => LegList.First();
         public Bar LastBar => LastLeg.LastBar;
+        public Pattern LastPattern => PatternList.Last();
+        public List<Reference> RefList { get; } = new List<Reference>();
+        public double LastPrice => LastPattern.LastBar.Close;
+        protected Reference LastSupport => RefList.Last(r => r.Price <= LastPrice);
+        protected Reference LastResistance => RefList.Last(r => r.Price >= LastPrice);
         public Pattern PreviousPattern { get; }
 
         private Pattern()
@@ -21,23 +27,42 @@ namespace Trading.Common
             LegList = new List<Leg>();
         }
         public Pattern(Bar bar) : this() { LegList.Add(new Leg(bar)); }
-        public Pattern(Leg leg) : this() { LegList.Add(leg); }
         public Pattern(Bar bar, Pattern previousPattern) : this(bar) { PreviousPattern = previousPattern; }
-        public Pattern(Leg leg, Pattern previousPattern) : this(leg) { PreviousPattern = previousPattern; }
 
-        public PatternDirection Direction { get; set; }
+        public PatternDirection Direction
+        {
+            get
+            {
+                if (this.FirstLeg.Direction == LegDirection.Up)
+                    return PatternDirection.Up;
+                return PatternDirection.Down;
+            }
+        }
 
-        public PatternState State { get; set; }
+        public PatternState State
+        {
+            get
+            {
+                if (this.Direction == PatternDirection.Up)
+                {
+                    if (LegList.Count() == 1)
+                    {
+                        return PatternState.Continuation1;
+                    }
+                }
+            } 
+        }
 
         public bool AddBar(Bar newBar)
         {
-            if ((LastLeg.Direction == LegDirection.Up && newBar.Direction > BarDirection.Balance) ||
-            (LastLeg.Direction == LegDirection.Down && newBar.Direction < BarDirection.Balance))
+            if (this.Direction == PatternDirection.Up)
             {
-                LastLeg.AddBar(newBar);
-                return true;
+
             }
-            return false;
+            else
+            {
+
+            }
         }
 
     }
