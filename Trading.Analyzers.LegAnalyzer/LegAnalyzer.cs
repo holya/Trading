@@ -51,7 +51,7 @@ namespace Trading.Analyzers.LegAnalyzer
             d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime, d.EndDateTime);
             LegList.Add(newLeg);
 
-            PatternsList.Add(new Pattern(newLeg));
+            PatternsList.Add(new Pattern(newBar));
             addBar = addBarContinued;
         }
         private void addBarContinued(Bar newBar)

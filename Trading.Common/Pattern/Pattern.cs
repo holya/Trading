@@ -49,7 +49,9 @@ namespace Trading.Common
                     {
                         return PatternState.Continuation1;
                     }
+                    return PatternState.Continuation2;
                 }
+                return PatternState.Continuation1;
             } 
         }
 
@@ -57,11 +59,11 @@ namespace Trading.Common
         {
             if (this.Direction == PatternDirection.Up)
             {
-
+                return true;
             }
             else
             {
-
+                return false;
             }
         }
 

@@ -41,11 +41,11 @@ namespace Trading.Analyzers.PatternAnalyzer
             newBar.PreviousBar = bar0;
             var leg = new Leg(newBar, leg0);
 
-            var pattern = new Pattern(leg);
-            var patternDirection = pattern.Direction = leg.Direction == LegDirection.Up ? 
-                PatternDirection.Up : PatternDirection.Down;
-            pattern.State = PatternState.Continuation1;
-            PatternList.Add(pattern);
+            //var pattern = new Pattern(leg);
+            //var patternDirection = pattern.Direction = leg.Direction == LegDirection.Up ? 
+            //    PatternDirection.Up : PatternDirection.Down;
+            //pattern.State = PatternState.Continuation1;
+            //PatternList.Add(pattern);
 
             if (newBar.Direction < BarDirection.Balance)
                 this.createReferenceForHighOfThisBar(newBar);
@@ -82,7 +82,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                             {
                                 var changedPattern = new Pattern(newBar, LastPattern);
                                 PatternList.Add(changedPattern);
-                                changedPattern.State = PatternState.Continuation2;
+                                //changedPattern.State = PatternState.Continuation2;
                                 return;
                             }
 
@@ -92,7 +92,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                         {
                             var changedPattern = new Pattern(newBar, LastPattern);
                             PatternList.Add(changedPattern);
-                            changedPattern.State = PatternState.PullBack1;
+                            //changedPattern.State = PatternState.PullBack1;
                             this.createReferenceForHighOfThisBar(LastBar);
                             return;
                         }
@@ -112,7 +112,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                             {
                                 var changedPattern = new Pattern(newBar, LastPattern);
                                 PatternList.Add(changedPattern);
-                                changedPattern.State = PatternState.PullBack1;
+                                //changedPattern.State = PatternState.PullBack1;
                                 this.createReferenceForHighOfThisBar(LastBar);
                                 return;
                             }
@@ -120,7 +120,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                             {
                                 var changedPattern = new Pattern(newBar, LastPattern);
                                 PatternList.Add(changedPattern);
-                                changedPattern.State = PatternState.PullBack2;
+                                //changedPattern.State = PatternState.PullBack2;
                                 this.createReferenceForHighOfThisBar(LastBar);
                                 return;
                             }
@@ -144,7 +144,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                                 {
                                     var changedPattern = new Pattern(newBar, LastPattern);
                                     PatternList.Add(changedPattern);
-                                    changedPattern.State = PatternState.Continuation1;
+                                    //changedPattern.State = PatternState.Continuation1;
                                     this.createReferenceForLowOfThisBar(LastBar);
                                     return;
                                 }
@@ -152,7 +152,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                                 {
                                     var changedPattern = new Pattern(newBar, LastPattern);
                                     PatternList.Add(changedPattern);
-                                    changedPattern.State = PatternState.Continuation2;
+                                    //changedPattern.State = PatternState.Continuation2;
                                     this.createReferenceForLowOfThisBar(LastBar);
                                     return;
                                 }
@@ -183,7 +183,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                             {
                                 var changedPattern = new Pattern(newBar, LastPattern);
                                 PatternList.Add(changedPattern);
-                                changedPattern.State = PatternState.Continuation1;
+                                //changedPattern.State = PatternState.Continuation1;
                                 this.createReferenceForLowOfThisBar(LastBar);
                                 return;
                             }
@@ -191,7 +191,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                             {
                                 var changedPattern = new Pattern(newBar, LastPattern);
                                 PatternList.Add(changedPattern);
-                                changedPattern.State = PatternState.Continuation2;
+                                //changedPattern.State = PatternState.Continuation2;
                                 this.createReferenceForLowOfThisBar(LastBar);
                                 return;
                             }
