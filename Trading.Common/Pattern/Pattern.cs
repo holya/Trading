@@ -50,10 +50,7 @@ namespace Trading.Common
 
                         return PatternState.Continuation1;
                     }
-                }
-                else
-                {
-
+                    return PatternState.Continuation2;
                 }
             } 
         }
@@ -66,7 +63,7 @@ namespace Trading.Common
             }
             else
             {
-
+                return false;
             }
         }
 
