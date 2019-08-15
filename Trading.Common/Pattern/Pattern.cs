@@ -10,12 +10,10 @@ namespace Trading.Common
     public class Pattern
     {
         public List<Leg> LegList { get; private set; }
-        //public List<Pattern> PatternList { get; } = new List<Pattern>();
 
         public Leg LastLeg => LegList.Last();
         public Leg FirstLeg => LegList.First();
         public Bar LastBar => LastLeg.LastBar;
-        //public Pattern LastPattern => PatternList.Last();
         public List<Reference> RefList { get; } = new List<Reference>();
         public double LastPrice => LastLeg.LastBar.Close;
         protected Reference LastSupport => RefList.Last(r => r.Price <= LastPrice);
@@ -39,32 +37,27 @@ namespace Trading.Common
             }
         }
 
-        public PatternState State
-        {
-            get
-            {
-                if (this.Direction == PatternDirection.Up)
-                {
-                    if (LegList.Last().Direction == LegDirection.Up)
-                    {
-
-                        return PatternState.Continuation1;
-                    }
-                    return PatternState.Continuation2;
-                }
-            } 
-        }
+        //public PatternState State
+        //{
+        //}
 
         public bool AddBar(Bar newBar)
         {
             if (this.Direction == PatternDirection.Up)
             {
+                if (newBar.Direction > BarDirection.Balance || newBar.Direction == BarDirection.Balance)
+                    this.LastLeg.AddBar(newBar);
+                    return true;
+            }
 
-            }
-            else
+            if (this.Direction == PatternDirection.Down)
             {
-                return false;
+                if (newBar.Direction < BarDirection.Balance || newBar.Direction == BarDirection.Balance)
+                    this.LastLeg.AddBar(newBar);
+                    return true;
             }
+
+            return false;
         }
 
     }
