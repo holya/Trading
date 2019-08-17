@@ -14,14 +14,13 @@ namespace Trading.Common
 
         public FxBar() :base() { } 
 
-        public FxBar(double open, double askOpen, double high, double askHigh, double low, double askLow, double close, double askClose, double volume, DateTime dateTime, DateTime endDateTime) : base(open, high, low, close, volume, dateTime, endDateTime)
+        public FxBar(double open, double askOpen, double high, double askHigh, 
+            double low, double askLow, double close, double askClose, double volume, 
+            DateTime dateTime, DateTime endDateTime) : base(open, high, low, close, volume, dateTime, endDateTime)
         {
-            //this.AskOpen = askOpen;
-            if(askHigh > AskHigh)
-                this.AskHigh = askHigh;
-            if(askLow < AskLow)
-                this.AskLow = askLow;
-
+            this.AskOpen = askOpen;
+            this.AskHigh = askHigh;
+            this.AskLow = askLow;
             this.AskClose = askClose;
         }
 
@@ -30,11 +29,8 @@ namespace Trading.Common
             base.Update(bar);
 
             AskOpen = ((FxBar)bar).AskOpen;
-            if(((FxBar)bar).AskHigh > AskHigh)
-                AskHigh = ((FxBar)bar).AskHigh;
-            if(((FxBar)bar).AskLow < AskLow)
-                AskLow = ((FxBar)bar).AskLow;
-
+            AskHigh = ((FxBar)bar).AskHigh;
+            AskLow = ((FxBar)bar).AskLow;
             AskClose = ((FxBar)bar).AskClose;
         }
 
