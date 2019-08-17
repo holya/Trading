@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Trading.Brokers.Fxcm;
-using Trading.DataManager;
 using Trading.DataManager.Common;
-using Trading.DataProviders.Common;
 using Unity;
 
 namespace WindowsFormsApp

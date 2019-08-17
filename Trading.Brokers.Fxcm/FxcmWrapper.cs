@@ -216,7 +216,7 @@ namespace Trading.Brokers.Fxcm
                 realTimeInstruments.Add(instrument);
         }
 
-        public void UnsubscribeToRealTime(string instrument)
+        public void UnsubscribeFromRealTime(string instrument)
         {
             realTimeInstruments.Remove(instrument);
         }

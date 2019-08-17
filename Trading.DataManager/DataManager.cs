@@ -58,9 +58,9 @@ namespace Trading.DataManager
             dataProvider.SubscribeToRealTime(instrument);
         }
 
-        public void UnsubscribeToRealTime(string instrument)
+        public void UnsubscribeFromRealTime(string instrument)
         {
-            dataProvider.UnsubscribeToRealTime(instrument);
+            dataProvider.UnsubscribeFromRealTime(instrument);
         }
 
         private void DataProvider_SessionStatusChanged(object sender, SessionStatusChangedEventArgs e)

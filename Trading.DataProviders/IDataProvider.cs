@@ -16,7 +16,7 @@ namespace Trading.DataProviders.Common
             DateTime beginDateTime, DateTime endDateTime);
 
         void SubscribeToRealTime(string instrument);
-        void UnsubscribeToRealTime(string instrument);
+        void UnsubscribeFromRealTime(string instrument);
         event EventHandler<RealTimeDataUpdatedEventArgs> RealTimeDataUpdated;
 
     }

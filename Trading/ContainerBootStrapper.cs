@@ -14,7 +14,7 @@ using Trading.DataManager;
 using Trading.DataBases.MongoDb;
 using Trading.DataManager.Common;
 
-namespace Trading.Common
+namespace Trading
 {
     public class ContainerBootStrapper
     {

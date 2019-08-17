@@ -44,7 +44,7 @@ namespace Trading.Common
         /// <param name="dateTime"></param>
         /// <param name="previousBar">If null, open is used to create a bar as open, high, low and close.</param>
         public Bar(double open, double high, double low, double close, double volume, DateTime dateTime, DateTime endDateTime, Bar previousBar = null)
-            : this(open, high, low, close, volume, dateTime, endDateTime)
+            : this(open, high, low, close, volume, dateTime, endDateTime) // this is the same constructor as above!
         {
             if(previousBar != null)
                 PreviousBar = previousBar;

@@ -213,7 +213,7 @@ namespace WindowsFormsApp
                 return;
             if (selectedSymbolLabel != null)
             {
-                dataManager.UnsubscribeToRealTime(selectedSymbolLabel.Text);
+                dataManager.UnsubscribeFromRealTime(selectedSymbolLabel.Text);
                 selectedSymbolLabel.BackColor = normalSymbolLabelColor;
             }
 
