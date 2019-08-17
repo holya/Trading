@@ -19,7 +19,7 @@ namespace Trading.Common.Pattern_Tests
             Pattern pt = new Pattern(bar1);
             Bar bar2 = Helper.GetUpBar(bar1, DateTime.Now);
             pt.AddBar(bar2);
-            Bar bar3 = Helper.GetUpBar(bar2, DateTime.Now);
+            Bar bar3 = Helper.GetBalanceBar(bar2, DateTime.Now);
             pt.AddBar(bar3);
 
             Assert.AreEqual(PatternDirection.Up, pt.Direction);

@@ -45,14 +45,7 @@ namespace Trading.Common
         {
             if (this.Direction == PatternDirection.Up)
             {
-                if (newBar.Direction > BarDirection.Balance || newBar.Direction == BarDirection.Balance)
-                    this.LastLeg.AddBar(newBar);
-                    return true;
-            }
-
-            if (this.Direction == PatternDirection.Down)
-            {
-                if (newBar.Direction < BarDirection.Balance || newBar.Direction == BarDirection.Balance)
+                if (newBar.Direction >= BarDirection.Balance)
                     this.LastLeg.AddBar(newBar);
                     return true;
             }
