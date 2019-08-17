@@ -79,30 +79,40 @@ namespace Trading.Common
             }
         }
 
-        public bool IsSameDirection(Bar bar)
-        {
-            if (bar.Direction == BarDirection.Balance) return true;
-            if (bar.Direction < BarDirection.Balance & Direction < BarDirection.Balance) return true;
-            if (bar.Direction > BarDirection.Balance & Direction > BarDirection.Balance) return true;
-            return false;
-        }
+        //public bool IsSameDirection(Bar bar)
+        //{
+        //    if (bar.Direction == BarDirection.Balance) return true;
+        //    if (bar.Direction < BarDirection.Balance & Direction < BarDirection.Balance) return true;
+        //    if (bar.Direction > BarDirection.Balance & Direction > BarDirection.Balance) return true;
+        //    return false;
+        //}
 
         public virtual void Update(Bar bar)
         {
-            //Open = bar.Open;
-            if(bar.High > High)
-                High = bar.High;
-            if(bar.Low < Low)
-                Low = bar.Low;
+            Open = bar.Open;
+            High = bar.High;
+            Low = bar.Low;
 
             Close = bar.Close;
             Volume += bar.Volume;
-            //DateTime = bar.DateTime;
+            DateTime = bar.DateTime;
+            EndDateTime = bar.EndDateTime;
         }
 
         public override string ToString()
         {
             return $"{Open},{High},{Low},{Close},{Volume},{DateTime},{EndDateTime}";
+        }
+
+        public virtual void Copy(Bar bar)
+        {
+            Open = bar.Open;
+            High = bar.High;
+            Low = bar.Low;
+            Close = bar.Close;
+            Volume = bar.Volume;
+            DateTime = bar.DateTime;
+            EndDateTime = bar.EndDateTime;
         }
     }
 }
