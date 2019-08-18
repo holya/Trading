@@ -24,14 +24,14 @@ namespace Trading.Common
             this.AskClose = askClose;
         }
 
-        public override void Update(Bar bar)
+        public void Update(FxBar bar)
         {
             base.Update(bar);
 
-            AskOpen = ((FxBar)bar).AskOpen;
-            AskHigh = ((FxBar)bar).AskHigh;
-            AskLow = ((FxBar)bar).AskLow;
-            AskClose = ((FxBar)bar).AskClose;
+            AskOpen = bar.AskOpen;
+            AskHigh = bar.AskHigh;
+            AskLow = bar.AskLow;
+            AskClose = bar.AskClose;
         }
 
         public override string ToString()

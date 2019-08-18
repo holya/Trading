@@ -16,5 +16,13 @@ namespace UnitTestProject1.Trading.Common_Tests.Trading.Common.FxBar_Tests
 
             Assert.AreEqual(BarDirection.Down, downBar.Direction);
         }
+
+        [TestMethod]
+        public void FxBar_Update()
+        {
+            FxBar upBar = new FxBar(50, 51, 100, 101, 20, 21, 60, 61, 0, DateTime.Now, DateTime.Now);
+
+            upBar.Update(new FxBar(10, 10, 10, 10, 10, 10, 10, 10, 0, DateTime.Now, DateTime.Now));
+        }
     }
 }
