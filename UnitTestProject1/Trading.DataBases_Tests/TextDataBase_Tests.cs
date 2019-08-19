@@ -4,8 +4,9 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trading.Common;
 using Trading.DataBases.TextFileDataBase;
+using Trading_UnitTests;
 
-namespace UnitTestProject1
+namespace Trading.DataBases_Tests
 {
     [TestClass]
     public class TextDataBase_Tests

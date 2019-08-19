@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trading.Common;
 using Trading.DataBases.XmlDataBase;
-using UnitTestProject1;
+using Trading_UnitTests;
 
 namespace Trading.DataBases_Tests
 {

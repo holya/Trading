@@ -6,12 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
 using Trading.Analyzers.PatternAnalyzer;
-using UnitTestProject1;
+using Trading_UnitTests;
 
-namespace Trading.Pattern_Tests
+namespace Trading.Analyzers_Tests
 {
     [TestClass]
     public class PatternAnalyzer_Tests
     {
+        [TestMethod]
+        public void Sample()
+        {
+
+        }
     }
 }

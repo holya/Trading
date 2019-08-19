@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trading.Common;
-using UnitTestProject1;
+using Trading_UnitTests;
 
-namespace Trading.Common.Pattern_Tests
+namespace Trading.Common_Tests
 {
     [TestClass]
     public class Pattern_Tests

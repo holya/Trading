@@ -6,7 +6,7 @@ using Trading.Analyzers.LegAnalyzer;
 using Trading.Common;
 using Trading_UnitTests;
 
-namespace Trading_UnitTests
+namespace Trading.Analyzers_Tests
 {
     [TestClass]
     public class LegAnalyzer_Tests

@@ -2,8 +2,10 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trading.DataManager;
 using Trading.Common;
-namespace UnitTestProject1
-{
+using Trading_UnitTests;
+
+namespace Trading.DataManager_Tests
+{ 
     [TestClass]
     public class DataManager_Tests
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using Trading.Common;
-using UnitTestProject1;
+using Trading_UnitTests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace UnitTestProject1.Trading.Common_Tests.Trading.Common.Bar_Tests
+namespace Trading.Common_Tests
 {
     [TestClass]
     public class Bar_Tests
