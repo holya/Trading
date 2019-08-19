@@ -87,7 +87,7 @@ namespace Trading.Common
         //    return false;
         //}
 
-        public virtual void Update(Bar bar)
+        public void Update(Bar bar)
         {
             Open = bar.Open;
             High = bar.High;

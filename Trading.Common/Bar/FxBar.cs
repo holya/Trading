@@ -16,7 +16,7 @@ namespace Trading.Common
 
         public FxBar(double open, double askOpen, double high, double askHigh, 
             double low, double askLow, double close, double askClose, double volume, 
-            DateTime dateTime, DateTime endDateTime) : base(open, high, low, close, volume, dateTime, endDateTime)
+            DateTime dateTime, DateTime endDateTime, FxBar previousBar = null) : base(open, high, low, close, volume, dateTime, endDateTime, previousBar)
         {
             this.AskOpen = askOpen;
             this.AskHigh = askHigh;
@@ -28,10 +28,10 @@ namespace Trading.Common
         {
             base.Update(bar);
 
-            AskOpen = ((FxBar)bar).AskOpen;
-            AskHigh = ((FxBar)bar).AskHigh;
-            AskLow = ((FxBar)bar).AskLow;
-            AskClose = ((FxBar)bar).AskClose;
+            AskOpen = bar.AskOpen;
+            AskHigh = bar.AskHigh;
+            AskLow = bar.AskLow;
+            AskClose = bar.AskClose;
         }
 
         public override string ToString()
