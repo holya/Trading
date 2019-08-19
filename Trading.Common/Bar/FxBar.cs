@@ -24,7 +24,7 @@ namespace Trading.Common
             this.AskClose = askClose;
         }
 
-        public override void Update(Bar bar)
+        public void Update(FxBar bar)
         {
             base.Update(bar);
 
