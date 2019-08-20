@@ -52,14 +52,31 @@ namespace Trading_UnitTests
         }
 
 
-        //public static Leg GetUpLeg(int numberOfBars)
-        //{
-        //    Leg leg = new Leg(GetUpBar());
-        //    for(int i = 0; i < numberOfBars; i++)
-        //    {
+        public static Leg GetUpLeg(int numberOfBars)
+        {
+            FxBar[] barlist = new FxBar[numberOfBars];
+            FxBar upBar = new FxBar(30, 31, 60, 61, 10, 11, 40, 41, 0, DateTime.Now, DateTime.Now);
+            barlist[0] = upBar;
+            Leg leg = new Leg(upBar);
+            for (int i = 1; i < numberOfBars; i++)
+            {
+                barlist[i] = (new FxBar
+                {
+                    Open = upBar.Open + (i + 10),
+                    AskOpen = upBar.AskOpen + (i + 10),
+                    High = upBar.High + (i + 10),
+                    AskHigh = upBar.AskHigh + (i + 10),
+                    Low = upBar.Low + (i + 10),
+                    AskLow = upBar.AskLow + (i + 10),
+                    Close = upBar.Close + (i + 10),
+                    AskClose = upBar.AskClose + (i + 10),
+                    PreviousBar = barlist[i - 1]
+                });
 
-        //    }
+                leg.AddBar(barlist[i]);
+            }
 
-        //}
+            return leg;
+        }
     }
 }
