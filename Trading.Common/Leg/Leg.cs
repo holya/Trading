@@ -52,13 +52,13 @@ namespace Trading.Common
 
         public bool AddBar(Bar bar)
         {
-            if(this.Direction == LegDirection.Up && (bar.Direction == BarDirection.Up || bar.Direction == BarDirection.Balance))
+            if(this.Direction == LegDirection.Up && bar.Direction >= BarDirection.Balance)
             {
                 this.BarList.Add(bar);
                 return true;
             }
 
-            if(this.Direction == LegDirection.Down && (bar.Direction == BarDirection.Down || bar.Direction == BarDirection.Balance))
+            if(this.Direction == LegDirection.Down && bar.Direction <= BarDirection.Balance)
             {
                 this.BarList.Add(bar);
                 return true;
