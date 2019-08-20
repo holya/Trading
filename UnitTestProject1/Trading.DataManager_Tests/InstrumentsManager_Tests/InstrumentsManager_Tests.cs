@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trading.DataManager;
 
-namespace UnitTestProject1
+namespace Trading.DataManager.InstrumentManager_Tests
 {
     [TestClass]
     public class InstrumentsManager_Tests

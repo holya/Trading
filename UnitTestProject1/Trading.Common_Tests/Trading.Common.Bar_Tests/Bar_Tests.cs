@@ -1,22 +1,22 @@
 ﻿using System;
 using Trading.Common;
-using UnitTestProject1;
+using Trading_UnitTests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace UnitTestProject1.Trading.Common_Tests.Trading.Common.Bar_Tests
+namespace Trading.Common_Tests
 {
     [TestClass]
     public class Bar_Tests
     {
         [TestMethod]
-        public void One_UpBar_Direction_Should_Be_OutsideUp()
+        public void UpBar_Without_PreviousBar_Should_Be_OutsideUp()
         {
             Bar bar1 = new Bar(30, 100, 20, 50, 0, DateTime.Now, DateTime.Now);
             Assert.AreEqual(BarDirection.OutsideUp, bar1.Direction);
         }
 
         [TestMethod]
-        public void One_DownBar_Direction_Should_Be_OutsideDown()
+        public void DownBar_Without_PreviousBar_Should_Be_OutsideDown()
         {
             Bar bar1 = new Bar(50, 100, 20, 30, 0, DateTime.Now, DateTime.Now);
             Assert.AreEqual(BarDirection.OutsideDown, bar1.Direction);

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
 
-namespace UnitTestProject1
+namespace Trading_UnitTests
 {
     public static class Helper
     {

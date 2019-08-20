@@ -4,8 +4,9 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trading.Analyzers.LegAnalyzer;
 using Trading.Common;
+using Trading_UnitTests;
 
-namespace UnitTestProject1
+namespace Trading.Analyzers_Tests
 {
     [TestClass]
     public class LegAnalyzer_Tests

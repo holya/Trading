@@ -16,7 +16,7 @@ namespace Trading.Common
         public double Low { get { return this.BarList.Min(b => b.Low); } }
         public double Close { get { return this.LastBar.Close; } }
         public double Volume { get { return this.BarList.Sum(b => b.Volume); } }
-        public Leg PreviousLeg { get; set; }
+        public Leg PreviousLeg { get; }
         public Bar LastBar { get { return this.BarList.LastOrDefault(); } }
         public Bar FirstBar { get { return this.BarList.First(); } }
         public DateTime StartDateTime { get { return this.BarList.First().DateTime; } }
@@ -39,18 +39,14 @@ namespace Trading.Common
             }
         }
 
-        public Leg()
+        private Leg()
         {
             this.BarList = new List<Bar>();
         }
 
-        public Leg(Bar bar) : this()
+        public Leg(Bar bar, Leg previousLeg = null) : this()
         {
             this.BarList.Add(bar);
-        }
-
-        public Leg(Bar bar, Leg previousLeg) : this(bar)
-        {
             PreviousLeg = previousLeg;
         }
 

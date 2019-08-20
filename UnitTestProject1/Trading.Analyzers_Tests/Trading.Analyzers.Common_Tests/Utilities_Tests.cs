@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trading.Analyzers.Common;
 using Trading.Common;
 
-namespace UnitTestProject1.Trading.Analyzers.Common_Tests
+namespace Trading.Analyzers.Common_Tests
 {
     [TestClass]
     public class Utilities_Tests
