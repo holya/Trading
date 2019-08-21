@@ -13,7 +13,6 @@ namespace Trading.Common_Tests
         public void FxBar_Update()
         {
             FxBar upBar = new FxBar(50, 51, 100, 101, 20, 21, 60, 61, 0, DateTime.Now, DateTime.Now);
-
             upBar.Update(new FxBar(10, 10, 10, 10, 10, 10, 10, 10, 0, DateTime.Now, DateTime.Now));
 
             Assert.AreEqual(10, upBar.AskHigh);
