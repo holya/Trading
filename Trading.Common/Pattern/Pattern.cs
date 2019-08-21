@@ -37,9 +37,19 @@ namespace Trading.Common
             }
         }
 
-        //public PatternState State
-        //{
-        //}
+        public PatternState State
+        {
+            get
+            {
+                if(this.Direction == PatternDirection.Up)
+                {
+                    if(LegList.Count < 3)
+                    {
+
+                    }
+                }
+            }
+        }
 
         public bool AddBar(Bar newBar)
         {
