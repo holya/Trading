@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
-namespace Trading.Analyzers.Common
+namespace Trading.Common
 {
     public static class Utilities
     {
@@ -47,7 +47,7 @@ namespace Trading.Analyzers.Common
                     int cutOffHour = date.IsDaylightSavingTime() ? 21 : 22;
                     DateTime startDate = new DateTime(date.Year, date.Month, date.Day, cutOffHour, 0, 0).AddDays(-1);
                     DateTime endDate = startDate.AddHours(resolution.Size);
-                    for(int i = 0; i < 24/resolution.Size+4; i++)
+                    for (int i = 0; i < 24 / resolution.Size + 4; i++)
                     {
                         if (date >= startDate && date < endDate)
                             break;
@@ -95,6 +95,86 @@ namespace Trading.Analyzers.Common
                 default:
                     return dateTime;
             }
+        }
+
+        public static List<Bar> CreatHourlyBarsFromMinuteBars(IEnumerable<Bar> minuteList, int hourlySize)
+        {
+            var list = new List<Bar>();
+
+            var fd = minuteList.First().DateTime;
+            DateTime sd = new DateTime(fd.Year, fd.Month, fd.Day, 0, 0, 0);
+            DateTime ed = sd.AddHours(hourlySize);
+
+            while (sd <= minuteList.Last().EndDateTime)
+            {
+                var ls = minuteList.Where(p => p.DateTime >= sd && p.EndDateTime < ed);
+
+                if (ls.Count() > 0)
+                {
+                    var bar = composeBarFromList(sd, ed, ls);
+                    list.Add(bar);
+                }
+
+                sd = ed;
+                ed = ed.AddHours(hourlySize);
+            }
+
+            return list;
+        }
+
+        public static List<Bar> CreateMonthlyBarsFromDailyBars(IEnumerable<Bar> dailyList, int monthlySize)
+        {
+            var list = new List<Bar>();
+
+            var fd = dailyList.First().DateTime;
+            DateTime sd = new DateTime(fd.Year, 1, 1, 0, 0, 0);
+            DateTime ed = sd.AddMonths(monthlySize);
+
+            while (sd <= dailyList.Last().EndDateTime)
+            {
+                var ls = dailyList.Where(p => p.DateTime >= sd && p.EndDateTime < ed);
+
+                if (ls.Count() > 0)
+                {
+                    Bar bar = composeBarFromList(sd, ed, ls);
+                    list.Add(bar);
+                }
+
+                sd = ed;
+                ed = ed.AddMonths(monthlySize);
+            }
+
+            return list;
+        }
+
+        public static List<Bar> CreateQuarterlyBarsFromMonthlyBars(IEnumerable<Bar> monthlyList)
+        {
+            var list = new List<Bar>();
+
+            var fd = monthlyList.First().DateTime;
+            DateTime sd = new DateTime(fd.Year, 1, 1, 0, 0, 0);
+            DateTime ed = sd.AddMonths(3);
+
+            while (sd <= monthlyList.Last().EndDateTime)
+            {
+                var ls = monthlyList.Where(p => p.DateTime >= sd && p.EndDateTime < ed);
+
+                if (ls.Count() > 0)
+                {
+                    Bar bar = composeBarFromList(sd, ed, ls);
+                    list.Add(bar);
+                }
+
+                sd = ed;
+                ed = ed.AddMonths(3);
+            }
+
+            return list;
+        }
+
+        private static Bar composeBarFromList(DateTime sd, DateTime ed, IEnumerable<Bar> ls)
+        {
+            return new Bar { Open = ls.First().Open, High = ls.Max(p => p.High), Low = ls.Min(p => p.Low), Close = ls.Last().Close, Volume = ls.Sum(p => p.Volume), DateTime = sd, EndDateTime = ed };
         }
     }
 }

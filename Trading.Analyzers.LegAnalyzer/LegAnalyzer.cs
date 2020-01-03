@@ -61,16 +61,16 @@ namespace Trading.Analyzers.LegAnalyzer
                 LegList.Add(new Leg(newBar));
                 //create new reference point of the last Leg
 
-                if(LastLeg.Direction == LegDirection.Up)
-                {
-                    createReferenceForLowOfThisBar(LastLeg.PreviousLeg.LowestBar);
-                    createReferenceForHighOfThisBar(newBar);
-                }
-                else
-                {
-                    createReferenceForHighOfThisBar(LastLeg.PreviousLeg.HighestBar);
-                    createReferenceForLowOfThisBar(newBar);
-                }
+                //if(LastLeg.Direction == LegDirection.Up)
+                //{
+                //    createReferenceForLowOfThisBar(LastLeg.PreviousLeg.LowestBar);
+                //    createReferenceForHighOfThisBar(newBar);
+                //}
+                //else
+                //{
+                //    createReferenceForHighOfThisBar(LastLeg.PreviousLeg.HighestBar);
+                //    createReferenceForLowOfThisBar(newBar);
+                //}
             }
 
 
@@ -136,9 +136,10 @@ namespace Trading.Analyzers.LegAnalyzer
             _onNewBarAdded(this, new NewBarAddedEventArgs { LastLeg = LastLeg });
         }
 
+
         public void UpdateLastBar(Bar updatedBar)
         {
-            LastbarUpdateEventEnum updateEnum;
+            BarUpdateStatus updateEnum;
             bool isUpdateTickWithinLastBar = updatedBar.High > LastBar.High || updatedBar.Low < LastBar.Low;
             bool isCloseSame = updatedBar.Close == LastBar.Close;
             var oldDir = LastBar.Direction;
@@ -152,16 +153,16 @@ namespace Trading.Analyzers.LegAnalyzer
                 if (LegList.Count == 0)
                     addBar = this.addFirstBar;
                 addBar(savedLastBar);
-                updateEnum = LastbarUpdateEventEnum.TypeChanged;
+                updateEnum = BarUpdateStatus.TypeChanged;
             }
             else if (!isUpdateTickWithinLastBar)
-                updateEnum = LastbarUpdateEventEnum.Expanded;
+                updateEnum = BarUpdateStatus.Expanded;
             else if (!isCloseSame)
-                updateEnum = LastbarUpdateEventEnum.CloseUpdated;
+                updateEnum = BarUpdateStatus.CloseUpdated;
             else
-                updateEnum = LastbarUpdateEventEnum.NoPriceChange;
+                updateEnum = BarUpdateStatus.NoPriceChange;
 
-            _onLastBarUpdated(this, new LastBarUpdatedEventArgs { LastBar = LastBar, UpdateEnum = updateEnum });
+            _onLastBarUpdated(this, new BarUpdateEventArgs { LastBar = LastBar, UpdateEnum = updateEnum });
         }
 
         public void Reset()

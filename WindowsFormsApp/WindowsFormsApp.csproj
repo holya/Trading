@@ -51,8 +51,8 @@
     <Reference Include="System.Security.Permissions, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Permissions.4.5.0\lib\net461\System.Security.Permissions.dll</HintPath>
     </Reference>
-    <Reference Include="System.Security.Principal.Windows, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Principal.Windows.4.5.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+    <Reference Include="System.Security.Principal.Windows, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Principal.Windows.4.5.1\lib\net461\System.Security.Principal.Windows.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Transactions" />
@@ -69,12 +69,17 @@
     <Reference Include="Unity.Abstractions, Version=5.11.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.5.11.1\lib\net47\Unity.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Container, Version=5.8.11.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Unity.Container.dll</HintPath>
+    <Reference Include="Unity.Container, Version=5.11.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.5.11.1\lib\net47\Unity.Container.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Custom Views\Chart_CustomControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Custom Views\Chart_CustomControl.Designer.cs">
+      <DependentUpon>Chart_CustomControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Custom Views\HlocCustomChart.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -99,6 +104,18 @@
     <Compile Include="Custom Views\NewChartDialog.Designer.cs">
       <DependentUpon>NewChartDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Custom Views\OhlcChartForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Custom Views\OhlcChartForm.Designer.cs">
+      <DependentUpon>OhlcChartForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Custom Views\PatternAnalyzerCustomChart.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Custom Views\PatternAnalyzerCustomChart.Designer.cs">
+      <DependentUpon>PatternAnalyzerCustomChart.cs</DependentUpon>
+    </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -108,11 +125,23 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Custom Views\Chart_CustomControl.resx">
+      <DependentUpon>Chart_CustomControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Custom Views\HlocCustomChart.resx">
+      <DependentUpon>HlocCustomChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Custom Views\HlocLACustomChart.resx">
+      <DependentUpon>HlocLACustomChart.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Custom Views\HlocLAForm.resx">
       <DependentUpon>HlocLAForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Custom Views\NewChartDialog.resx">
       <DependentUpon>NewChartDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Custom Views\OhlcChartForm.resx">
+      <DependentUpon>OhlcChartForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -158,6 +187,10 @@
       <Project>{28108a74-5d38-4c8d-8389-4c0561c7fd93}</Project>
       <Name>Trading.Analyzers.LegAnalyzer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Trading.Analyzers.PatternAnalyzer\Trading.Analyzers.PatternAnalyzer.csproj">
+      <Project>{4db58e7c-0b17-49cc-aba8-763f25428817}</Project>
+      <Name>Trading.Analyzers.PatternAnalyzer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Trading.Brokers.Fxcm\Trading.Brokers.Fxcm.csproj">
       <Project>{38995aff-7180-4f8c-a902-a68d268138bf}</Project>
       <Name>Trading.Brokers.Fxcm</Name>
@@ -186,6 +219,9 @@
       <Project>{13885792-59cb-494b-8d91-2e5455fa9d20}</Project>
       <Name>Trading</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

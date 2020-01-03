@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Trading.Common
 {
@@ -97,6 +99,11 @@ namespace Trading.Common
             Volume += bar.Volume;
             DateTime = bar.DateTime;
             EndDateTime = bar.EndDateTime;
+        }
+
+        public virtual Bar Factory(IEnumerable<Bar> barList)
+        {
+            return new Bar { Open = barList.First().Open, High = barList.Max(p => p.High), Low = barList.Min(p => p.Low), Close = barList.Last().Close, Volume = barList.Sum(p => p.Volume), DateTime = barList.First().DateTime, EndDateTime = barList.Last().EndDateTime };
         }
 
         public override string ToString()

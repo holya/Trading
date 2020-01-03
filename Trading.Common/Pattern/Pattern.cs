@@ -41,13 +41,14 @@ namespace Trading.Common
         {
             get
             {
-                if(this.Direction == PatternDirection.Up)
-                {
-                    if(LegList.Count < 3)
-                    {
+                //if(this.Direction == PatternDirection.Up)
+                //{
+                //    if(LegList.Count < 3)
+                //    {
 
-                    }
-                }
+                //    }
+                //}
+                return PatternState.Continuation1;
             }
         }
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,6 +18,7 @@ using Trading.DataProviders.Common;
 using Unity;
 using Trading;
 using Trading.DataManager.Common;
+using System;
 
 namespace WindowsFormsApp
 {
@@ -47,16 +47,15 @@ namespace WindowsFormsApp
         {
             InitializeComponent();
 
-            //try
-            //{
+            try
+            {
                 this.dataManager = dataManager;
-                //dataManager.Login();
-            //}
-            //catch(Exception e)
-            //{
-            //    MessageBox.Show(e.Message);
-            //    Environment.Exit(1);
-            //}
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                Environment.Exit(1);
+            }
 
             this.update_sessionStatusButton();
 
@@ -73,25 +72,30 @@ namespace WindowsFormsApp
             //});
             this.tableLayoutPanel_chartForm.ColumnCount = 4;
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Monthly, 1), DateTime.UtcNow.AddMonths(-24), DateTime.Now.AddMonths(1), 0, 0);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Monthly, 1), DateTime.UtcNow.AddMonths(-24), DateTime.Now.AddMonths(1), 0, 0);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), DateTime.UtcNow.AddMonths(-2), DateTime.Now.AddDays(7), 0, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), DateTime.UtcNow.AddMonths(-2), DateTime.Now.AddDays(7), 0, 1);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), DateTime.UtcNow.AddMonths(-1), DateTime.Now.AddDays(1), 1, 0);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), DateTime.Now.AddMonths(-1), DateTime.Now.AddDays(2), 1, 0);
+            var f = new OhlcChartForm(this.dataManager, new Resolution(TimeFrame.Hourly, 1));
+            f.Dock = DockStyle.Fill;
+            tableLayoutPanel_chartForm.Controls.Add(f, 0, 0);
+            f.Show();
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 4), DateTime.UtcNow.AddDays(-6), DateTime.Now.AddHours(12), 1, 1);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 4), DateTime.UtcNow.AddDays(-6), DateTime.Now.AddHours(12), 1, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddHours(-24), DateTime.Now.AddHours(12), 2, 0);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddHours(-24), DateTime.Now.AddHours(12), 2, 0);
-
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-5), DateTime.Now.AddHours(12), 2, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-5), DateTime.Now.AddHours(12), 2, 1);
 
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-4), 3, 0);
 
             //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.Now.AddDays(-3), DateTime.Now,
             //3, 1);
 
-            dataManager.SessionStatusChanged += DataManager_SessionStatusChanged;
+            //dataManager.SessionStatusChanged += DataManager_SessionStatusChanged;
             dataManager.RealTimeDataUpdated += DataManager_RealTimeDataUpdated;
+
+           
         }
 
         private void DataManager_SessionStatusChanged(object sender, SessionStatusChangedEventArgs e)
@@ -123,15 +127,15 @@ namespace WindowsFormsApp
         {
             this.button_sessionStatus.Enabled = false;
 
-            try
-            {
-                await dataManager.Login();
-            }
-            catch (SessionStatusException e)
-            {
-                MessageBox.Show(e.Message);
-            }
-            this.button_sessionStatus.Enabled = true;
+            //var sessionMessage = await dataManager.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
+            var sessionMessage = await dataManager.Login("holya", "maryam");
+
+            if (sessionMessage.SessionStatus != SessionStatusEnum.Connected)
+                MessageBox.Show(sessionMessage.ToString(), "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            else
+                this.button_sessionStatus.Enabled = true;
+
+            this.update_sessionStatusButton();
         }
 
         private void addNewChartFormToRightPanel(Resolution resolution, DateTime fromDateTime, DateTime toDateTime, int column, int row)
@@ -271,7 +275,7 @@ namespace WindowsFormsApp
                             Low = tuple.Item2,
                             AskLow = tuple.Item3,
                             Close = tuple.Item2,
-                            AskClose = tuple.Item3,
+                            AskClose = tuple.Item3
                         };
 
                         chart.LegAnalyzer.UpdateLastBar(newBar);
@@ -344,6 +348,7 @@ namespace WindowsFormsApp
                 dataManager.Logout();
             else
                 await this.logIn();
+
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Trading.DataManager.Common;
 using Unity;
+using Trading;
 
 namespace WindowsFormsApp
 {
@@ -26,9 +27,9 @@ namespace WindowsFormsApp
 
         private static IUnityContainer setupDependencyInjection()
         {
-            IUnityContainer c = new UnityContainer();
+            IUnityContainer c = new Unity.UnityContainer();
 
-            Trading.Common.ContainerBootStrapper.RegisterTypes(c);
+            Trading.ContainerBootStrapper.RegisterTypes(c);
 
             return c;
         }

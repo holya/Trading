@@ -67,5 +67,6 @@ namespace WindowsFormsApp.Custom_Views
         {
             base.OnPaint(pe);
         }
+
     }
 }

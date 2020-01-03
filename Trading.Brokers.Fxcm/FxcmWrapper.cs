@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace Trading.Brokers.Fxcm
 {
     public class FxcmWrapper : IDataProvider, IDisposable
     {
-        private List<string> realTimeInstruments = new List<string>();
+        private List<string> realTimeInstrumentsList = new List<string>();
 
         public event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged = delegate { };
         //public bool IsOnline { get; private set; } = false;
@@ -36,56 +37,47 @@ namespace Trading.Brokers.Fxcm
 
         public FxcmWrapper()
         {
-            session = O2GTransport.createSession();
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
+            session = O2GTransport.createSession();
             sessionStatusResponseListener = new SessionStatusResponseListener(session, "", "");
             session.subscribeSessionStatus(sessionStatusResponseListener);
             session.SessionStatusChanged += Session_SessionStatusChanged;
+
         }
 
         public DateTime GetServerTime() => session.getServerTime();
 
-        #region Login / Logout
-        public async Task Login(params string[] loginData)
+        #region Login / Logout   -----------------------------------------------------------------------------
+
+        public async Task<SessionStatusMessage> Login(params string[] loginData)
+        {
+            return await Task.Run(() => 
+            {
+                return doLogin(loginData);
+            });
+        }
+
+        private SessionStatusMessage doLogin(string[] loginData)
         {
             session.subscribeSessionStatus(sessionStatusResponseListener);
 
             session.useTableManager(O2GTableManagerMode.Yes, null);
-            try
-            {
-                session.login(loginData[0], loginData[1], loginData[2], loginData[3]);
-                await Task.Run(() =>
-                {
-                    sessionStatusResponseListener.WaitEvents();
-                    session.login(loginData[0], loginData[1], loginData[2], loginData[3]);
-                });
-            }
-            catch (Exception e)
-            { 
-                throw new SessionStatusException(SessionStatusEnum.ERROR10, $"{SessionStatusEnum.ERROR10.ToString()}. An error has occured", e); 
-            }
 
-            if (sessionStatusResponseListener.SessionStatus == O2GSessionStatusCode.SessionLost)
-            {
-                var ss = this.convertO2GSessionStatusCodeToSessionStatusEnum(sessionStatusResponseListener.SessionStatus);
-                throw new SessionStatusException(ss, $"{ss.ToString()}. Session has been lost.");
-            }
-
-            if (sessionStatusResponseListener.SessionStatus == O2GSessionStatusCode.Unknown)
-            {
-                var ss = this.convertO2GSessionStatusCodeToSessionStatusEnum(sessionStatusResponseListener.SessionStatus);
-                throw new SessionStatusException(ss, $"{ss.ToString()}. Uknown Error.");
-            }
+            session.login(loginData[0], loginData[1], loginData[2], loginData[3]);
+            sessionStatusResponseListener.WaitEvents();
 
             if (sessionStatusResponseListener.Error)
-            {
-                throw new SessionStatusException(SessionStatusEnum.ERROR9, $"{SessionStatusEnum.ERROR9.ToString()}. {sessionStatusResponseListener.ErrorMessage}.");
-            }
+                return new SessionStatusMessage(SessionStatusEnum.ERROR1, "FXCM: " + sessionStatusResponseListener.ErrorMessage);
+            if (sessionStatusResponseListener.SessionStatus == O2GSessionStatusCode.SessionLost)
+                return new SessionStatusMessage(SessionStatusEnum.ERROR2, "FXCM: Session Lost");
+            if (sessionStatusResponseListener.SessionStatus == O2GSessionStatusCode.Unknown)
+                return new SessionStatusMessage(SessionStatusEnum.ERROR3, "FXCM: Uknown Error");
 
             tableMgr = session.getTableManager();
-            //await Task.Delay(3000);
+            Task.Delay(1000);
             if (tableMgr == null)
-                throw new SessionStatusException(SessionStatusEnum.ERROR10, $"{SessionStatusEnum.ERROR10.ToString()}. Could not load Table manager from Session.");
+                return new SessionStatusMessage(SessionStatusEnum.ERROR4, "FXCM: TableManage is null");
 
             O2GTableManagerStatus managerStatus = tableMgr.getStatus();
 
@@ -94,22 +86,16 @@ namespace Trading.Brokers.Fxcm
             {
                 Thread.Sleep(200);
                 managerStatus = tableMgr.getStatus();
-                if (i > 5)
+                if (i > 9)
                     break;
             }
             if (managerStatus == O2GTableManagerStatus.TablesLoadFailed)
-            {
-                //this.Logout();
-                throw new SessionStatusException(SessionStatusEnum.ERROR11, $"{SessionStatusEnum.ERROR9.ToString()}. Could not load Table Manager.");
-            }
-            //if (count >= 70)
-            //{
-            ////this.Logout();
-            //    throw new SessionStatusException(SessionStatusEnum.ERROR8, $"{SessionStatusEnum.ERROR8.ToString()}. Could not load Table Manager. Maximum waiting time of {max} milli-seconds has been reached.");
-            //}
+                return new SessionStatusMessage(SessionStatusEnum.ERROR3, "FXCM: TablesLoadFailed");
 
             offersTable = (O2GOffersTable)tableMgr.getTable(O2GTableType.Offers);
             offersTable.RowChanged += offersTableUpdated;
+
+            return new SessionStatusMessage(SessionStatusEnum.Connected, "FXCM: Connected");
         }
 
         public void Logout()
@@ -162,7 +148,16 @@ namespace Trading.Brokers.Fxcm
             }
         }
 
-        #endregion
+        #endregion  ---------------------------------------------------------------------------------------------------
+
+        #region GetHistoricalDataAsync
+
+        public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
+        {
+            Task<IEnumerable<Bar>> task = Task.Factory.StartNew(() =>
+                    getHistoricalData(this.normalizeSymbol(instrument.Name), resolution, startDateTime, endDateTime));
+            return await task;
+        }
 
         private IEnumerable<Bar> getHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
         {
@@ -171,7 +166,7 @@ namespace Trading.Brokers.Fxcm
             List<FxBar> barList;
             try
             {
-                barList = GetHistoryPrices(session, symbol, convert_Resolution_To_string(resolution), startDateTime, endDateTime, 1000, responseListener);
+                barList = getHistoryPrices(session, symbol, convert_Resolution_To_string(resolution), startDateTime, endDateTime, 1000, responseListener);
                 foreach (var bar in barList)
                     bar.EndDateTime = Utilities.GetEndDateTime(bar.DateTime, resolution);
             }
@@ -191,88 +186,7 @@ namespace Trading.Brokers.Fxcm
         }
 
 
-        public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
-        {
-            Task<IEnumerable<Bar>> task = Task.Factory.StartNew(() =>
-                    getHistoricalData(instrument.Name, resolution, startDateTime, endDateTime));
-            return await task;
-        }
-
-        private void offersTableUpdated(object sender, RowEventArgs e)
-        {
-            O2GOfferTableRow otr = (O2GOfferTableRow)e.RowData;
-            if (otr != null && realTimeInstruments.Count > 0)
-            {
-                if(realTimeInstruments.Contains(otr.Instrument))
-                    //RealTimeDataUpdated?.Invoke(this, new Tuple<string ,double, double, DateTime, int>(otr.Instrument ,otr.Bid, otr.Ask, otr.Time, otr.Volume));
-                    RealTimeDataUpdated?.Invoke(this, new RealTimeDataUpdatedEventArgs { Data = new Tuple<string, double, double, DateTime, int>(otr.Instrument, otr.Bid, otr.Ask, otr.Time, otr.Volume) });
-
-            }
-        }
-
-        public void SubscribeToRealTime(string instrument)
-        {
-            if (!realTimeInstruments.Contains(instrument))
-                realTimeInstruments.Add(instrument);
-        }
-
-        public void UnsubscribeFromRealTime(string instrument)
-        {
-            realTimeInstruments.Remove(instrument);
-        }
-
-        private static IEnumerable<Bar> normalizeToQuarterlyTimeFrame(List<FxBar> barList)
-        {
-            List<FxBar> quarterlyBarList = new List<FxBar>();
-
-            var index = 0;
-
-            List<FxBar> tempList;
-
-            while (index < barList.Count)
-            {
-                int count = 3 - ((barList[index].DateTime.Month - 1) % 3);
-
-                tempList = barList.GetRange(index, count);
-
-                index = index + count;
-
-                var open = tempList.First().Open;
-                var askOpen = tempList.First().AskOpen;
-
-                var close = tempList.Last().Close;
-                var askClose = tempList.Last().AskClose;
-
-                var high = tempList.Max(p => p.High);
-                var askHigh = tempList.Max(p => p.AskHigh);
-
-                var low = tempList.Min(p => p.Low);
-                var askLow = tempList.Min((p) => p.AskLow);
-
-                var volume = tempList.Sum(p => p.Volume);
-
-                var dateTime = tempList.Last().DateTime;
-
-                FxBar bar = new FxBar()
-                {
-                    Open = open,
-                    AskOpen = askOpen,
-                    High = high,
-                    AskHigh = askHigh,
-                    Low = low,
-                    AskLow = askLow,
-                    Close = close,
-                    AskClose = askClose,
-                    Volume = volume,
-                    DateTime = dateTime
-                };
-
-                quarterlyBarList.Add(bar);
-            }
-            return quarterlyBarList;
-        }
-
-        private List<FxBar> GetHistoryPrices(O2GSession session, string instrument, string timeFrame, DateTime startDateTime, DateTime endDateTime, int maxBars, GetHistoricalDataResponseListener responseListener)
+        private List<FxBar> getHistoryPrices(O2GSession session, string instrument, string timeFrame, DateTime startDateTime, DateTime endDateTime, int maxBars, GetHistoricalDataResponseListener responseListener)
         {
             List<FxBar> barList = new List<FxBar>();
 
@@ -329,6 +243,88 @@ namespace Trading.Brokers.Fxcm
             return barList;
         }
 
+        #endregion
+
+        private void offersTableUpdated(object sender, RowEventArgs e)
+        {
+            O2GOfferTableRow otr = (O2GOfferTableRow)e.RowData;
+            if (otr != null && realTimeInstrumentsList.Count > 0)
+            {
+                if(realTimeInstrumentsList.Contains(this.deNormalizeSymbol(otr.Instrument)))
+                    //RealTimeDataUpdated?.Invoke(this, new Tuple<string ,double, double, DateTime, int>(otr.Instrument ,otr.Bid, otr.Ask, otr.Time, otr.Volume));
+                    RealTimeDataUpdated?.Invoke(this, new RealTimeDataUpdatedEventArgs { Data = new Tuple<string, double, double, DateTime, int>(this.deNormalizeSymbol(otr.Instrument), otr.Bid, otr.Ask, otr.Time, otr.Volume) });
+
+
+            }
+        }
+
+        private string normalizeSymbol(string symbol) => $"{symbol.Substring(0, 3)}/{symbol.Substring(3, 3)}";
+        private string deNormalizeSymbol(string symbol) => $"{symbol.Substring(0, 3)}{symbol.Substring(4, 3)}";
+
+
+        public void SubscribeToRealTime(string symbol)
+        {
+            if (!realTimeInstrumentsList.Contains(symbol))
+                realTimeInstrumentsList.Add(symbol);
+        }
+
+        public void UnsubscribeFromRealTime(string symbol)
+        {
+            realTimeInstrumentsList.Remove(symbol);
+        }
+
+        private static IEnumerable<Bar> normalizeToQuarterlyTimeFrame(List<FxBar> barList)
+        {
+            List<FxBar> quarterlyBarList = new List<FxBar>();
+
+            var index = 0;
+
+            List<FxBar> tempList;
+
+            while (index < barList.Count)
+            {
+                int count = 3 - ((barList[index].DateTime.Month - 1) % 3);
+
+                tempList = barList.GetRange(index, count);
+
+                index = index + count;
+
+                var open = tempList.First().Open;
+                var askOpen = tempList.First().AskOpen;
+
+                var close = tempList.Last().Close;
+                var askClose = tempList.Last().AskClose;
+
+                var high = tempList.Max(p => p.High);
+                var askHigh = tempList.Max(p => p.AskHigh);
+
+                var low = tempList.Min(p => p.Low);
+                var askLow = tempList.Min((p) => p.AskLow);
+
+                var volume = tempList.Sum(p => p.Volume);
+
+                var dateTime = tempList.Last().DateTime;
+
+                FxBar bar = new FxBar()
+                {
+                    Open = open,
+                    AskOpen = askOpen,
+                    High = high,
+                    AskHigh = askHigh,
+                    Low = low,
+                    AskLow = askLow,
+                    Close = close,
+                    AskClose = askClose,
+                    Volume = volume,
+                    DateTime = dateTime
+                };
+
+                quarterlyBarList.Add(bar);
+            }
+            return quarterlyBarList;
+        }
+
+
         private string convert_Resolution_To_string(Resolution resolution)
         {
             var str = "";
@@ -372,5 +368,9 @@ namespace Trading.Brokers.Fxcm
 
         public void Dispose() => session.Dispose();
 
+        public override string ToString()
+        {
+            return "Fxcm";
+        }
     }
 }

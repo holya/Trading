@@ -23,6 +23,7 @@ namespace Trading.DataBases.XmlDataBase
                 return barList;
 
             XElement readData = XElement.Load(getFullPath(instrument, resolution));
+
             IEnumerable<XElement> barData = from elements in readData.Descendants()
                                             where (Convert.ToDateTime(elements.Attribute("DateTime").Value) >= fromDate 
                                             && Convert.ToDateTime(elements.Attribute("EndDateTime").Value) <= toDate)
@@ -150,11 +151,11 @@ namespace Trading.DataBases.XmlDataBase
 
         private string getFullPath(Instrument instrument, Resolution resolution)
         {
-            string directoryName = $"{root}{instrument.Type.ToString()}\\";
-            if (instrument.Type == InstrumentType.Forex)
-                directoryName += $"{instrument.Name.Substring(0, 3)}{instrument.Name.Substring(4, 3)}";
-            else
-                directoryName += instrument.Name;
+            string directoryName = $"{root}{instrument.Type.ToString()}\\{instrument.Name}";
+            //if (instrument.Type == InstrumentType.Forex)
+            //    directoryName += $"{instrument.Name.Substring(0, 3)}{instrument.Name.Substring(4, 3)}";
+            //else
+            //    directoryName += instrument.Name;
 
             if (!Directory.Exists(directoryName))
                 Directory.CreateDirectory(directoryName);

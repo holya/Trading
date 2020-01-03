@@ -24,6 +24,7 @@ namespace Trading.Common
             this.AskClose = askClose;
         }
 
+
         public void Update(FxBar bar)
         {
             base.Update(bar);
@@ -32,6 +33,18 @@ namespace Trading.Common
             AskHigh = bar.AskHigh;
             AskLow = bar.AskLow;
             AskClose = bar.AskClose;
+        }
+
+        public override Bar Factory(IEnumerable<Bar> barList)
+        {
+            var bar = base.Factory(barList) as FxBar;
+
+            bar.AskOpen = (barList.First() as FxBar).AskOpen;
+            bar.AskHigh = (barList.Max() as FxBar).AskHigh;
+            bar.AskLow = (barList.Min() as FxBar).AskLow;
+            bar.AskClose = (barList.Last() as FxBar).Close;
+
+            return bar;
         }
 
         public override string ToString()

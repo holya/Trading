@@ -5,9 +5,9 @@ using Trading.Common;
 
 namespace Trading.DataProviders.Common
 {
-    public interface IDataProvider
+    public interface IDataProvider 
     {
-        Task Login(params string [] loginData);
+        Task<SessionStatusMessage> Login(params string [] loginData);
         void Logout();
         bool IsOnline { get; }
         event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged;

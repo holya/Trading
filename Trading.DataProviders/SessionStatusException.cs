@@ -8,7 +8,7 @@ namespace Trading.DataProviders.Common
 {
     public class SessionStatusException : Exception
     {
-        public SessionStatusEnum Status { get; set; }
+        private SessionStatusEnum Status { get; set; }
 
         public SessionStatusException() : base()
         { }

@@ -10,50 +10,92 @@ using Trading.DataManager;
 using Trading;
 using Unity;
 using Trading.DataBases.MongoDb;
+using Trading.DataProviders.ActiveTick;
+using Trading.DataBases.XmlDataBase;
+using Trading.DataProviders.Common;
 
 namespace ConsoleApp1
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public  static async Task Main(string[] args)
         {
-            Lazy<IUnityContainer> container = new Lazy<IUnityContainer>(() =>
-                {
-                    var c = new UnityContainer();
-                    ContainerBootStrapper.RegisterTypes(c);
-                    return c;
-                });
+            //Lazy<IUnityContainer> container = new Lazy<IUnityContainer>(() =>
+            //    {
+            //        var c = new UnityContainer();
+            //        ContainerBootStrapper.RegisterTypes(c);
+            //        return c;
+            //    });
             //var container = new UnityContainer();
             //ContainerBootStrapper.RegisterTypes(container);
 
-            //DataManager dm = new DataManager(new FxcmWrapper(), new MongoDb());
-            var dm = container.Value.Resolve<DataManager>();
+            //var dm = container.Value.Resolve<DataManager>();
 
-            Instrument instrument = new Instrument { Name = "USD/CAD", Type = InstrumentType.Forex };
-            DateTime sd = new DateTime(2018, 11, 19, 20, 0, 0);
-            var ed = new DateTime(2018, 11, 19, 23, 0, 0);
-            //var barList = f.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), sd, ed).GetAwaiter().GetResult();
+            var dm = new ActiveTick();
+            //var dm2 = new FxcmWrapper();
+
+            //var dm = new DataManager(new ActiveTick(), new XmlDataBase());
+
+            //dm.SessionStatusChanged += Dm_SessionStatusChanged;
+
+            var r = await dm.Login("holya", "maryam");
+
+            //var res = await dm2.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
+            //Console.WriteLine(res);
+            //Instrument instrument = new Instrument { Name = "AAPL", Type = InstrumentType.Stock };
+            Instrument instrument = new Instrument { Name = "USDCAD", Type = InstrumentType.Forex };
+            var ed = DateTime.Now.AddDays(1);
+            var sd = ed.AddDays(-10);
 
             var barList = new List<Bar>();
+            var barList2 = new List<Bar>();
             try
             {
-                barList.AddRange(dm.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Hourly, 1), sd, ed).GetAwaiter().GetResult());
+                var bars = await dm.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), sd, ed);
+                barList.AddRange(bars);
+
+                //var bars2 = await dm2.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), sd, ed);
+                //barList2.AddRange(bars2);
 
             }
-            catch(Exception e)
+            catch (HistoricalDataDownloadException e)
             {
                 Console.WriteLine(e.Message);
             }
+            //dm.RealTimeDataUpdated += (object sender, RealTimeDataUpdatedEventArgs e) =>
+            //{
+            //    var tuple = (Tuple<string, double, double, DateTime, int>)e.Data;
+
+            //    Console.WriteLine($"symbol: {tuple.Item1}\nBid: {tuple.Item2}\nAsk: {tuple.Item3}\nDateTime: {tuple.Item4}\nSize: {tuple.Item5}");
+            //};
+
+            Console.WriteLine(barList.Count);
+            Console.WriteLine(barList2.Count);
+            Console.WriteLine(barList.First().DateTime);
+            Console.WriteLine(barList.Last().EndDateTime);
+
+            Console.WriteLine(barList2.Last().DateTime);
+            Console.WriteLine(barList2.Last().EndDateTime);
+
+            //dm.SubscribeToRealTime("USDCAD");
+            //dm.SubscribeToRealTime("#USD/CAD");
 
             Console.WriteLine($"Count: {barList.Count}\n");
             foreach (var bar in barList)
                 Console.WriteLine(bar.ToString());
+            Console.WriteLine("__________________________");
+            foreach (var bar in barList2)
+                Console.WriteLine(bar.ToString());
 
+            //dm.Logout();
+            //dm2.Logout();
             Console.ReadLine();
-            dm.Dispose();
+            //dm.Dispose();
+
+
+
             Console.WriteLine("done");
-
-
+            
             //try
             //{
             //    f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
@@ -156,6 +198,13 @@ namespace ConsoleApp1
             //Console.WriteLine(f.GetServerTime());
 
             //f.Logout();
+
+        }
+
+
+        private static void Dm_SessionStatusChanged(object sender, SessionStatusChangedEventArgs e)
+        {
+            Console.WriteLine($"{e.SessionStatus.ToString()}");
         }
     }
 }

@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using Trading.Analyzers.Common;
 using Trading.Common;
 
 namespace Trading.Analyzers.LegAnalyzer
 {
-    public enum LastbarUpdateEventEnum
-    {
-        NoPriceChange,
-        CloseUpdated,
-        Expanded,
-        TypeChanged
-    }
+    //public enum LastbarUpdateEventEnum
+    //{
+    //    NoPriceChange,
+    //    CloseUpdated,
+    //    Expanded,
+    //    TypeChanged
+    //}
 
     public partial class LegAnalyzer
     {
@@ -26,8 +27,8 @@ namespace Trading.Analyzers.LegAnalyzer
             NewBarAdded?.Invoke(this, eventArgs);
         }
 
-        public event EventHandler<LastBarUpdatedEventArgs> LastBarUpdated;
-        private void _onLastBarUpdated(object sender, LastBarUpdatedEventArgs eventArgs)
+        public event EventHandler<BarUpdateEventArgs> LastBarUpdated;
+        private void _onLastBarUpdated(object sender, BarUpdateEventArgs eventArgs)
         {
             LastBarUpdated?.Invoke(this, eventArgs);
         }
@@ -41,9 +42,9 @@ namespace Trading.Analyzers.LegAnalyzer
     {
         public Leg LastLeg { get; set; }
     }
-    public class LastBarUpdatedEventArgs : EventArgs
+    public class BarUpdateEventArgs: EventArgs
     {
         public Bar LastBar { get; set; }
-        public LastbarUpdateEventEnum UpdateEnum { get; set; }
+        public BarUpdateStatus UpdateEnum { get; set; }
     }
 }

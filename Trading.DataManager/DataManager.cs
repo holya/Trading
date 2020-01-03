@@ -35,9 +35,9 @@ namespace Trading.DataManager
 
         #region IDataProvider implementations
 
-        public async Task Login(params string[] loginData)
+        public async Task<SessionStatusMessage> Login(params string[] loginData)
         {
-            await dataProvider.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
+            return await dataProvider.Login(loginData);
         }
 
         public void Logout()

@@ -35,26 +35,26 @@ namespace WindowsFormsApp.Custom_Views
             this.BackColor = Color.Black;
         }
 
-        private void LegAnalyzer_LastBarUpdated(object sender, LastBarUpdatedEventArgs e)
+        private void LegAnalyzer_LastBarUpdated(object sender, BarUpdateEventArgs e)
         {
             if (this.InvokeRequired)
-                Invoke(new Action<LastBarUpdatedEventArgs>(this.updateLastBar), e);
+                Invoke(new Action<BarUpdateEventArgs>(this.updateLastBar), e);
             else
                 this.updateLastBar(e);
         }
 
-        private void updateLastBar(LastBarUpdatedEventArgs e)
+        private void updateLastBar(BarUpdateEventArgs e)
         {
             DataPoint dp = Series[0].Points.Last();
             switch (e.UpdateEnum)
             {
-                case LastbarUpdateEventEnum.NoPriceChange:
+                case BarUpdateStatus.NoPriceChange:
                     return;
-                case LastbarUpdateEventEnum.CloseUpdated:
+                case BarUpdateStatus.CloseUpdated:
                     dp.YValues[3] = e.LastBar.Close;
                     break;
-                case LastbarUpdateEventEnum.Expanded:
-                case LastbarUpdateEventEnum.TypeChanged:
+                case BarUpdateStatus.Expanded:
+                case BarUpdateStatus.TypeChanged:
                     Series[0].Points.Remove(dp);
                     this.addNewDataPoint(Series[0], this.LegAnalyzer.LastLeg, e.LastBar);
                     this.ChartAreas[0].RecalculateAxesScale();

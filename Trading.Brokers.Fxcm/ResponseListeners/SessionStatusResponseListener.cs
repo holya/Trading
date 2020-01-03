@@ -23,7 +23,7 @@ namespace Trading.Brokers.Fxcm
         /// <param name="session"></param>
         public SessionStatusResponseListener(O2GSession session, string sSessionID, string sPin)
         {
-            this.session = session;
+            //this.session = session;
             sessionId = sSessionID;
             pin = sPin;
             Reset();
@@ -69,7 +69,7 @@ namespace Trading.Brokers.Fxcm
                     waitHandle.Set();
                     break;
                 case O2GSessionStatusCode.PriceSessionReconnecting:
-                    waitHandle.Set();
+                    //waitHandle.Set();
                     break;
                 case O2GSessionStatusCode.Unknown:
                     waitHandle.Set();
