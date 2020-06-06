@@ -21,8 +21,8 @@ namespace Trading
     {
         public static void RegisterTypes(IUnityContainer container)
         {
-            //container.RegisterType<IDataProvider, FxcmWrapper>(new ContainerControlledLifetimeManager());
-            container.RegisterType<IDataProvider, ActiveTick>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IDataProvider, FxcmWrapper>(new ContainerControlledLifetimeManager());
+            //container.RegisterType<IDataProvider, ActiveTick>(new ContainerControlledLifetimeManager());
 
             container.RegisterType<IDataBase, XmlDataBase>(new ContainerControlledLifetimeManager());
             container.RegisterType<IDataManager, DataManager.DataManager>(new ContainerControlledLifetimeManager());

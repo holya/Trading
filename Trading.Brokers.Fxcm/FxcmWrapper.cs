@@ -1,6 +1,7 @@
 ﻿using fxcore2;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -37,7 +38,7 @@ namespace Trading.Brokers.Fxcm
 
         public FxcmWrapper()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             session = O2GTransport.createSession();
             sessionStatusResponseListener = new SessionStatusResponseListener(session, "", "");
@@ -60,7 +61,7 @@ namespace Trading.Brokers.Fxcm
 
         private SessionStatusMessage doLogin(string[] loginData)
         {
-            session.subscribeSessionStatus(sessionStatusResponseListener);
+            //session.subscribeSessionStatus(sessionStatusResponseListener);
 
             session.useTableManager(O2GTableManagerMode.Yes, null);
 
@@ -154,27 +155,32 @@ namespace Trading.Brokers.Fxcm
 
         public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
         {
-            Task<IEnumerable<Bar>> task = Task.Factory.StartNew(() =>
-                    getHistoricalData(this.normalizeSymbol(instrument.Name), resolution, startDateTime, endDateTime));
-            return await task;
+            return await Task.Factory.StartNew(() =>
+                     getHistoricalData(this.normalizeSymbol(instrument.Name), resolution, startDateTime, endDateTime));
         }
 
         private IEnumerable<Bar> getHistoricalData(string symbol, Resolution resolution, DateTime startDateTime, DateTime endDateTime)
         {
             GetHistoricalDataResponseListener responseListener = new GetHistoricalDataResponseListener(session);
             session.subscribeResponse(responseListener);
-            List<FxBar> barList;
-            try
+            List<FxBar> barList = new List<FxBar>();
+            for (int i = 0; i < 100; i++)
             {
-                barList = getHistoryPrices(session, symbol, convert_Resolution_To_string(resolution), startDateTime, endDateTime, 1000, responseListener);
-                foreach (var bar in barList)
-                    bar.EndDateTime = Utilities.GetEndDateTime(bar.DateTime, resolution);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+                var bars = getHistoryPrices(session, symbol, resolution, startDateTime, endDateTime, 1000, responseListener);
+                if (bars.Count() == 0)
+                {
+                    session.unsubscribeResponse(responseListener);
+                    return barList;
+                }
+                barList.InsertRange(0, bars);
 
+                if (startDateTime >= normDate(bars.First().DateTime))
+                    break;
+                //Console.WriteLine($"Count: {bars.Count} -- firstDate:{bars.First().DateTime} --- normalized date:{normDate(barList.First().DateTime)}");
+
+                endDateTime = barList.First().DateTime;
+            }
+            //Console.WriteLine($"Last date: {barList.Last().DateTime}");
             if (resolution.TimeFrame == TimeFrame.Quarterly)
             {
                 return normalizeToQuarterlyTimeFrame(barList);
@@ -182,20 +188,41 @@ namespace Trading.Brokers.Fxcm
 
             session.unsubscribeResponse(responseListener);
 
+            DateTime normDate(DateTime d)
+            {
+                switch (resolution.TimeFrame)
+                {
+                    case TimeFrame.Minute:
+                        return d.AddMinutes(-resolution.Size);
+                    case TimeFrame.Hourly:
+                        return d.AddHours(-resolution.Size);
+                    case TimeFrame.Daily:
+                        return d.AddDays(-resolution.Size);
+                    case TimeFrame.Weekly:
+                        return d.AddDays(-(resolution.Size * 7));
+                    case TimeFrame.Monthly:
+                        return d.AddMonths(-resolution.Size);
+                    case TimeFrame.Quarterly:
+                        return d.AddMonths(-(resolution.Size * 3));
+                    case TimeFrame.Yearly:
+                        return d.AddYears(-resolution.Size);
+                    default:
+                        return d;
+                }
+            }
+
             return barList;
         }
 
 
-        private List<FxBar> getHistoryPrices(O2GSession session, string instrument, string timeFrame, DateTime startDateTime, DateTime endDateTime, int maxBars, GetHistoricalDataResponseListener responseListener)
+        private List<FxBar> getHistoryPrices(O2GSession session, string instrument, Resolution resolution, DateTime startDateTime, DateTime endDateTime, int maxBars, GetHistoricalDataResponseListener responseListener)
         {
-            List<FxBar> barList = new List<FxBar>();
-
             O2GRequestFactory factory = session.getRequestFactory();
-
-            O2GTimeframe timeframe = factory.Timeframes[timeFrame];
+            var tf = convert_Resolution_To_string(resolution);
+            O2GTimeframe timeframe = factory.Timeframes[tf];
             if (timeframe == null)
             {
-                throw new Exception(string.Format("Timeframe '{0}' is incorrect!", timeFrame));
+                throw new TimeframeNotFoundException($"Timeframe '{resolution.TimeFrame.ToString()}:{resolution.Size}' is incorrect!");
             }
 
             O2GRequest request = factory.createMarketDataSnapshotRequestInstrument(instrument, timeframe, maxBars);
@@ -211,6 +238,8 @@ namespace Trading.Brokers.Fxcm
             }
 
             O2GResponse response = responseListener.GetResponse();
+
+            List<FxBar> barList = new List<FxBar>();
 
             if (response != null && response.Type == O2GResponseType.MarketDataSnapshot)
             {
@@ -248,11 +277,13 @@ namespace Trading.Brokers.Fxcm
         private void offersTableUpdated(object sender, RowEventArgs e)
         {
             O2GOfferTableRow otr = (O2GOfferTableRow)e.RowData;
+            
             if (otr != null && realTimeInstrumentsList.Count > 0)
             {
-                if(realTimeInstrumentsList.Contains(this.deNormalizeSymbol(otr.Instrument)))
+                var instrument = otr.Instrument.Contains('/') ? this.deNormalizeSymbol(otr.Instrument) : otr.Instrument;
+                if(realTimeInstrumentsList.Contains(instrument))
                     //RealTimeDataUpdated?.Invoke(this, new Tuple<string ,double, double, DateTime, int>(otr.Instrument ,otr.Bid, otr.Ask, otr.Time, otr.Volume));
-                    RealTimeDataUpdated?.Invoke(this, new RealTimeDataUpdatedEventArgs { Data = new Tuple<string, double, double, DateTime, int>(this.deNormalizeSymbol(otr.Instrument), otr.Bid, otr.Ask, otr.Time, otr.Volume) });
+                    RealTimeDataUpdated?.Invoke(this, new RealTimeDataUpdatedEventArgs { Data = new Tuple<string, double, double, DateTime, int>(instrument, otr.Bid, otr.Ask, otr.Time, otr.Volume) });
 
 
             }
@@ -261,7 +292,7 @@ namespace Trading.Brokers.Fxcm
         private string normalizeSymbol(string symbol) => $"{symbol.Substring(0, 3)}/{symbol.Substring(3, 3)}";
         private string deNormalizeSymbol(string symbol) => $"{symbol.Substring(0, 3)}{symbol.Substring(4, 3)}";
 
-
+        
         public void SubscribeToRealTime(string symbol)
         {
             if (!realTimeInstrumentsList.Contains(symbol))
@@ -327,43 +358,25 @@ namespace Trading.Brokers.Fxcm
 
         private string convert_Resolution_To_string(Resolution resolution)
         {
-            var str = "";
             switch (resolution.TimeFrame)
             {
                 case TimeFrame.Yearly:
-                    if (resolution.Size == 1)
-                        str = $"Y{resolution.Size}";
-                    break;
+                    return $"Y{resolution.Size}";
                 case TimeFrame.Quarterly:
-                    if (resolution.Size == 1)
-                        str = $"M{resolution.Size}";
-                    break;
+                    return $"M{resolution.Size}";
                 case TimeFrame.Monthly:
-                    if (resolution.Size == 1)
-                        str = $"M{resolution.Size}";
-                    break;
+                    return $"M{resolution.Size}";
                 case TimeFrame.Weekly:
-                    if (resolution.Size == 1)
-                        str = $"W{resolution.Size}";
-                    break;
+                    return $"W{resolution.Size}";
                 case TimeFrame.Daily:
-                    if (resolution.Size == 1)
-                        str = $"D{resolution.Size}";
-                    break;
+                    return $"D{resolution.Size}";
                 case TimeFrame.Hourly:
-                    if (resolution.Size == 1 || resolution.Size == 2 || resolution.Size == 3 || resolution.Size == 4 
-                        || resolution.Size == 6)
-                        str = $"H{resolution.Size}";
-                    break;
+                    return $"H{resolution.Size}";
                 case TimeFrame.Minute:
-                    if(resolution.Size == 1 || resolution.Size == 5 || resolution.Size == 15 || resolution.Size == 30)
-                        str = $"m{resolution.Size}"; 
-                    break;
+                    return $"m{resolution.Size}"; 
                 default:
-                    break;
+                    return "";
             }
-
-            return str;
         }
 
         public void Dispose() => session.Dispose();

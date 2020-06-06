@@ -29,8 +29,10 @@ namespace Trading.DataManager
             this.dataProvider = dataProvider;
             repository = dataBase;
 
-            dataProvider.SessionStatusChanged += DataProvider_SessionStatusChanged;
-            dataProvider.RealTimeDataUpdated += DataProvider_RealTimeDataUpdated;
+            dataProvider.SessionStatusChanged += (object sender, SessionStatusChangedEventArgs e) =>
+                SessionStatusChanged?.Invoke(sender, e);
+            dataProvider.RealTimeDataUpdated += (object sender, RealTimeDataUpdatedEventArgs e) =>
+                RealTimeDataUpdated?.Invoke(sender, e);
         }
 
         #region IDataProvider implementations
@@ -63,20 +65,14 @@ namespace Trading.DataManager
             dataProvider.UnsubscribeFromRealTime(instrument);
         }
 
-        private void DataProvider_SessionStatusChanged(object sender, SessionStatusChangedEventArgs e)
-        {
-            this.SessionStatusChanged?.Invoke(sender, e);
-        }
 
-        private void DataProvider_RealTimeDataUpdated(object sender, RealTimeDataUpdatedEventArgs e)
-        {
-            RealTimeDataUpdated?.Invoke(sender, e);
-        }
         
         public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
             DateTime beginDate, DateTime endDate)
         {
             var localData = repository.ReadLocalData(instrument, resolution, beginDate, endDate).ToList();
+
+
 
             if (!IsOnline)
                 return localData;

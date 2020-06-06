@@ -154,7 +154,7 @@ namespace Trading.DataProviders.ActiveTick
                         tcs.TrySetResult(minuteList);
                         break;
                     }
-                    var list = Utilities.CreatHourlyBarsFromMinuteBars(minuteList, resolution.Size);
+                    var list = Utilities.CreateHourlyBarsFromMinuteBars(minuteList, resolution.Size);
 
                     tcs.TrySetResult(list);
                     break;

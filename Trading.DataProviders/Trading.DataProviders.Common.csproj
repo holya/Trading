@@ -52,6 +52,7 @@
     <Compile Include="SessionStatusEnum.cs" />
     <Compile Include="SessionStatusException.cs" />
     <Compile Include="SessionStatusMessage.cs" />
+    <Compile Include="TimeframeNotFoundException.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trading.Common\Trading.Common.csproj">

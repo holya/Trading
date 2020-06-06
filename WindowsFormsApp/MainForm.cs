@@ -127,12 +127,12 @@ namespace WindowsFormsApp
         {
             this.button_sessionStatus.Enabled = false;
 
-            //var sessionMessage = await dataManager.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
-            var sessionMessage = await dataManager.Login("holya", "maryam");
+            var sessionMessage = await dataManager.Login("U10D2442130", "7400", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
+            //var sessionMessage = await dataManager.Login("holya", "maryam");
 
             if (sessionMessage.SessionStatus != SessionStatusEnum.Connected)
-                MessageBox.Show(sessionMessage.ToString(), "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            else
+                MessageBox.Show(sessionMessage.Message, "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //else
                 this.button_sessionStatus.Enabled = true;
 
             this.update_sessionStatusButton();
@@ -282,7 +282,7 @@ namespace WindowsFormsApp
                     }
                     else
                     {
-                        var dt = Utilities.NormalizeBarDateTime_FXCM(tuple.Item4, chartForm.Chart.Resolution);
+                        //var dt = Utilities.NormalizeBarDateTime_FXCM(tuple.Item4, chartForm.Chart.Resolution);
 
                         FxBar newBar = new FxBar
                         {
@@ -294,8 +294,8 @@ namespace WindowsFormsApp
                             AskLow = tuple.Item3,
                             Close = tuple.Item2,
                             AskClose = tuple.Item3,
-                            DateTime = dt,
-                            EndDateTime = Utilities.GetEndDateTime(dt, chart.Resolution)
+                            DateTime = tuple.Item4,// dt,
+                            EndDateTime = Utilities.GetEndDateTime(tuple.Item4/*dt*/, chart.Resolution)
                         };
                         chart.LegAnalyzer.AddBar(newBar);
                     }

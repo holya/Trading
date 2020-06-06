@@ -30,9 +30,9 @@ namespace Trading.Brokers.Fxcm
             waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
         }
 
-        public O2GSessionStatusCode SessionStatus { get; private set; }
+        public O2GSessionStatusCode SessionStatus { get; private set; } = O2GSessionStatusCode.Disconnected;
         public bool Connected { get; private set; } = false;
-        public bool Disconnected { get; private set; } = true;
+        //public bool Disconnected { get; private set; } = true;
         public bool Error { get; private set; } = false;
         public string ErrorMessage { get; private set; }
 
@@ -52,6 +52,7 @@ namespace Trading.Brokers.Fxcm
             switch (status)
             {
                 case O2GSessionStatusCode.Disconnected:
+                    this.Connected = false;
                     waitHandle.Set();
                     break;
                 case O2GSessionStatusCode.Connecting:
@@ -59,6 +60,7 @@ namespace Trading.Brokers.Fxcm
                 case O2GSessionStatusCode.TradingSessionRequested:
                     break;
                 case O2GSessionStatusCode.Connected:
+                    this.Connected = true;
                     waitHandle.Set();
                     break;
                 case O2GSessionStatusCode.Reconnecting:
@@ -66,12 +68,14 @@ namespace Trading.Brokers.Fxcm
                 case O2GSessionStatusCode.Disconnecting:
                     break;
                 case O2GSessionStatusCode.SessionLost:
+                    this.Connected = false;
                     waitHandle.Set();
                     break;
                 case O2GSessionStatusCode.PriceSessionReconnecting:
                     //waitHandle.Set();
                     break;
                 case O2GSessionStatusCode.Unknown:
+                    this.Connected = false;
                     waitHandle.Set();
                     break;
             }
@@ -81,6 +85,7 @@ namespace Trading.Brokers.Fxcm
         {
             Error = true;
             ErrorMessage = error;
+            this.Connected = false;
             waitHandle.Set();
         }
 

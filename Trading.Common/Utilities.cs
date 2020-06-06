@@ -97,7 +97,7 @@ namespace Trading.Common
             }
         }
 
-        public static List<Bar> CreatHourlyBarsFromMinuteBars(IEnumerable<Bar> minuteList, int hourlySize)
+        public static List<Bar> CreateHourlyBarsFromMinuteBars(IEnumerable<Bar> minuteList, int hourlySize)
         {
             var list = new List<Bar>();
 

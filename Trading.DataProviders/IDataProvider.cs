@@ -9,7 +9,7 @@ namespace Trading.DataProviders.Common
     {
         Task<SessionStatusMessage> Login(params string [] loginData);
         void Logout();
-        bool IsOnline { get; }
+        bool IsOnline { get; } 
         event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged;
 
         Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution,

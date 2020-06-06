@@ -49,7 +49,7 @@ namespace WindowsFormsApp
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 28);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 30);
             this.splitContainer1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -61,7 +61,7 @@ namespace WindowsFormsApp
             // 
             this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.Control;
             this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel_chartForm);
-            this.splitContainer1.Size = new System.Drawing.Size(960, 476);
+            this.splitContainer1.Size = new System.Drawing.Size(960, 474);
             this.splitContainer1.SplitterDistance = 170;
             this.splitContainer1.SplitterWidth = 7;
             this.splitContainer1.TabIndex = 0;
@@ -79,7 +79,7 @@ namespace WindowsFormsApp
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(170, 476);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(170, 474);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // tableLayoutPanel_chartForm
@@ -95,7 +95,7 @@ namespace WindowsFormsApp
             this.tableLayoutPanel_chartForm.RowCount = 2;
             this.tableLayoutPanel_chartForm.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel_chartForm.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel_chartForm.Size = new System.Drawing.Size(783, 476);
+            this.tableLayoutPanel_chartForm.Size = new System.Drawing.Size(783, 474);
             this.tableLayoutPanel_chartForm.TabIndex = 0;
             // 
             // menuStrip1
@@ -107,7 +107,7 @@ namespace WindowsFormsApp
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(960, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(960, 30);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -116,20 +116,20 @@ namespace WindowsFormsApp
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newChartToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 26);
             this.fileToolStripMenuItem.Text = "&File";
             // 
             // newChartToolStripMenuItem
             // 
             this.newChartToolStripMenuItem.Name = "newChartToolStripMenuItem";
-            this.newChartToolStripMenuItem.Size = new System.Drawing.Size(153, 26);
+            this.newChartToolStripMenuItem.Size = new System.Drawing.Size(161, 26);
             this.newChartToolStripMenuItem.Text = "New &Chart";
             this.newChartToolStripMenuItem.Click += new System.EventHandler(this.newChartToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(73, 24);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(75, 26);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // button_sessionStatus

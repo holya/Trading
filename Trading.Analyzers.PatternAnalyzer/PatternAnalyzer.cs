@@ -21,8 +21,9 @@ namespace Trading.Analyzers.PatternAnalyzer
         protected Reference LastResistance => RefList.Last(r => r.Price >= LastPrice);
 
         #endregion
-        public PatternAnalyzer() { addBar = addFirstBar; }
+        public PatternAnalyzer() => addBar = addFirstBar;
 
+        public void AddBar(Bar newBar) => addBar(newBar);
 
         public void AddBarList(IEnumerable<Bar> barList)
         {
@@ -227,10 +228,6 @@ namespace Trading.Analyzers.PatternAnalyzer
             RefList.Add(new Reference { Price = price, DateTime = dateTime, Owner = owner, Type = type });
         }
 
-        public void AddBar(Bar newBar)
-        {
-            addBar(newBar);
-        }
 
         public void UpdateLastBar(Bar updatedBar)
         {

@@ -13,6 +13,7 @@ using Trading.DataBases.MongoDb;
 using Trading.DataProviders.ActiveTick;
 using Trading.DataBases.XmlDataBase;
 using Trading.DataProviders.Common;
+using System.Diagnostics;
 
 namespace ConsoleApp1
 {
@@ -31,36 +32,56 @@ namespace ConsoleApp1
 
             //var dm = container.Value.Resolve<DataManager>();
 
-            var dm = new ActiveTick();
-            //var dm2 = new FxcmWrapper();
+            //var dm = new ActiveTick();
+            //var r = await dm.Login("holya", "maryam");
+
+            IDataProvider dm2 = new FxcmWrapper();
+            dm2.SessionStatusChanged += Dm_SessionStatusChanged;
+
+            var res = await dm2.Login("U10D2442130", "7400", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
+            if(res.SessionStatus != SessionStatusEnum.Connected)
+            {
+                Console.WriteLine($"Not logged in: {res.SessionStatus}");
+                System.Environment.Exit(0);
+            }
+            //dm2.SubscribeToRealTime("USDCAD");
+            dm2.RealTimeDataUpdated += Dm2_RealTimeDataUpdated;
+            //Console.ReadLine();
 
             //var dm = new DataManager(new ActiveTick(), new XmlDataBase());
 
-            //dm.SessionStatusChanged += Dm_SessionStatusChanged;
-
-            var r = await dm.Login("holya", "maryam");
-
-            //var res = await dm2.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
             //Console.WriteLine(res);
-            //Instrument instrument = new Instrument { Name = "AAPL", Type = InstrumentType.Stock };
+            //Instrument instrument = new Instrument { Name = "ms", Type = InstrumentType.Stock };
             Instrument instrument = new Instrument { Name = "USDCAD", Type = InstrumentType.Forex };
-            var ed = DateTime.Now.AddDays(1);
-            var sd = ed.AddDays(-10);
+            var ed = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
+            var sd = new DateTime(2020, 4, 20, 22, 0, 0, DateTimeKind.Utc); //ed.AddDays(-7);
+            //var ed = new DateTime(2020, 5, 20, 0, 0, 0, DateTimeKind.Utc); //ed.AddDays(-7);
+            //var sd = TimeZoneInfo.ConvertTimeToUtc(new DateTime(2020, 4, 19, 13, 0, 0, DateTimeKind.Local));
+            //var ed = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
 
+            //Console.WriteLine($"first date: {sd}\n last date:{ed}");
             var barList = new List<Bar>();
             var barList2 = new List<Bar>();
             try
             {
-                var bars = await dm.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), sd, ed);
-                barList.AddRange(bars);
+                //var bars = await dm.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), sd, ed);
+                //barList.AddRange(bars);
 
-                //var bars2 = await dm2.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Daily, 1), sd, ed);
-                //barList2.AddRange(bars2);
-
+                var bars2 = await dm2.GetHistoricalDataAsync(instrument, new Resolution(TimeFrame.Hourly, 1), sd, ed);
+                barList2.AddRange(bars2);
+            }
+            catch (AggregateException aex)
+            {
+                Console.WriteLine(aex.Message);
             }
             catch (HistoricalDataDownloadException e)
             {
                 Console.WriteLine(e.Message);
+            }
+            catch (TimeframeNotFoundException e)
+            {
+                Console.WriteLine(e.Message);
+                
             }
             //dm.RealTimeDataUpdated += (object sender, RealTimeDataUpdatedEventArgs e) =>
             //{
@@ -69,33 +90,33 @@ namespace ConsoleApp1
             //    Console.WriteLine($"symbol: {tuple.Item1}\nBid: {tuple.Item2}\nAsk: {tuple.Item3}\nDateTime: {tuple.Item4}\nSize: {tuple.Item5}");
             //};
 
-            Console.WriteLine(barList.Count);
+            //Console.WriteLine(barList.Count);
             Console.WriteLine(barList2.Count);
-            Console.WriteLine(barList.First().DateTime);
-            Console.WriteLine(barList.Last().EndDateTime);
+            //Console.WriteLine(barList.FirstOrDefault().DateTime);
+            //Console.WriteLine(barList.LastOrDefault().EndDateTime);
 
-            Console.WriteLine(barList2.Last().DateTime);
-            Console.WriteLine(barList2.Last().EndDateTime);
+            //Console.WriteLine(barList2.LastOrDefault().DateTime);
+            //Console.WriteLine(barList2.LastOrDefault().EndDateTime);
 
             //dm.SubscribeToRealTime("USDCAD");
             //dm.SubscribeToRealTime("#USD/CAD");
 
-            Console.WriteLine($"Count: {barList.Count}\n");
-            foreach (var bar in barList)
-                Console.WriteLine(bar.ToString());
+            //Console.WriteLine($"Count: {barList.Count}\n");
+            //foreach (var bar in barList)
+            //    Console.WriteLine(bar.ToString());
             Console.WriteLine("__________________________");
             foreach (var bar in barList2)
-                Console.WriteLine(bar.ToString());
-
+            {
+                bar.DateTime = TimeZoneInfo.ConvertTimeFromUtc(bar.DateTime, TimeZoneInfo.Local);
+                //Console.WriteLine(bar.DateTime);
+            }
+            Console.WriteLine($"first date: {barList2.First().DateTime}\n last date: {barList2.Last().Close}");
             //dm.Logout();
             //dm2.Logout();
-            Console.ReadLine();
-            //dm.Dispose();
-
-
+            Console.ReadKey();
 
             Console.WriteLine("done");
-            
+            #region
             //try
             //{
             //    f.Login("U10D2386411", "1786", "http://www.fxcorporate.com/Hosts.jsp", "Demo");
@@ -198,9 +219,13 @@ namespace ConsoleApp1
             //Console.WriteLine(f.GetServerTime());
 
             //f.Logout();
-
+            #endregion
         }
 
+        private static void Dm2_RealTimeDataUpdated(object sender, RealTimeDataUpdatedEventArgs e)
+        {
+            Console.WriteLine(e.Data);
+        }
 
         private static void Dm_SessionStatusChanged(object sender, SessionStatusChangedEventArgs e)
         {

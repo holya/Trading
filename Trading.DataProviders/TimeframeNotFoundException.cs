@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Trading.DataProviders.Common
 {
-    public class RealTimeDataUpdatedEventArgs : EventArgs
+    public class TimeframeNotFoundException : Exception
     {
-        public Tuple<string, double, double, DateTime, int> Data { get; set; }
+        public TimeframeNotFoundException(string message) : base(message)
+        {
+
+        }
     }
 }
