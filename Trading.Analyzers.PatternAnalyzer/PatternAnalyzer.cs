@@ -37,21 +37,18 @@ namespace Trading.Analyzers.PatternAnalyzer
         private void addFirstBar(Bar newBar)
         {
             var bar0 = new Bar(newBar.Open, newBar.Open, newBar.Open, newBar.Open, newBar.Volume, newBar.DateTime, newBar.EndDateTime);
-            var leg0 = new Leg(bar0);
-
             newBar.PreviousBar = bar0;
+
+            var leg0 = new Leg(bar0);
             var leg = new Leg(newBar, leg0);
 
-            //var pattern = new Pattern(leg);
-            //var patternDirection = pattern.Direction = leg.Direction == LegDirection.Up ? 
-            //    PatternDirection.Up : PatternDirection.Down;
-            //pattern.State = PatternState.Continuation1;
-            //PatternList.Add(pattern);
+            var pattern0 = new Pattern(bar0);
+            var pattern = new Pattern(newBar, pattern0);
 
-            if (newBar.Direction < BarDirection.Balance)
-                this.createReferenceForHighOfThisBar(newBar);
-            else
-                this.createReferenceForLowOfThisBar(newBar);
+            //if (newBar.Direction < BarDirection.Balance)
+            //    this.createReferenceForHighOfThisBar(newBar);
+            //else
+            //    this.createReferenceForLowOfThisBar(newBar);
 
             addBar = addBarContinued;
         }
@@ -71,141 +68,6 @@ namespace Trading.Analyzers.PatternAnalyzer
                     this.createReferenceForLowOfThisBar(newBar);
                     return;
                 }
-
-                //switch (LastPattern.State)
-                //{
-                //    case PatternState.Continuation1:
-
-                //        #region Continuation1
-                //        if (newBar.Direction >= BarDirection.Balance)
-                //        {
-                //            if (RefList.Exists(r => r.Price >= LastPrice) && newBar.High > LastResistance.Price)
-                //            {
-                //                var changedPattern = new Pattern(newBar, LastPattern);
-                //                PatternList.Add(changedPattern);
-                //                //changedPattern.State = PatternState.Continuation2;
-                //                return;
-                //            }
-
-                //            LastPattern.LastLeg.AddBar(newBar);
-                //        }
-                //        else
-                //        {
-                //            var changedPattern = new Pattern(newBar, LastPattern);
-                //            PatternList.Add(changedPattern);
-                //            //changedPattern.State = PatternState.PullBack1;
-                //            this.createReferenceForHighOfThisBar(LastBar);
-                //            return;
-                //        }
-                //        break;
-                //    #endregion
-
-                //    case PatternState.Continuation2:
-
-                //        #region Continuation2
-                //        if (newBar.Direction >= BarDirection.Balance)
-                //        {
-                //            LastPattern.LastLeg.AddBar(newBar);
-                //        }
-                //        else
-                //        {
-                //            if (newBar.Low > LastSupport.Price)
-                //            {
-                //                var changedPattern = new Pattern(newBar, LastPattern);
-                //                PatternList.Add(changedPattern);
-                //                //changedPattern.State = PatternState.PullBack1;
-                //                this.createReferenceForHighOfThisBar(LastBar);
-                //                return;
-                //            }
-                //            else
-                //            {
-                //                var changedPattern = new Pattern(newBar, LastPattern);
-                //                PatternList.Add(changedPattern);
-                //                //changedPattern.State = PatternState.PullBack2;
-                //                this.createReferenceForHighOfThisBar(LastBar);
-                //                return;
-                //            }
-                //        }
-
-                //        break;
-                //    #endregion
-
-                //    case PatternState.PullBack1:
-
-                //        #region PullBack1
-                //        if (LastPattern.PreviousPattern.LastLeg.Direction == LegDirection.Up)
-                //        {
-                //            if (newBar.Direction <= BarDirection.Balance)
-                //            {
-                //                LastPattern.LastLeg.AddBar(newBar);
-                //            }
-                //            else
-                //            {
-                //                if (newBar.High < LastResistance.Price)
-                //                {
-                //                    var changedPattern = new Pattern(newBar, LastPattern);
-                //                    PatternList.Add(changedPattern);
-                //                    //changedPattern.State = PatternState.Continuation1;
-                //                    this.createReferenceForLowOfThisBar(LastBar);
-                //                    return;
-                //                }
-                //                else
-                //                {
-                //                    var changedPattern = new Pattern(newBar, LastPattern);
-                //                    PatternList.Add(changedPattern);
-                //                    //changedPattern.State = PatternState.Continuation2;
-                //                    this.createReferenceForLowOfThisBar(LastBar);
-                //                    return;
-                //                }
-                //            }
-                //        }
-                //        break;
-                //    #endregion
-
-                //    case PatternState.PullBack2:
-
-                //        #region PullBack2
-                //        if (newBar.Direction <= BarDirection.Balance)
-                //        {
-                //            if (newBar.Low < LastSupport.Price)
-                //            {
-                //                var newPattern = new Pattern(newBar, LastPattern);
-                //                PatternList.Add(newPattern);
-                //                return;
-                //            }
-                //            else
-                //            {
-                //                LastPattern.LastLeg.AddBar(newBar);
-                //            }
-                //        }
-                //        else
-                //        {
-                //            if (newBar.High < LastResistance.Price)
-                //            {
-                //                var changedPattern = new Pattern(newBar, LastPattern);
-                //                PatternList.Add(changedPattern);
-                //                //changedPattern.State = PatternState.Continuation1;
-                //                this.createReferenceForLowOfThisBar(LastBar);
-                //                return;
-                //            }
-                //            else
-                //            {
-                //                var changedPattern = new Pattern(newBar, LastPattern);
-                //                PatternList.Add(changedPattern);
-                //                //changedPattern.State = PatternState.Continuation2;
-                //                this.createReferenceForLowOfThisBar(LastBar);
-                //                return;
-                //            }
-                //        }
-
-                //        break;
-                //    #endregion
-
-                //    case PatternState.HeadAndShoulder:
-                //        break;
-                //    default:
-                //        break;
-                //}
 
             }
             else
