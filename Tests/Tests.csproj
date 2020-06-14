@@ -59,6 +59,7 @@
     <Compile Include="Trading.Common_Tests\Trading.Common.FxBar_Tests\FxBar_Tests.cs" />
     <Compile Include="Trading.Common_Tests\Trading.Common.Leg_Tests\Leg_Tests.cs" />
     <Compile Include="Trading.Common_Tests\Trading.Common.Pattern_Tests\Pattern_Tests.cs" />
+    <Compile Include="Trading.Common_Tests\Trading.Common.Reference_Tests\Reference_Tests.cs" />
     <Compile Include="Trading.DataBases_Tests\TextDataBase_Tests.cs" />
     <Compile Include="Trading.DataBases_Tests\XmlDataBase_Tests.cs" />
     <Compile Include="Trading.DataManager_Tests\DataManager_Tests.cs" />
