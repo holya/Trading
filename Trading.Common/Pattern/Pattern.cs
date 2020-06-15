@@ -27,27 +27,33 @@ namespace Trading.Common
         public Pattern(Bar bar) : this() { LegList.Add(new Leg(bar)); } //????
         public Pattern(Bar bar, Pattern previousPattern) : this(bar) { PreviousPattern = previousPattern; }
 
-        public PatternDirection Direction // ????
+        public PatternDirection Direction
         {
-            get
-            {
-                if (this.FirstLeg.Direction == LegDirection.Up)
-                    return PatternDirection.Up;
-                return PatternDirection.Down;
-            }
+            get => this.FirstLeg.Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
         }
+        //{
+            //get
+            //{
+            //    if (this.FirstLeg.Direction == LegDirection.Up)
+            //        return PatternDirection.Up;
+            //    return PatternDirection.Down;
+            //}
+        //}
 
         public PatternState State
         {
             get
             {
-                //if(this.Direction == PatternDirection.Up)
-                //{
-                //    if(LegList.Count < 3)
-                //    {
+                if (this.Direction == PatternDirection.Up)
+                {
+                    if(LastLeg.Direction == LegDirection.Up)
+                    {
+                        //if(LastLeg == LegList.First())
+                        //    return PatternState.Continuation2
+                    }
 
-                //    }
-                //}
+
+                }
                 return PatternState.Continuation1;
             }
         }
