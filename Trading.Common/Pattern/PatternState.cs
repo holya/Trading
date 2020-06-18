@@ -12,6 +12,6 @@ namespace Trading.Common
         Continuation2,
         PullBack1,
         PullBack2,
-        HeadAndShoulder
+        Sideways
     }
 }

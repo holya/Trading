@@ -69,7 +69,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                         break;
                     case PatternState.PullBack2:
                         break;
-                    case PatternState.HeadAndShoulder:
+                    case PatternState.Sideways:
                         break;
                     default:
                         break;
@@ -87,7 +87,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                         break;
                     case PatternState.PullBack2:
                         break;
-                    case PatternState.HeadAndShoulder:
+                    case PatternState.Sideways:
                         break;
                     default:
                         break;

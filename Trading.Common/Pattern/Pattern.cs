@@ -46,9 +46,9 @@ namespace Trading.Common
             {
                 if (this.Direction == PatternDirection.Up)
                 {
-                    if(LastLeg.Direction == LegDirection.Up)
+                    if (LastLeg.Direction == LegDirection.Up)
                     {
-                        //if(LastLeg == LegList.First())
+                        //if (LegList.Count == 1 || )
                         //    return PatternState.Continuation2
                     }
 
