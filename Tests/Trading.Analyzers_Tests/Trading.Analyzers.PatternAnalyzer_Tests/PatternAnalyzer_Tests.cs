@@ -14,13 +14,13 @@ namespace Trading.Analyzers_Tests
     public class PatternAnalyzer_Tests
     {
         [TestMethod]
-        public void Construct_First_Pattern()
+        public void Add_New_UpBar_to_DownPattern_With_Reference_Violation()
         {
-            var bar = new Bar(10, 20, 5, 15, 0, DateTime.Now, DateTime.Now);
+            Bar bar = new Bar(5, 15, -5, 0, 0, DateTime.Now, DateTime.Now);
+            Pattern pt = new Pattern(bar);
+            Bar bar2 = new Bar(0, 10, -10, -5, 0, DateTime.Now, DateTime.Now);
+            pt.AddBar(bar2);
 
-            var p = new Pattern(bar);
-
-            Assert.AreEqual(PatternDirection.Up, p.Direction);
         }
     }
 }

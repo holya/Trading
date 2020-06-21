@@ -57,42 +57,19 @@ namespace Trading.Analyzers.PatternAnalyzer
         {
             newBar.PreviousBar = LastBar;
 
-            if (this.LastPattern.Direction == PatternDirection.Up)
+            if(!LastPattern.AddBar(newBar))
             {
-                switch (this.LastPattern.State)
-                {
-                    case PatternState.Continuation1:
-                        break;
-                    case PatternState.Continuation2:
-                        break;
-                    case PatternState.PullBack1:
-                        break;
-                    case PatternState.PullBack2:
-                        break;
-                    case PatternState.HeadAndShoulder:
-                        break;
-                    default:
-                        break;
-                }
+                if (newBar.Direction == BarDirection.Balance)
+                    this.LastPattern.LastLeg.AddBar(newBar);
+                else if (newBar.Direction > BarDirection.Balance)
+                    createReferenceForHighOfThisBar(newBar);
+                else
+                    createReferenceForLowOfThisBar(newBar);
+
+                Pattern newPattern = new Pattern(newBar);
+                PatternList.Add(newPattern);
             }
-            else
-            {
-                switch (this.LastPattern.State)
-                {
-                    case PatternState.Continuation1:
-                        break;
-                    case PatternState.Continuation2:
-                        break;
-                    case PatternState.PullBack1:
-                        break;
-                    case PatternState.PullBack2:
-                        break;
-                    case PatternState.HeadAndShoulder:
-                        break;
-                    default:
-                        break;
-                }
-            }
+
         }
 
         private void createReferenceForLowOfThisBar(Bar bar)

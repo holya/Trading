@@ -13,6 +13,16 @@ namespace Trading.Common_Tests
     public class Pattern_Tests
     {
         [TestMethod]
+        public void Construct_First_Pattern()
+        {
+            var bar = new Bar(10, 20, 5, 15, 0, DateTime.Now, DateTime.Now);
+
+            var p = new Pattern(bar);
+
+            Assert.AreEqual(PatternDirection.Up, p.Direction);
+        }
+
+        [TestMethod]
         public void With_Three_UpBars_PatternDirection_Should_be_Up()
         {
             Bar bar1 = Helper.GetUpBar();
