@@ -13,14 +13,6 @@ namespace Trading.Common
         public short HitCount;
         public ReferenceType Type;
         public Bar Owner;
-        public bool isRefViolated(Bar newBar)
-        {
-            if (this.Type == ReferenceType.Support && newBar.Low < this.Price)
-                return true;
-            if (this.Type == ReferenceType.Resistance && newBar.High > this.Price)
-                return true;
-            return false;
-        }
     }
 
     //public class Reference

@@ -18,7 +18,6 @@ namespace Trading.Common
         public double LastPrice => LastLeg.LastBar.Close;
         protected Reference LastSupport => RefList.Last(r => r.Price <= LastPrice);
         protected Reference LastResistance => RefList.Last(r => r.Price >= LastPrice);
-        protected Reference reference;
         public Pattern PreviousPattern { get; }
 
         private Pattern()
@@ -46,24 +45,14 @@ namespace Trading.Common
             get
             {
                 if (this.Direction == PatternDirection.Up)
-                {
-                    if (!reference.isRefViolated(LastLeg.LastBar))
-                        return PatternState.Continuation1;
-                    else
-                        return PatternState.Continuation2;
-                }
-                else
-                    if (!reference.isRefViolated(LastLeg.LastBar))
-                    return PatternState.PullBack1;
-                else
-                    return PatternState.PullBack2;
-
+                    return PatternState.Continuation1;
+                return PatternState.Continuation2;
             }
         }
 
         public bool AddBar(Bar newBar)
         {
-            if (this.Direction == PatternDirection.Up || this.Direction == PatternDirection.Down)
+            if (this.Direction == PatternDirection.Up)
             {
                 if (!reference.isRefViolated(newBar))
                 {
