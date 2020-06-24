@@ -19,6 +19,7 @@ namespace Trading.Common
         protected Reference LastSupport => RefList.Last(r => r.Price <= LastPrice);
         protected Reference LastResistance => RefList.Last(r => r.Price >= LastPrice);
         public Pattern PreviousPattern { get; }
+        public PatternState State { get; set; }
 
         private Pattern()
         {
@@ -31,37 +32,5 @@ namespace Trading.Common
         {
             get => this.FirstLeg.Direction == LegDirection.Up ? PatternDirection.Up : PatternDirection.Down;
         }
-        //{
-            //get
-            //{
-            //    if (this.FirstLeg.Direction == LegDirection.Up)
-            //        return PatternDirection.Up;
-            //    return PatternDirection.Down;
-            //}
-        //}
-
-        public PatternState State
-        {
-            get
-            {
-                if (this.Direction == PatternDirection.Up)
-                    return PatternState.Continuation1;
-                return PatternState.Continuation2;
-            }
-        }
-
-        public bool AddBar(Bar newBar)
-        {
-            if (this.Direction == PatternDirection.Up)
-            {
-                if (!reference.isRefViolated(newBar))
-                {
-                    this.LastLeg.AddBar(newBar);
-                    return true;
-                }
-            }
-            return false;
-        }
-
     }
 }

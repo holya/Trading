@@ -57,19 +57,101 @@ namespace Trading.Analyzers.PatternAnalyzer
         {
             newBar.PreviousBar = LastBar;
 
-            if(!LastPattern.AddBar(newBar))
+            if (LastPattern.Direction == PatternDirection.Up)
             {
-                if (newBar.Direction == BarDirection.Balance)
-                    this.LastPattern.LastLeg.AddBar(newBar);
-                else if (newBar.Direction > BarDirection.Balance)
-                    createReferenceForHighOfThisBar(newBar);
-                else
-                    createReferenceForLowOfThisBar(newBar);
+                switch (LastPattern.State)
+                {
+                    case PatternState.Continuation1:
+                    case PatternState.Continuation2:
+                        switch (newBar.Direction)
+                        {
+                            case BarDirection.Down:
+                            case BarDirection.GapDown:
+                            case BarDirection.OutsideDown:
+                                if (newBar.Low < LastSupport.Price)
+                                {
+                                    //is reference voided?
+                                    Pattern newPattern = new Pattern(newBar); //new Pattern(newBar, this.LastPattern)
+                                    PatternList.Add(newPattern);
+                                }
+                                LastPattern.LastLeg.AddBar(newBar);
+                                LastPattern.State = PatternState.PullBack1;
+                                createReferenceForHighOfThisBar(LastBar);
+                                break;
 
-                Pattern newPattern = new Pattern(newBar);
-                PatternList.Add(newPattern);
+                            case BarDirection.Balance:
+                                LastPattern.LastLeg.AddBar(newBar);
+                                break;
+
+                            case BarDirection.Up:
+                            case BarDirection.GapUp:
+                                LastPattern.LastLeg.AddBar(newBar);
+                                break;
+                            case BarDirection.OutsideUp:
+                                if (newBar.Low < LastSupport.Price)
+                                {
+                                    Pattern newPattern = new Pattern(newBar);
+                                    PatternList.Add(newPattern);
+                                    newPattern.State = PatternState.Continuation1;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+
+                    case PatternState.PullBack1:
+                    case PatternState.PullBack2:
+                        switch (newBar.Direction)
+                        {
+                            case BarDirection.Down:
+                            case BarDirection.GapDown:
+
+                                break;
+                            case BarDirection.OutsideDown:
+                                break;
+                            case BarDirection.Balance:
+                                break;
+                            case BarDirection.Up:
+                                break;
+                            case BarDirection.GapUp:
+                                break;
+                            case BarDirection.OutsideUp:
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+
+                    case PatternState.SideWays:
+                        switch (newBar.Direction)
+                        {
+                            case BarDirection.Down:
+                                break;
+                            case BarDirection.GapDown:
+                                break;
+                            case BarDirection.OutsideDown:
+                                break;
+                            case BarDirection.Balance:
+                                break;
+                            case BarDirection.Up:
+                                break;
+                            case BarDirection.GapUp:
+                                break;
+                            case BarDirection.OutsideUp:
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
+            else
+            {
 
+            }
         }
 
         private void createReferenceForLowOfThisBar(Bar bar)
