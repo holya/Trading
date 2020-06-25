@@ -106,17 +106,50 @@ namespace Trading.Analyzers.PatternAnalyzer
                         {
                             case BarDirection.Down:
                             case BarDirection.GapDown:
+                                if (newBar.Low < LastSupport.Price)
+                                {
+                                    Pattern newPattern = new Pattern(newBar);
+                                    PatternList.Add(newPattern);
+                                }
+                                LastPattern.LastLeg.AddBar(newBar);
+                                break;
 
-                                break;
                             case BarDirection.OutsideDown:
+                                if (newBar.Low < LastSupport.Price)
+                                {
+                                    Pattern newPattern = new Pattern(newBar);
+                                    PatternList.Add(newPattern);
+                                }
+
+                                //if (newBar.High > LastResistance.Price)
+                                //{
+                                //    Pattern newPattern = new Pattern(newBar); //Up Pattern after another Up pattern
+                                //    PatternList.Add(newPattern);
+                                //}
+                                LastPattern.LastLeg.AddBar(newBar);
                                 break;
+
                             case BarDirection.Balance:
+                                LastPattern.LastLeg.AddBar(newBar);
                                 break;
+
                             case BarDirection.Up:
-                                break;
                             case BarDirection.GapUp:
+                                LastPattern.LastLeg.AddBar(newBar);
+                                createReferenceForLowOfThisBar(LastBar);
+                                LastPattern.State = PatternState.Continuation1;
+                                if (newBar.High > LastResistance.Price)
+                                    LastPattern.State = PatternState.Continuation2;
                                 break;
+
                             case BarDirection.OutsideUp:
+                                if (newBar.Low < LastSupport.Price)
+                                {
+                                    Pattern newPattern = new Pattern(newBar);
+                                    PatternList.Add(newPattern);
+                                }
+                                LastPattern.LastLeg.AddBar(newBar);
+                                createReferenceForLowOfThisBar(newBar);
                                 break;
                             default:
                                 break;
