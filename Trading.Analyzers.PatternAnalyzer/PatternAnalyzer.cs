@@ -61,13 +61,11 @@ namespace Trading.Analyzers.PatternAnalyzer
             {
                 switch (LastPattern.State)
                 {
-                    case PatternState.Continuation1:
-                    case PatternState.Continuation2:
+                    case PatternState.Continuation:
                         switch (newBar.Direction)
                         {
                             case BarDirection.Down:
                             case BarDirection.GapDown:
-                            case BarDirection.OutsideDown:
                                 if (newBar.Low < LastSupport.Price)
                                 {
                                     //is reference voided?
@@ -75,8 +73,21 @@ namespace Trading.Analyzers.PatternAnalyzer
                                     PatternList.Add(newPattern);
                                 }
                                 LastPattern.LastLeg.AddBar(newBar);
-                                LastPattern.State = PatternState.PullBack1;
+                                LastPattern.State = PatternState.PullBack;
                                 createReferenceForHighOfThisBar(LastBar);
+                                break;
+
+                            case BarDirection.OutsideDown:
+                                if (newBar.Low < LastSupport.Price)
+                                {
+                                    Pattern newPattern = new Pattern(newBar);
+                                    PatternList.Add(newPattern);
+                                }
+                                LastPattern.LastLeg.AddBar(newBar);
+                                LastPattern.State = PatternState.PullBack;
+                                createReferenceForHighOfThisBar(newBar);
+                                if (newBar.High > LastResistance.Price)
+                                    createReferenceForHighOfThisBar(newBar); // major or stronger reference
                                 break;
 
                             case BarDirection.Balance:
@@ -92,7 +103,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                                 {
                                     Pattern newPattern = new Pattern(newBar);
                                     PatternList.Add(newPattern);
-                                    newPattern.State = PatternState.Continuation1;
+                                    newPattern.State = PatternState.Continuation;
                                 }
                                 break;
                             default:
@@ -100,8 +111,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                         }
                         break;
 
-                    case PatternState.PullBack1:
-                    case PatternState.PullBack2:
+                    case PatternState.PullBack:
                         switch (newBar.Direction)
                         {
                             case BarDirection.Down:
@@ -121,11 +131,8 @@ namespace Trading.Analyzers.PatternAnalyzer
                                     PatternList.Add(newPattern);
                                 }
 
-                                //if (newBar.High > LastResistance.Price)
-                                //{
-                                //    Pattern newPattern = new Pattern(newBar); //Up Pattern after another Up pattern
-                                //    PatternList.Add(newPattern);
-                                //}
+                                if (newBar.High > LastResistance.Price)
+                                    createReferenceForHighOfThisBar(newBar);
                                 LastPattern.LastLeg.AddBar(newBar);
                                 break;
 
@@ -137,9 +144,7 @@ namespace Trading.Analyzers.PatternAnalyzer
                             case BarDirection.GapUp:
                                 LastPattern.LastLeg.AddBar(newBar);
                                 createReferenceForLowOfThisBar(LastBar);
-                                LastPattern.State = PatternState.Continuation1;
-                                if (newBar.High > LastResistance.Price)
-                                    LastPattern.State = PatternState.Continuation2;
+                                LastPattern.State = PatternState.Continuation;
                                 break;
 
                             case BarDirection.OutsideUp:
@@ -148,6 +153,8 @@ namespace Trading.Analyzers.PatternAnalyzer
                                     Pattern newPattern = new Pattern(newBar);
                                     PatternList.Add(newPattern);
                                 }
+                                if (newBar.High > LastResistance.Price)
+                                    createReferenceForHighOfThisBar(newBar);
                                 LastPattern.LastLeg.AddBar(newBar);
                                 createReferenceForLowOfThisBar(newBar);
                                 break;

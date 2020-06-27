@@ -8,10 +8,8 @@ namespace Trading.Common
 {
     public enum PatternState
     {
-        Continuation1,
-        Continuation2,
-        PullBack1,
-        PullBack2,
+        Continuation,
+        PullBack,
         SideWays
     }
 }
