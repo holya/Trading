@@ -52,13 +52,10 @@
   <ItemGroup>
     <Compile Include="Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Trading.Analyzers_Tests\Trading.Analyzers.Common_Tests\Utilities_Tests.cs" />
+    <Compile Include="Trading.Common_Tests\Trading.Common_Tests\Utilities_Tests.cs" />
     <Compile Include="Trading.Analyzers_Tests\Trading.Analyzers.LegAnalyzers_Tests\LegAnalyzer_Tests.cs" />
-    <Compile Include="Trading.Analyzers_Tests\Trading.Analyzers.PatternAnalyzer_Tests\PatternAnalyzer_Tests.cs" />
     <Compile Include="Trading.Common_Tests\Trading.Common.Bar_Tests\Bar_Tests.cs" />
-    <Compile Include="Trading.Common_Tests\Trading.Common.FxBar_Tests\FxBar_Tests.cs" />
     <Compile Include="Trading.Common_Tests\Trading.Common.Leg_Tests\Leg_Tests.cs" />
-    <Compile Include="Trading.Common_Tests\Trading.Common.Pattern_Tests\Pattern_Tests.cs" />
     <Compile Include="Trading.Common_Tests\Trading.Common.Reference_Tests\Reference_Tests.cs" />
     <Compile Include="Trading.DataBases_Tests\TextDataBase_Tests.cs" />
     <Compile Include="Trading.DataBases_Tests\XmlDataBase_Tests.cs" />
@@ -66,10 +63,6 @@
     <Compile Include="Trading.DataManager_Tests\InstrumentsManager_Tests\InstrumentsManager_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TextFileDataBase\Trading.DataBases.TextFileDataBase.csproj">
-      <Project>{a555290a-9076-4a96-9162-083f56c59548}</Project>
-      <Name>Trading.DataBases.TextFileDataBase</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Trading.Analyzers.Common\Trading.Analyzers.Common.csproj">
       <Project>{bb95d2e4-9158-43f9-8e25-19483333175c}</Project>
       <Name>Trading.Analyzers.Common</Name>
@@ -77,10 +70,6 @@
     <ProjectReference Include="..\Trading.Analyzers.LegAnalyzer\Trading.Analyzers.LegAnalyzer.csproj">
       <Project>{28108a74-5d38-4c8d-8389-4c0561c7fd93}</Project>
       <Name>Trading.Analyzers.LegAnalyzer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trading.Analyzers.PatternAnalyzer\Trading.Analyzers.PatternAnalyzer.csproj">
-      <Project>{4db58e7c-0b17-49cc-aba8-763f25428817}</Project>
-      <Name>Trading.Analyzers.PatternAnalyzer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trading.Common\Trading.Common.csproj">
       <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>

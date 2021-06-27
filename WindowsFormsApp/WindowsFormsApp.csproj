@@ -56,7 +56,26 @@
     </Reference>
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Transactions" />
-    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Web.DataVisualization, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Chart.Controls.4.7.2046\lib\net35\System.Web.DataVisualization.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.DataVisualization.Design, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Chart.Controls.4.7.2046\lib\net35\System.Web.DataVisualization.Design.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms.DataVisualization, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Chart.Controls.4.7.2046\lib\net35\System.Windows.Forms.DataVisualization.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms.DataVisualization.Design, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Chart.Controls.4.7.2046\lib\net35\System.Windows.Forms.DataVisualization.Design.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -175,10 +194,6 @@
     <Content Include="Symbols.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TextFileDataBase\Trading.DataBases.TextFileDataBase.csproj">
-      <Project>{a555290a-9076-4a96-9162-083f56c59548}</Project>
-      <Name>Trading.DataBases.TextFileDataBase</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Trading.Analyzers.Common\Trading.Analyzers.Common.csproj">
       <Project>{bb95d2e4-9158-43f9-8e25-19483333175c}</Project>
       <Name>Trading.Analyzers.Common</Name>
@@ -186,10 +201,6 @@
     <ProjectReference Include="..\Trading.Analyzers.LegAnalyzer\Trading.Analyzers.LegAnalyzer.csproj">
       <Project>{28108a74-5d38-4c8d-8389-4c0561c7fd93}</Project>
       <Name>Trading.Analyzers.LegAnalyzer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trading.Analyzers.PatternAnalyzer\Trading.Analyzers.PatternAnalyzer.csproj">
-      <Project>{4db58e7c-0b17-49cc-aba8-763f25428817}</Project>
-      <Name>Trading.Analyzers.PatternAnalyzer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trading.Brokers.Fxcm\Trading.Brokers.Fxcm.csproj">
       <Project>{38995aff-7180-4f8c-a902-a68d268138bf}</Project>
@@ -199,9 +210,9 @@
       <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
       <Name>Trading.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Interfaces.csproj">
+    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Common.csproj">
       <Project>{35CEF0FC-636C-4C15-B07C-99C6C5B93439}</Project>
-      <Name>Trading.DataBases.Interfaces</Name>
+      <Name>Trading.DataBases.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trading.DataManager.Common\Trading.DataManager.Common.csproj">
       <Project>{2E901633-5C28-4CCC-91A8-8E30D2B512C5}</Project>

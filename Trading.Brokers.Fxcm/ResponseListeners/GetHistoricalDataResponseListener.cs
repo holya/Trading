@@ -10,10 +10,10 @@ namespace Trading.Brokers.Fxcm
 {
     class GetHistoricalDataResponseListener : IO2GResponseListener, IDisposable
     {
-        private O2GSession session;
+        private readonly O2GSession session;
         private string requestId;
         private O2GResponse response;
-        private EventWaitHandle eventWaitHandle;
+        private readonly EventWaitHandle eventWaitHandle;
 
         public string Error { get; private set; }
 

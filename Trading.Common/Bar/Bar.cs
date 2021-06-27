@@ -16,7 +16,6 @@ namespace Trading.Common
         public double Close { get; set; }
         public double Volume { get; set; }
         public DateTime DateTime { get; set; }
-        public DateTime EndDateTime { get; set; }
         public DateTime PreviousBarDateTime { get { return PreviousBar.DateTime; } }
         public Bar PreviousBar { get; set; }
 
@@ -24,7 +23,7 @@ namespace Trading.Common
 
         public Bar() { }
 
-        private Bar(double open, double high, double low, double close, double volume, DateTime dateTime, DateTime endDateTime) : this()
+        private Bar(double open, double high, double low, double close, double volume, DateTime dateTime) : this()
         {
             this.Open = open;
             this.High = high;
@@ -32,7 +31,6 @@ namespace Trading.Common
             this.Close = close;
             this.Volume = volume;
             this.DateTime = dateTime;
-            this.EndDateTime = endDateTime;
         }
 
         /// <summary>
@@ -45,19 +43,26 @@ namespace Trading.Common
         /// <param name="volume"></param>
         /// <param name="dateTime"></param>
         /// <param name="previousBar">If null, open is used to create a bar as open, high, low and close.</param>
-        public Bar(double open, double high, double low, double close, double volume, DateTime dateTime, DateTime endDateTime, Bar previousBar = null)
-            : this(open, high, low, close, volume, dateTime, endDateTime) // this is the same constructor as above!
+        public Bar(double open, double high, double low, double close, double volume, DateTime dateTime, Bar previousBar = null)
+            : this(open, high, low, close, volume, dateTime) // this is the same constructor as above!
         {
             if(previousBar != null)
                 PreviousBar = previousBar;
             else
-                this.PreviousBar = new Bar(open, open, open, open, 0, dateTime, endDateTime);
+                this.PreviousBar = new Bar(open, open, open, open, 0, dateTime);
         }
 
         public BarDirection Direction
         {
             get
             {
+                if(this.PreviousBar == null)
+                {
+                    if (this.Close > this.Open) return BarDirection.Up;
+                    if (this.Close < this.Open) return BarDirection.Down;
+                    return BarDirection.Balance;
+                }
+
                 if(Low >= PreviousBar.Low && High <= PreviousBar.High)
                     return BarDirection.Balance;
 
@@ -98,17 +103,16 @@ namespace Trading.Common
             Close = bar.Close;
             Volume += bar.Volume;
             DateTime = bar.DateTime;
-            EndDateTime = bar.EndDateTime;
         }
 
         public virtual Bar Factory(IEnumerable<Bar> barList)
         {
-            return new Bar { Open = barList.First().Open, High = barList.Max(p => p.High), Low = barList.Min(p => p.Low), Close = barList.Last().Close, Volume = barList.Sum(p => p.Volume), DateTime = barList.First().DateTime, EndDateTime = barList.Last().EndDateTime };
+            return new Bar { Open = barList.First().Open, High = barList.Max(p => p.High), Low = barList.Min(p => p.Low), Close = barList.Last().Close, Volume = barList.Sum(p => p.Volume), DateTime = barList.First().DateTime};
         }
 
         public override string ToString()
         {
-            return $"{Open},{High},{Low},{Close},{Volume},{DateTime},{EndDateTime}";
+            return $"{Open},{High},{Low},{Close},{Volume},{DateTime}";
         }
 
         public virtual void Copy(Bar bar)
@@ -119,7 +123,6 @@ namespace Trading.Common
             Close = bar.Close;
             Volume = bar.Volume;
             DateTime = bar.DateTime;
-            EndDateTime = bar.EndDateTime;
         }
     }
 }

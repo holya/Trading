@@ -13,7 +13,7 @@ using Trading.Brokers.Fxcm;
 using Trading.Common;
 using WindowsFormsApp.Custom_Views;
 using Trading.DataManager;
-using Trading.DataBases.TextFileDataBase;
+//using Trading.DataBases.TextFileDataBase;
 using Trading.DataProviders.Common;
 using Unity;
 using Trading;
@@ -217,7 +217,7 @@ namespace WindowsFormsApp
                 return;
             if (selectedSymbolLabel != null)
             {
-                dataManager.UnsubscribeFromRealTime(selectedSymbolLabel.Text);
+                dataManager.UnsubscribeRealTime(new Instrument { Name = selectedSymbolLabel.Text, Type = InstrumentType.Forex });
                 selectedSymbolLabel.BackColor = normalSymbolLabelColor;
             }
 
@@ -236,7 +236,7 @@ namespace WindowsFormsApp
                 c.Chart.LegAnalyzer.AddBarList(barList);
                 c.Chart.DataPopulated = true;
 
-                dataManager.SubscribeToRealTime(instrument.Name);
+                dataManager.SubscribeRealTime(instrument);
             }
         }
 

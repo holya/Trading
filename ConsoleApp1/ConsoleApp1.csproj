@@ -87,6 +87,26 @@
     </Reference>
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.DataVisualization, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Chart.Controls.4.7.2046\lib\net35\System.Web.DataVisualization.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.DataVisualization.Design, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Chart.Controls.4.7.2046\lib\net35\System.Web.DataVisualization.Design.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms.DataVisualization, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Chart.Controls.4.7.2046\lib\net35\System.Windows.Forms.DataVisualization.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms.DataVisualization.Design, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Chart.Controls.4.7.2046\lib\net35\System.Windows.Forms.DataVisualization.Design.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -125,25 +145,21 @@
       <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
       <Name>Trading.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Interfaces.csproj">
+    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Common.csproj">
       <Project>{35CEF0FC-636C-4C15-B07C-99C6C5B93439}</Project>
-      <Name>Trading.DataBases.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trading.DataBases.MongoDb\Trading.DataBases.MongoDb.csproj">
-      <Project>{f8ea47f5-da2c-4405-afc5-589adc4c3292}</Project>
-      <Name>Trading.DataBases.MongoDb</Name>
+      <Name>Trading.DataBases.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trading.DataBases.XmlDataBase\Trading.DataBases.XmlDataBase.csproj">
       <Project>{23781aa0-1b88-414a-8d50-edb0bf4d5aac}</Project>
       <Name>Trading.DataBases.XmlDataBase</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Trading.DataManager.Common\Trading.DataManager.Common.csproj">
+      <Project>{2e901633-5c28-4ccc-91a8-8e30d2b512c5}</Project>
+      <Name>Trading.DataManager.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Trading.DataManager\Trading.DataManager.csproj">
       <Project>{e95f8145-b29c-4faf-85af-495c5420c889}</Project>
       <Name>Trading.DataManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trading.DataProviders\Trading.DataProviders.ActiveTick\Trading.DataProviders.ActiveTick.csproj">
-      <Project>{7F0FBFF6-CC4E-4A0B-BC62-9CCC71EC3E18}</Project>
-      <Name>Trading.DataProviders.ActiveTick</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trading.DataProviders\Trading.DataProviders.Common.csproj">
       <Project>{F56906E6-E201-4C15-BFB1-980D99BB3884}</Project>

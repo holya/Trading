@@ -18,19 +18,12 @@ namespace Trading.Brokers.Fxcm
         private List<string> realTimeInstrumentsList = new List<string>();
 
         public event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged = delegate { };
-        //public bool IsOnline { get; private set; } = false;
-        public bool IsOnline
-        {
-            get
-            {
-                return session.getSessionStatus() == O2GSessionStatusCode.Connected ? true : false;
-            }
-        }
+        public bool IsOnline => session.getSessionStatus() == O2GSessionStatusCode.Connected ? true : false;
 
 
         public event EventHandler<RealTimeDataUpdatedEventArgs> RealTimeDataUpdated = delegate { };
 
-        private O2GSession session;
+        private readonly O2GSession session;
         private SessionStatusResponseListener sessionStatusResponseListener;
 
         private O2GTableManager tableMgr = null;
@@ -47,7 +40,7 @@ namespace Trading.Brokers.Fxcm
 
         }
 
-        public DateTime GetServerTime() => session.getServerTime();
+        //public DateTime GetServerTime() => session.getServerTime();
 
         #region Login / Logout   -----------------------------------------------------------------------------
 
@@ -83,11 +76,11 @@ namespace Trading.Brokers.Fxcm
             O2GTableManagerStatus managerStatus = tableMgr.getStatus();
 
             int i = 0;
-            while ((managerStatus == O2GTableManagerStatus.TablesLoading))
+            while (managerStatus == O2GTableManagerStatus.TablesLoading)
             {
                 Thread.Sleep(200);
                 managerStatus = tableMgr.getStatus();
-                if (i > 9)
+                if (i++ > 9)
                     break;
             }
             if (managerStatus == O2GTableManagerStatus.TablesLoadFailed)
@@ -164,52 +157,28 @@ namespace Trading.Brokers.Fxcm
             GetHistoricalDataResponseListener responseListener = new GetHistoricalDataResponseListener(session);
             session.subscribeResponse(responseListener);
             List<FxBar> barList = new List<FxBar>();
+
             for (int i = 0; i < 100; i++)
             {
                 var bars = getHistoryPrices(session, symbol, resolution, startDateTime, endDateTime, 1000, responseListener);
-                if (bars.Count() == 0)
-                {
-                    session.unsubscribeResponse(responseListener);
-                    return barList;
-                }
-                barList.InsertRange(0, bars);
 
-                if (startDateTime >= normDate(bars.First().DateTime))
+                if (barList.Count() > 0 && bars.Count() > 0 && bars.Last().DateTime == barList.First().DateTime)
+                    bars.RemoveAt(bars.Count() - 1);
+
+                if (bars.Count() == 0)
                     break;
-                //Console.WriteLine($"Count: {bars.Count} -- firstDate:{bars.First().DateTime} --- normalized date:{normDate(barList.First().DateTime)}");
+
+                barList.InsertRange(0, bars);
 
                 endDateTime = barList.First().DateTime;
             }
-            //Console.WriteLine($"Last date: {barList.Last().DateTime}");
+
             if (resolution.TimeFrame == TimeFrame.Quarterly)
             {
                 return normalizeToQuarterlyTimeFrame(barList);
             }
 
             session.unsubscribeResponse(responseListener);
-
-            DateTime normDate(DateTime d)
-            {
-                switch (resolution.TimeFrame)
-                {
-                    case TimeFrame.Minute:
-                        return d.AddMinutes(-resolution.Size);
-                    case TimeFrame.Hourly:
-                        return d.AddHours(-resolution.Size);
-                    case TimeFrame.Daily:
-                        return d.AddDays(-resolution.Size);
-                    case TimeFrame.Weekly:
-                        return d.AddDays(-(resolution.Size * 7));
-                    case TimeFrame.Monthly:
-                        return d.AddMonths(-resolution.Size);
-                    case TimeFrame.Quarterly:
-                        return d.AddMonths(-(resolution.Size * 3));
-                    case TimeFrame.Yearly:
-                        return d.AddYears(-resolution.Size);
-                    default:
-                        return d;
-                }
-            }
 
             return barList;
         }
@@ -221,9 +190,7 @@ namespace Trading.Brokers.Fxcm
             var tf = convert_Resolution_To_string(resolution);
             O2GTimeframe timeframe = factory.Timeframes[tf];
             if (timeframe == null)
-            {
-                throw new TimeframeNotFoundException($"Timeframe '{resolution.TimeFrame.ToString()}:{resolution.Size}' is incorrect!");
-            }
+                throw new TimeframeNotFoundException($"Timeframe '{resolution.TimeFrame}:{resolution.Size}' is incorrect!");
 
             O2GRequest request = factory.createMarketDataSnapshotRequestInstrument(instrument, timeframe, maxBars);
 
@@ -233,9 +200,7 @@ namespace Trading.Brokers.Fxcm
             session.sendRequest(request);
 
             if (!responseListener.WaitEvents())
-            {
                 throw new Exception($"{responseListener.Error}");
-            }
 
             O2GResponse response = responseListener.GetResponse();
 
@@ -257,10 +222,10 @@ namespace Trading.Brokers.Fxcm
                                 High = reader.getBidHigh(i),
                                 Low = reader.getBidLow(i),
                                 Close = reader.getBidClose(i),
-                                AskOpen = reader.getAskOpen(i),
-                                AskHigh = reader.getAskHigh(i),
-                                AskLow = reader.getAskLow(i),
-                                AskClose = reader.getAskClose(i),
+                                //AskOpen = reader.getAskOpen(i),
+                                //AskHigh = reader.getAskHigh(i),
+                                //AskLow = reader.getAskLow(i),
+                                //AskClose = reader.getAskClose(i),
                                 Volume = reader.getVolume(i),
                                 DateTime = reader.getDate(i)
                             });
@@ -281,11 +246,13 @@ namespace Trading.Brokers.Fxcm
             if (otr != null && realTimeInstrumentsList.Count > 0)
             {
                 var instrument = otr.Instrument.Contains('/') ? this.deNormalizeSymbol(otr.Instrument) : otr.Instrument;
-                if(realTimeInstrumentsList.Contains(instrument))
-                    //RealTimeDataUpdated?.Invoke(this, new Tuple<string ,double, double, DateTime, int>(otr.Instrument ,otr.Bid, otr.Ask, otr.Time, otr.Volume));
-                    RealTimeDataUpdated?.Invoke(this, new RealTimeDataUpdatedEventArgs { Data = new Tuple<string, double, double, DateTime, int>(instrument, otr.Bid, otr.Ask, otr.Time, otr.Volume) });
+                if (realTimeInstrumentsList.Contains(instrument))
+                    RealTimeDataUpdated?.Invoke(this, 
+                        new RealTimeDataUpdatedEventArgs { Instrument = new Instrument{ Name = "", Type = InstrumentType.Forex},
+                         Price = otr.Bid, Volume = otr.Volume, DateTime = otr.Time });
+                        //instrument, otr.Bid, otr.Ask, otr.Volume, otr.Time);
 
-
+                //RealTimeDataUpdated?.Invoke(this, new RealTimeDataUpdatedEventArgs { Data = new Tuple<string, double, double, int, DateTime>(instrument, otr.Bid, otr.Ask, otr.Volume, otr.Time) });
             }
         }
 
@@ -293,15 +260,15 @@ namespace Trading.Brokers.Fxcm
         private string deNormalizeSymbol(string symbol) => $"{symbol.Substring(0, 3)}{symbol.Substring(4, 3)}";
 
         
-        public void SubscribeToRealTime(string symbol)
+        public void SubscribeRealTime(Instrument instrument)
         {
-            if (!realTimeInstrumentsList.Contains(symbol))
-                realTimeInstrumentsList.Add(symbol);
+            if (!realTimeInstrumentsList.Contains(instrument.Name))
+                realTimeInstrumentsList.Add(instrument.Name);
         }
 
-        public void UnsubscribeFromRealTime(string symbol)
+        public void UnsubscribeRealTime(Instrument instrument)
         {
-            realTimeInstrumentsList.Remove(symbol);
+            realTimeInstrumentsList.Remove(instrument.Name);
         }
 
         private static IEnumerable<Bar> normalizeToQuarterlyTimeFrame(List<FxBar> barList)

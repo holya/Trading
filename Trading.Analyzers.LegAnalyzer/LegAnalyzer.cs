@@ -23,7 +23,7 @@ namespace Trading.Analyzers.LegAnalyzer
         //public List<double> AdvanceList { get; private set; }
         //public List<double> DeclineList { get; private set; }
 
-        public List<Pattern> PatternsList { get; } = new List<Pattern>();
+        //public List<Pattern> PatternsList { get; } = new List<Pattern>();
         
 
         public List<Reference> RefList { get; } = new List<Reference>();
@@ -48,7 +48,7 @@ namespace Trading.Analyzers.LegAnalyzer
         {
             var d = newBar;
             var newLeg = new Leg(d);
-            d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime, d.EndDateTime);
+            d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime);
             LegList.Add(newLeg);
 
             addBar = addBarContinued;

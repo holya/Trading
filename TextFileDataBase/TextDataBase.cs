@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Trading.Common;
-using Trading.DataBases.Interfaces;
+using Trading.DataBases.Common;
 
 namespace Trading.DataBases.TextFileDataBase
 {
@@ -16,7 +16,7 @@ namespace Trading.DataBases.TextFileDataBase
             root = rootPath;
         }
 
-        public IEnumerable<Bar> ReadLocalData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
+        public IEnumerable<Bar> ReadLocalDataAsync(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
         {
             List<Bar> barList = new List<Bar>();
 
@@ -51,7 +51,7 @@ namespace Trading.DataBases.TextFileDataBase
             return barList;
         }
 
-        public void WriteLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        public void WriteLocalDataAsync(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
             string fileFullPath = getFullPath(instrument, resolution);
 
@@ -66,7 +66,7 @@ namespace Trading.DataBases.TextFileDataBase
         {
             string fileFullPath = getFullPath(instrument, resolution);
 
-            var localList = ReadLocalData(instrument, resolution, DateTime.Now, DateTime.Now);
+            var localList = ReadLocalDataAsync(instrument, resolution, DateTime.Now, DateTime.Now);
 
             using (StreamWriter sw = new StreamWriter(fileFullPath))
             {

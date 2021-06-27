@@ -82,13 +82,9 @@
       <Project>{38995aff-7180-4f8c-a902-a68d268138bf}</Project>
       <Name>Trading.Brokers.Fxcm</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Interfaces.csproj">
+    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Common.csproj">
       <Project>{35cef0fc-636c-4c15-b07c-99c6c5b93439}</Project>
-      <Name>Trading.DataBases.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trading.DataBases.MongoDb\Trading.DataBases.MongoDb.csproj">
-      <Project>{f8ea47f5-da2c-4405-afc5-589adc4c3292}</Project>
-      <Name>Trading.DataBases.MongoDb</Name>
+      <Name>Trading.DataBases.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trading.DataBases.XmlDataBase\Trading.DataBases.XmlDataBase.csproj">
       <Project>{23781aa0-1b88-414a-8d50-edb0bf4d5aac}</Project>
@@ -101,10 +97,6 @@
     <ProjectReference Include="..\Trading.DataManager\Trading.DataManager.csproj">
       <Project>{e95f8145-b29c-4faf-85af-495c5420c889}</Project>
       <Name>Trading.DataManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trading.DataProviders\Trading.DataProviders.ActiveTick\Trading.DataProviders.ActiveTick.csproj">
-      <Project>{7f0fbff6-cc4e-4a0b-bc62-9ccc71ec3e18}</Project>
-      <Name>Trading.DataProviders.ActiveTick</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trading.DataProviders\Trading.DataProviders.Common.csproj">
       <Project>{f56906e6-e201-4c15-bfb1-980d99bb3884}</Project>

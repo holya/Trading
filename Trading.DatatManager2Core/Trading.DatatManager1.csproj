@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Common.csproj" />
+    <ProjectReference Include="..\Trading.DataManager.Common\Trading.DataManager.Common.csproj" />
+    <ProjectReference Include="..\Trading.DataProviders\Trading.DataProviders.Common.csproj" />
+  </ItemGroup>
+
+</Project>

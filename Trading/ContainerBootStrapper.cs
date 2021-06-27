@@ -8,12 +8,12 @@ using Trading.Brokers.Fxcm;
 using Unity;
 using Unity.Injection;
 using Unity.Lifetime;
-using Trading.DataBases.Interfaces;
+using Trading.DataBases.Common;
 using Trading.DataBases.XmlDataBase;
 using Trading.DataManager;
-using Trading.DataBases.MongoDb;
+//using Trading.DataBases.MongoDb;
 using Trading.DataManager.Common;
-using Trading.DataProviders.ActiveTick;
+//using Trading.DataProviders.ActiveTick;
 
 namespace Trading
 {

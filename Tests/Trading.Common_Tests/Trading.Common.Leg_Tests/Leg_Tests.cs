@@ -14,6 +14,8 @@ namespace Trading.Common_Tests
             Leg upLeg = Helper.GetUpLeg(10);
 
             Assert.AreEqual(LegDirection.Up, upLeg.Direction);
+
+
         }
 
         [TestMethod]

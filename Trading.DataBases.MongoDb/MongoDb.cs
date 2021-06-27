@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
-using Trading.DataBases.Interfaces;
+using Trading.DataBases.Common;
 
 namespace Trading.DataBases.MongoDb
 {
@@ -41,7 +41,7 @@ namespace Trading.DataBases.MongoDb
             return collection;
         }
 
-        public void WriteLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
+        public void WriteLocalDataAsync(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
         {
             var col = getCollection(instrument, resolution);
 
@@ -51,7 +51,7 @@ namespace Trading.DataBases.MongoDb
             }
         }
 
-        public IEnumerable<Bar> ReadLocalData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
+        public IEnumerable<Bar> ReadLocalDataAsync(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
         {
             var collection = getCollection(instrument, resolution);
 

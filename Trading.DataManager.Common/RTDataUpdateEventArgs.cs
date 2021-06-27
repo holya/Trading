@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
-namespace Trading.DataProviders.Common
+namespace Trading.DataManager.Common
 {
-    public class RealTimeDataUpdatedEventArgs : EventArgs
+    public class RTDataUpdateEventArgs : EventArgs
     {
-        //public Tuple<string, double, double, int, DateTime> Data { get; set; }
         public Instrument Instrument;
+        public Resolution Resolution;
         public double Price;
-        public int Volume;
         public DateTime DateTime;
+        public bool IsNewBar;
     }
 }

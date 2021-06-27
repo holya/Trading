@@ -12,21 +12,10 @@ namespace Trading.Brokers.Fxcm
 {
     class SessionStatusResponseListener : IO2GSessionStatus, IDisposable
     {
-        private string sessionId;
-        private string pin;
-        private O2GSession session;
         private EventWaitHandle waitHandle;
 
-        /// <summary>
-        /// ctor
-        /// </summary>
-        /// <param name="session"></param>
         public SessionStatusResponseListener(O2GSession session, string sSessionID, string sPin)
         {
-            //this.session = session;
-            sessionId = sSessionID;
-            pin = sPin;
-            Reset();
             waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
         }
 
@@ -36,10 +25,10 @@ namespace Trading.Brokers.Fxcm
         public bool Error { get; private set; } = false;
         public string ErrorMessage { get; private set; }
 
-        public void Reset()
-        {
-            SessionStatus = O2GSessionStatusCode.Disconnected;
-        }
+        //public void Reset()
+        //{
+        //    SessionStatus = O2GSessionStatusCode.Disconnected;
+        //}
 
         public bool WaitEvents()
         {
@@ -55,18 +44,18 @@ namespace Trading.Brokers.Fxcm
                     this.Connected = false;
                     waitHandle.Set();
                     break;
-                case O2GSessionStatusCode.Connecting:
-                    break;
-                case O2GSessionStatusCode.TradingSessionRequested:
-                    break;
+                //case O2GSessionStatusCode.Connecting:
+                //    break;
+                //case O2GSessionStatusCode.TradingSessionRequested:
+                //    break;
                 case O2GSessionStatusCode.Connected:
                     this.Connected = true;
                     waitHandle.Set();
                     break;
-                case O2GSessionStatusCode.Reconnecting:
-                    break;
-                case O2GSessionStatusCode.Disconnecting:
-                    break;
+                //case O2GSessionStatusCode.Reconnecting:
+                //    break;
+                //case O2GSessionStatusCode.Disconnecting:
+                //    break;
                 case O2GSessionStatusCode.SessionLost:
                     this.Connected = false;
                     waitHandle.Set();

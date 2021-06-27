@@ -9,7 +9,7 @@ namespace Trading.DataManager_Tests
     public class DataManager_Tests
     {
         [TestMethod]
-        public void GetHystoricalDataAsync__beginDate_Greater_than_Last_Local_Data()
+        public void GetHystoricalDataAsync__beginDate_Greater_than_Last_Local_Date()
         {
             
         }

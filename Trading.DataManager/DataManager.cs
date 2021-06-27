@@ -6,23 +6,25 @@ using System.Text;
 using System.Threading.Tasks;
 using Trading.Common;
 using Trading.Brokers.Fxcm;
-using Trading.DataBases.Interfaces;
+using Trading.DataBases.Common;
 using Trading.DataProviders.Common;
-using Trading.DataBases.TextFileDataBase;
 using Trading.Analyzers.Common;
 using System.Xml.Linq;
 using Trading.DataBases.XmlDataBase;
 using Trading.DataManager.Common;
+using System.Collections.Concurrent;
 
 namespace Trading.DataManager
 {
     public class DataManager : IDataManager
     {
         public event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged;
-        public event EventHandler<RealTimeDataUpdatedEventArgs> RealTimeDataUpdated;
+        public event EventHandler<RTDataUpdateEventArgs> RealTimeDataUpdated;
 
-        private IDataBase repository;
-        private IDataProvider dataProvider;
+        private readonly IDataBase repository;
+        private readonly IDataProvider dataProvider;
+
+        private readonly ConcurrentDictionary<(Instrument, Resolution), DateTime> RealTimeBars = new ConcurrentDictionary<(Instrument, Resolution), DateTime>();
 
         public DataManager(IDataProvider dataProvider, IDataBase dataBase)
         {
@@ -31,138 +33,107 @@ namespace Trading.DataManager
 
             dataProvider.SessionStatusChanged += (object sender, SessionStatusChangedEventArgs e) =>
                 SessionStatusChanged?.Invoke(sender, e);
-            dataProvider.RealTimeDataUpdated += (object sender, RealTimeDataUpdatedEventArgs e) =>
-                RealTimeDataUpdated?.Invoke(sender, e);
+            dataProvider.RealTimeDataUpdated += OnRealTimeDataUpdated;
         }
 
         #region IDataProvider implementations
 
-        public async Task<SessionStatusMessage> Login(params string[] loginData)
-        {
-            return await dataProvider.Login(loginData);
-        }
+        public async Task<SessionStatusMessage> Login(params string[] loginData) => await dataProvider.Login(loginData);
 
-        public void Logout()
-        {
-            this.dataProvider.Logout();
-        }
+        public void Logout( ) => this.dataProvider.Logout();
 
-        public bool IsOnline
+        public bool IsOnline => dataProvider.IsOnline;
+
+        public void SubscribeRealTime(Instrument instrument, Resolution resolution)
         {
-            get
+            dataProvider.SubscribeRealTime(instrument);
+
+            switch (resolution.TimeFrame)
             {
-                return dataProvider.IsOnline;
+                case TimeFrame.Minute:
+                    break;
+                case TimeFrame.Hourly:
+                    break;
+                case TimeFrame.Daily:
+                    break;
+                case TimeFrame.Weekly:
+                    break;
+                case TimeFrame.Monthly:
+                    break;
+                case TimeFrame.Quarterly:
+                    break;
+                case TimeFrame.Yearly:
+                    break;
+                default:
+                    break;
             }
+            RealTimeBars.TryAdd((instrument, resolution), DateTime.Now);
         }
 
-        public void SubscribeToRealTime(string instrument)
+        public void UnsubscribeRealTime(Instrument instrument)
         {
-            dataProvider.SubscribeToRealTime(instrument);
+            dataProvider.UnsubscribeRealTime(instrument);
         }
-
-        public void UnsubscribeFromRealTime(string instrument)
-        {
-            dataProvider.UnsubscribeFromRealTime(instrument);
-        }
-
-
-        
         public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
             DateTime beginDate, DateTime endDate)
+        
         {
-            var localData = repository.ReadLocalData(instrument, resolution, beginDate, endDate).ToList();
-
-
+            var localData =(List<Bar>)await repository.ReadLocalDataAsync(instrument, resolution, beginDate, endDate);
 
             if (!IsOnline)
                 return localData;
 
-            if(localData.Count == 0)
+            if(localData.Count() == 0 && !repository.FileExists(instrument, resolution))
             {
                 localData.AddRange(await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, endDate));
-                repository.WriteLocalData(instrument, resolution, localData);
+                await repository.WriteLocalDataAsync(instrument, resolution, localData);
                 return localData;
             }
 
+            localData = (List<Bar>)await repository.ReadLocalDataAsync(instrument, resolution);
 
             var firstLocalBarDateTime = localData.First().DateTime;
             var lastLocalBarDateTime = localData.Last().DateTime;
 
+
+            if(beginDate >= firstLocalBarDateTime && endDate < lastLocalBarDateTime)
+            {
+                var bars = localData.FindAll(p => p.DateTime >= beginDate && p.DateTime < endDate);
+                return bars;
+            }
+
+            var barList = new List<Bar>();
+
             if(beginDate < firstLocalBarDateTime)
             {
-                var prependBarList = (await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, firstLocalBarDateTime)).ToList();
-
-                if (prependBarList.Count > 0 && prependBarList.Last().DateTime == firstLocalBarDateTime)
-                    prependBarList.Remove(prependBarList.Last());
-                if (prependBarList.Count() > 0)
-                {
-                    repository.PrependLocalData(instrument, resolution, prependBarList);
-                    localData.InsertRange(0, prependBarList);
-                }
+                var bars = await dataProvider.GetHistoricalDataAsync(instrument, resolution, beginDate, firstLocalBarDateTime);
+                await repository.PrependLocalData(instrument, resolution, bars);
             }
-            else if(beginDate > firstLocalBarDateTime)
-            {
-                if(beginDate >= lastLocalBarDateTime)
-                {
-                    var list = (await dataProvider.GetHistoricalDataAsync(instrument, resolution, lastLocalBarDateTime, endDate)).ToList();
-                    repository.AppendLocalData(instrument, resolution, list);
-
-                    int removeIndex = list.FindIndex(bar => bar.DateTime >= beginDate & bar.EndDateTime <= beginDate);
-                    if(removeIndex > 0)
-                    {
-                        list.RemoveRange(0, removeIndex);
-                    }
-
-                    return list;
-                }
-                int i = localData.FindIndex(p => p.DateTime <= beginDate && p.EndDateTime >= beginDate);
-                localData.RemoveRange(0, i);
-            }
-                
             if(endDate > lastLocalBarDateTime)
             {
-                var appendBarList = await dataProvider.GetHistoricalDataAsync(instrument, resolution, lastLocalBarDateTime, endDate);
-                repository.AppendLocalData(instrument, resolution, appendBarList);
-                if (appendBarList.First().DateTime == localData.Last().DateTime)
+                var bars = (await dataProvider.GetHistoricalDataAsync(instrument, resolution, lastLocalBarDateTime, endDate)).ToList();
+                if (bars.Count() != 0)
                 {
-                    localData.Remove(localData.Last());
+                    if (bars.First().DateTime == lastLocalBarDateTime)
+                        bars.Remove(bars.First());
+                    if(bars.Count() != 0)
+                        await repository.AppendLocalData(instrument, resolution, bars);
                 }
-                localData.AddRange(appendBarList);
-            }
-            else if(endDate < lastLocalBarDateTime)
-            {
-                int removeBarIndex = localData.FindIndex(p => p.DateTime >= endDate);
-                localData.RemoveRange(removeBarIndex, localData.Count - removeBarIndex);
             }
 
-            return localData;
+            barList.AddRange(await repository.ReadLocalDataAsync(instrument, resolution, beginDate, endDate));
+
+            return barList;
         }
 
         #endregion
 
-        #region IDataBase implementations
-
-        public IEnumerable<Bar> ReadLocalData(Instrument instrument, Resolution resolution, DateTime fromDate, DateTime toDate)
+        protected void OnRealTimeDataUpdated(object sender, RealTimeDataUpdatedEventArgs e)
         {
-            return this.repository.ReadLocalData(instrument, resolution, fromDate, toDate);
-        }
 
-        public void WriteLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
-        {
-            this.repository.WriteLocalData(instrument, resolution, barList);
-        }
 
-        public void PrependLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
-        {
-            this.repository.PrependLocalData(instrument, resolution, barList);
+            //RealTimeDataUpdated?.Invoke(this, new RTDataUpdateEventArgs { })
         }
-
-        public void AppendLocalData(Instrument instrument, Resolution resolution, IEnumerable<Bar> barList)
-        {
-            this.repository.PrependLocalData(instrument, resolution, barList);
-        }
-
-        #endregion
 
         public void Dispose()
         {

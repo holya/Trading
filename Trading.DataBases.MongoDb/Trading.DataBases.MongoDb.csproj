@@ -79,9 +79,9 @@
       <Project>{0655B3C3-4B5B-4D2F-B721-8EBA6C74BE2F}</Project>
       <Name>Trading.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Interfaces.csproj">
+    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Common.csproj">
       <Project>{35cef0fc-636c-4c15-b07c-99c6c5b93439}</Project>
-      <Name>Trading.DataBases.Interfaces</Name>
+      <Name>Trading.DataBases.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

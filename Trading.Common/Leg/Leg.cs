@@ -66,15 +66,9 @@ namespace Trading.Common
 
             return false;
         }
-        
 
-        public LegDirection Direction
-        {
-            get
-            {
-                return this.BarList.First().Direction > BarDirection.Balance ?
+
+        public LegDirection Direction => this.BarList.First().Direction > BarDirection.Balance ?
                             LegDirection.Up : LegDirection.Down;
-            }
-        }
     }
 }

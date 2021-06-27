@@ -102,8 +102,8 @@ namespace Trading.Analyzers_Tests
         {
             LegAnalyzer la = new LegAnalyzer();
 
-            la.AddBar(new Bar(10, 20, 5, 12, 0, DateTime.Now, DateTime.Now));
-            la.UpdateLastBar(new Bar(10, 20, 5, 9, 0, DateTime.Now, DateTime.Now));
+            la.AddBar(new Bar(10, 20, 5, 12, 0, DateTime.Now));
+            la.UpdateLastBar(new Bar(10, 20, 5, 9, 0, DateTime.Now));
 
             Assert.AreEqual(BarDirection.OutsideDown, la.LastBar.Direction);
         }
@@ -113,10 +113,10 @@ namespace Trading.Analyzers_Tests
         {
             LegAnalyzer la = new LegAnalyzer();
 
-            la.AddBar(new Bar(10, 20, 5, 12, 0, DateTime.Now, DateTime.Now));
-            la.AddBar(new Bar(15, 25, 10, 17, 0, DateTime.Now, DateTime.Now));
+            la.AddBar(new Bar(10, 20, 5, 12, 0, DateTime.Now));
+            la.AddBar(new Bar(15, 25, 10, 17, 0, DateTime.Now));
 
-            la.AddBar(new Bar(15, 27, 8, 17, 0, DateTime.Now, DateTime.Now));
+            la.AddBar(new Bar(15, 27, 8, 17, 0, DateTime.Now));
 
             Assert.AreEqual(2, la.LegsCount);
             Assert.AreEqual(LegDirection.Up, la.LastLeg.Direction);

@@ -15,8 +15,8 @@ namespace Trading.DataProviders.Common
         Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution,
             DateTime beginDateTime, DateTime endDateTime);
 
-        void SubscribeToRealTime(string instrument);
-        void UnsubscribeFromRealTime(string instrument);
+        void SubscribeRealTime(Instrument instrument);
+        void UnsubscribeRealTime(Instrument instrument);
         event EventHandler<RealTimeDataUpdatedEventArgs> RealTimeDataUpdated;
 
     }

@@ -75,10 +75,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TextFileDataBase\Trading.DataBases.TextFileDataBase.csproj">
-      <Project>{a555290a-9076-4a96-9162-083f56c59548}</Project>
-      <Name>Trading.DataBases.TextFileDataBase</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Trading.Analyzers.Common\Trading.Analyzers.Common.csproj">
       <Project>{bb95d2e4-9158-43f9-8e25-19483333175c}</Project>
       <Name>Trading.Analyzers.Common</Name>
@@ -91,9 +87,9 @@
       <Project>{0655b3c3-4b5b-4d2f-b721-8eba6c74be2f}</Project>
       <Name>Trading.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Interfaces.csproj">
+    <ProjectReference Include="..\Trading.Databases.Interfaces\Trading.DataBases.Common.csproj">
       <Project>{35cef0fc-636c-4c15-b07c-99c6c5b93439}</Project>
-      <Name>Trading.DataBases.Interfaces</Name>
+      <Name>Trading.DataBases.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trading.DataBases.XmlDataBase\Trading.DataBases.XmlDataBase.csproj">
       <Project>{23781aa0-1b88-414a-8d50-edb0bf4d5aac}</Project>

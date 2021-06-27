@@ -1,9 +1,8 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Trading.Analyzers.Common;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using Trading.Common;
 
-namespace Trading.Analyzers.Common_Tests
+namespace Trading.Common_Tests
 {
     [TestClass]
     public class Utilities_Tests

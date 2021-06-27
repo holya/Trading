@@ -270,20 +270,20 @@ namespace Trading.DataProviders.ActiveTick
             return  await tcs.Task;
         }
 
-        public void SubscribeToRealTime(string instrument)
+        public void SubscribeRealTime(Instrument instrument)
         {
-            if (!realTimeInstrumentsList.Contains(instrument))
-                realTimeInstrumentsList.Add(instrument);
+            if (!realTimeInstrumentsList.Contains(instrument.Name))
+                realTimeInstrumentsList.Add(instrument.Name);
 
-            string[] symbols = new string[1] { instrument.ToUpper() };
+            string[] symbols = new string[1] { instrument.Name.ToUpper() };
             //symbols[0] = instrument.ToUpper();
 
             int requestId = this.feed.SendQuoteStreamRequest(symbols, (short)ActiveTickFeedLib.ATStreamRequestEnum.ATStreamRequestSubscribe);
         }
 
-        public void UnsubscribeFromRealTime(string instrument)
+        public void UnsubscribeRealTime(Instrument instrument)
         {
-            realTimeInstrumentsList.Remove(instrument);
+            realTimeInstrumentsList.Remove(instrument.Name);
         }
 
         protected void OnSessionStatusChanged(SessionStatusChangedEventArgs args)
