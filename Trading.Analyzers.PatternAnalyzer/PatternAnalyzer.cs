@@ -128,17 +128,17 @@
 //        //                        LastPattern.LastLeg.AddBar(newBar);
 //        //                        break;
 
-//        //                    case BarDirection.OutsideDown:
-//        //                        if (newBar.Low < LastSupport.Price)
-//        //                        {
-//        //                            Pattern newPattern = new Pattern(newBar);
-//        //                            PatternList.Add(newPattern);
-//        //                        }
+                            case BarDirection.OutsideDown:
+                                if (newBar.Low < LastSupport.Price)
+                                {
+                                    Pattern newPattern = new Pattern(newBar);
+                                    PatternList.Add(newPattern);
+                                }
 
-//        //                        if (newBar.High > LastResistance.Price)
-//        //                            createReferenceForHighOfThisBar(newBar);
-//        //                        LastPattern.LastLeg.AddBar(newBar);
-//        //                        break;
+                                if (newBar.High > LastResistance.Price)
+                                    createReferenceForHighOfThisBar(newBar);
+                                LastPattern.LastLeg.AddBar(newBar);
+                                break;
 
 //        //                    case BarDirection.Balance:
 //        //                        LastPattern.LastLeg.AddBar(newBar);
@@ -151,21 +151,21 @@
 //        //                        LastPattern.State = PatternState.Continuation;
 //        //                        break;
 
-//        //                    case BarDirection.OutsideUp:
-//        //                        if (newBar.Low < LastSupport.Price)
-//        //                        {
-//        //                            Pattern newPattern = new Pattern(newBar);
-//        //                            PatternList.Add(newPattern);
-//        //                        }
-//        //                        if (newBar.High > LastResistance.Price)
-//        //                            createReferenceForHighOfThisBar(newBar);
-//        //                        LastPattern.LastLeg.AddBar(newBar);
-//        //                        createReferenceForLowOfThisBar(newBar);
-//        //                        break;
-//        //                    default:
-//        //                        break;
-//        //                }
-//        //                break;
+                            case BarDirection.OutsideUp:
+                                if (newBar.Low < LastSupport.Price)
+                                {
+                                    Pattern newPattern = new Pattern(newBar);
+                                    PatternList.Add(newPattern);
+                                }
+                                if (newBar.High > LastResistance.Price)
+                                    createReferenceForHighOfThisBar(newBar);
+                                LastPattern.LastLeg.AddBar(newBar);
+                                createReferenceForLowOfThisBar(newBar);
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
 
 //        //            case PatternState.SideWays:
 //        //                switch (newBar.Direction)
