@@ -16,7 +16,6 @@ namespace Trading.Common
         public double Close { get; set; }
         public double Volume { get; set; }
         public DateTime DateTime { get; set; }
-        public DateTime PreviousBarDateTime { get { return PreviousBar.DateTime; } }
         public Bar PreviousBar { get; set; }
 
         public int BarCode { get { return (int)this.Direction; } }
@@ -94,15 +93,19 @@ namespace Trading.Common
         //    return false;
         //}
 
-        public void Update(Bar bar)
-        {
-            Open = bar.Open;
-            High = bar.High;
-            Low = bar.Low;
 
-            Close = bar.Close;
-            Volume += bar.Volume;
-            DateTime = bar.DateTime;
+        public void Update(double price, int volume)
+        {
+            if(price != Close)
+            {
+                Close = price;
+                if (price > High)
+                    High = price;
+                if (price < Low)
+                    Low = price;
+            }
+
+            this.Volume += volume;
         }
 
         public virtual Bar Factory(IEnumerable<Bar> barList)

@@ -20,8 +20,9 @@ namespace Trading.DataManager.Common
             DateTime beginDateTime, DateTime endDateTime);
 
         void SubscribeRealTime(Instrument instrument, Resolution resolution);
-        void UnsubscribeRealTime(Instrument instrument);
-        event EventHandler<RTDataUpdateEventArgs> RealTimeDataUpdated;
+        void UnsubscribeRealTime(Instrument instrument, Resolution resolution);
+        event EventHandler<RTTickUpdateEventArgs> RealTimeTickUpdated;
+        event EventHandler<RTNewBarEventArgs> RealTimeNewBarAdded;
 
     }
 }

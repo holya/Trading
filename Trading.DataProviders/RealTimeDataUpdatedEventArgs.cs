@@ -8,7 +8,13 @@ namespace Trading.DataProviders.Common
 {
     public class RealTimeDataUpdatedEventArgs : EventArgs
     {
-        //public Tuple<string, double, double, int, DateTime> Data { get; set; }
+        public RealTimeDataUpdatedEventArgs(Instrument instrument, double price, int volume, DateTime dateTime)
+        {
+            Instrument = instrument;
+            Price = price;
+            Volume = volume;
+            DateTime = dateTime;
+        }
         public Instrument Instrument;
         public double Price;
         public int Volume;

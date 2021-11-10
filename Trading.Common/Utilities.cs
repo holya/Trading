@@ -8,72 +8,6 @@ namespace Trading.Common
 {
     public static class Utilities
     {
-        public static DateTime NormalizeBarDateTime_FXCM(DateTime date, Resolution resolution)
-        {
-            switch (resolution.TimeFrame)
-            {
-                case TimeFrame.Yearly:
-                    return new DateTime(date.Year, 01, 01).AddYears(1).AddMilliseconds(-1);
-
-                case TimeFrame.Quarterly:
-                    int month;
-                    if (date.Month < 4)
-                        month = 1;
-                    else if (date.Month < 7)
-                        month = 4;
-                    else if (date.Month < 10)
-                        month = 7;
-                    else
-                        month = 10;
-                    return new DateTime(date.Year, month, 1).AddMonths(3).AddMilliseconds(-1);
-
-                case TimeFrame.Monthly:
-                    DateTime dt = new DateTime(date.Year, date.Month, 1, 0, 0, 0);
-                    int hour = dt.AddMonths(-1).IsDaylightSavingTime() ? 21 : 22;
-                    return dt.AddHours(-(24 - hour));
-
-                case TimeFrame.Weekly:
-                    DateTime tempDate = new DateTime(date.Year, date.Month, date.Day, date.IsDaylightSavingTime() ? 21 : 22, 0, 0).AddDays(-(int)(date.DayOfWeek + 1));
-                    return new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempDate.IsDaylightSavingTime() ? 21 : 22, tempDate.Minute, tempDate.Second);
-
-                case TimeFrame.Daily:
-                    int startHour = date.IsDaylightSavingTime() ? 21 : 22;
-                    DateTime d = new DateTime(date.Year, date.Month, date.Day, startHour, 0, 0);
-                    if (date.Hour >= startHour)
-                        return d;
-                    return d.AddDays(-1);
-
-                case TimeFrame.Hourly:
-                    int cutOffHour = date.IsDaylightSavingTime() ? 21 : 22;
-                    DateTime startDate = new DateTime(date.Year, date.Month, date.Day, cutOffHour, 0, 0).AddDays(-1);
-                    DateTime endDate = startDate.AddHours(resolution.Size);
-                    for (int i = 0; i < 24 / resolution.Size + 4; i++)
-                    {
-                        if (date >= startDate && date < endDate)
-                            break;
-
-                        startDate = endDate;
-                        endDate = endDate.AddHours(resolution.Size);
-                    }
-                    return startDate;
-
-                case TimeFrame.Minute:
-                    int floor = 0;
-                    int ceiling = resolution.Size;
-                    while (ceiling < 60)
-                    {
-                        if (date.Minute >= floor && date.Minute < ceiling)
-                            break;
-                        floor += resolution.Size;
-                        ceiling += resolution.Size;
-                    }
-                    return new DateTime(date.Year, date.Month, date.Day, date.Hour, floor, 0);
-
-                default:
-                    return date;
-            }
-        }
-
         public static DateTime GetEndDateTime(DateTime dateTime, Resolution resolution)
         {
             switch (resolution.TimeFrame)
@@ -97,6 +31,128 @@ namespace Trading.Common
             }
         }
 
+        public static DateTime NormalizeAndGetEndDateTime(DateTime date, Resolution resolution)
+        {
+            switch (resolution.TimeFrame)
+            {
+                case TimeFrame.Yearly:
+                    return new DateTime(date.Year, 01, 01).AddYears(1).AddMilliseconds(-1);
+
+                case TimeFrame.Quarterly:
+                    int month;
+                    if (date.Month < 4)
+                        month = 1;
+                    else if (date.Month < 7)
+                        month = 4;
+                    else if (date.Month < 10)
+                        month = 7;
+                    else
+                        month = 10;
+                    return new DateTime(date.Year, month, 1).AddMonths(3).AddMilliseconds(-1);
+
+                case TimeFrame.Monthly:
+                    return GetEndDateTime(new DateTime(date.Year, date.Month, 1, 0, 0, 0), resolution);
+
+                case TimeFrame.Weekly:
+                    var tempDt = date.AddDays(-(int)date.DayOfWeek);
+                    return GetEndDateTime(new DateTime(tempDt.Year, tempDt.Month, tempDt.Day, 0, 0, 0), resolution);
+
+                case TimeFrame.Daily:
+                    return GetEndDateTime(new DateTime(date.Year, date.Month, date.Day, 0, 0, 0), resolution);
+
+                case TimeFrame.Hourly:
+                    int i = 0;
+                    while(i < 24)
+                    {
+                        if (date.Hour >= i && date.Hour < i + resolution.Size)
+                            break;
+
+                        i += resolution.Size;
+                    }
+
+                    return GetEndDateTime(new DateTime(date.Year, date.Month, date.Day, i, 0, 0), resolution);
+                
+                case TimeFrame.Minute:
+                    int floor = 0;
+                    int ceiling = resolution.Size;
+                    while (ceiling < 60)
+                    {
+                        if (date.Minute >= floor && date.Minute < ceiling)
+                            break;
+                        floor += resolution.Size;
+                        ceiling += resolution.Size;
+                    }
+
+                    return GetEndDateTime(new DateTime(date.Year, date.Month, date.Day, date.Hour, floor, 0), resolution);
+
+
+                default:
+                    return date;
+            }
+
+        }
+
+        public static DateTime NormalizeAndGetStartDateTime(DateTime date, Resolution resolution)
+        {
+            switch (resolution.TimeFrame)
+            {
+                case TimeFrame.Yearly:
+                    return new DateTime(date.Year, 01, 01).AddYears(1).AddMilliseconds(-1);
+
+                case TimeFrame.Quarterly:
+                    int month;
+                    if (date.Month < 4)
+                        month = 1;
+                    else if (date.Month < 7)
+                        month = 4;
+                    else if (date.Month < 10)
+                        month = 7;
+                    else
+                        month = 10;
+                    return new DateTime(date.Year, month, 1).AddMonths(3);
+
+                case TimeFrame.Monthly:
+                    return new DateTime(date.Year, date.Month, 1, 0, 0, 0);
+
+                case TimeFrame.Weekly:
+                    var tempDt = date.AddDays(-(int)date.DayOfWeek);
+                    tempDt = new DateTime(tempDt.Year, tempDt.Month, tempDt.Day, 0, 0, 0);
+                    return tempDt;
+
+                case TimeFrame.Daily:
+                    return new DateTime(date.Year, date.Month, date.Day, 0, 0, 0).AddDays(-(resolution.Size - 1));
+
+                case TimeFrame.Hourly:
+                    int i = 0;
+                    while (i < 24)
+                    {
+                        if (date.Hour >= i && date.Hour < i + resolution.Size)
+                            break;
+
+                        i += resolution.Size;
+                    }
+
+                    return new DateTime(date.Year, date.Month, date.Day, i, 0, 0);
+
+                case TimeFrame.Minute:
+                    int floor = 0;
+                    int ceiling = resolution.Size;
+                    while (ceiling < 60)
+                    {
+                        if (date.Minute >= floor && date.Minute < ceiling)
+                            break;
+                        floor += resolution.Size;
+                        ceiling += resolution.Size;
+                    }
+
+                    return new DateTime(date.Year, date.Month, date.Day, date.Hour, floor, 0);
+
+
+                default:
+                    return date;
+            }
+
+        }
         //public static List<Bar> CreateHourlyBarsFromMinuteBars(IEnumerable<Bar> minuteList, int hourlySize)
         //{
         //    var list = new List<Bar>();

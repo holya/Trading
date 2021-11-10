@@ -26,22 +26,27 @@ namespace Trading.DataBases.XmlDataBase
 
                     XElement readData = XElement.Load(getFullPath(instrument, resolution));
 
+                    if (readData.IsEmpty)
+                        return barList;
+
                     IEnumerable<XElement> barData = from elements in readData.Descendants()
                                                     where (Convert.ToDateTime(elements.Attribute("DateTime").Value) >= fromDate
                                                     && Convert.ToDateTime(elements.Attribute("DateTime").Value) < toDate)
                                                     select elements;
 
+                    if (barData.Count() < 1)
+                        return barList;
+
                     foreach (var elem in barData)
                     {
-                        barList.Add(new Bar
-                        {
-                            Open = Convert.ToDouble(elem.Attribute("Open").Value),
-                            High = Convert.ToDouble(elem.Attribute("High").Value),
-                            Low = Convert.ToDouble(elem.Attribute("Low").Value),
-                            Close = Convert.ToDouble(elem.Attribute("Close").Value),
-                            Volume = Convert.ToDouble(elem.Attribute("Volume").Value),
-                            DateTime = Convert.ToDateTime(elem.Attribute("DateTime").Value),
-                        });
+                        barList.Add(new Bar(
+                            Convert.ToDouble(elem.Attribute("Open").Value),
+                            Convert.ToDouble(elem.Attribute("High").Value),
+                            Convert.ToDouble(elem.Attribute("Low").Value),
+                            Convert.ToDouble(elem.Attribute("Close").Value),
+                            Convert.ToDouble(elem.Attribute("Volume").Value),
+                            Convert.ToDateTime(elem.Attribute("DateTime").Value)
+                        ));
                     }
 
                     return barList;

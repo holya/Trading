@@ -14,7 +14,7 @@ using Trading.Common;
 
 namespace WindowsFormsApp.Custom_Views
 {
-    public partial class HlocLACustomChart : HlocCustomChart
+    public partial class HlocLACustomChart : HlocCustomChart, IChartView
     {
         public LegAnalyzer LegAnalyzer { get; } = new LegAnalyzer();
         public string Symbol { get; set; }
@@ -22,77 +22,29 @@ namespace WindowsFormsApp.Custom_Views
         public DateTime FromDateTime { get; set; }
         public DateTime ToDateTime { get; set; }
         public bool DataPopulated { get; set; } = false;
+        public Instrument Instrument { get; set; }
+
+        private Action<double, int, DateTime> addTickDelegate = delegate { };
+
         public HlocLACustomChart()
         {
             InitializeComponent();
             this.ResizeRedraw = true;
-            
-            LegAnalyzer.AnalyzerPopulated += LegAnalyzer_AnalyzerPopulated;
-            LegAnalyzer.NewBarAdded += LegAnalyzer_NewBarAdded;
-            LegAnalyzer.LastBarUpdated += LegAnalyzer_LastBarUpdated;
-
+            this.Dock = DockStyle.Fill;
             ChartAreas[0].BackColor = Color.Black;
             this.BackColor = Color.Black;
-        }
-
-        private void LegAnalyzer_LastBarUpdated(object sender, BarUpdateEventArgs e)
-        {
-            if (this.InvokeRequired)
-                Invoke(new Action<BarUpdateEventArgs>(this.updateLastBar), e);
-            else
-                this.updateLastBar(e);
-        }
-
-        private void updateLastBar(BarUpdateEventArgs e)
-        {
-            DataPoint dp = Series[0].Points.Last();
-            switch (e.UpdateEnum)
-            {
-                case BarUpdateStatus.NoPriceChange:
-                    return;
-                case BarUpdateStatus.CloseUpdated:
-                    dp.YValues[3] = e.LastBar.Close;
-                    break;
-                case BarUpdateStatus.Expanded:
-                case BarUpdateStatus.TypeChanged:
-                    Series[0].Points.Remove(dp);
-                    this.addNewDataPoint(Series[0], this.LegAnalyzer.LastLeg, e.LastBar);
-                    this.ChartAreas[0].RecalculateAxesScale();
-                    break;
-                default:
-                    break;
-            }
-            Invalidate();
-        }
-
-        private void LegAnalyzer_NewBarAdded(object sender, NewBarAddedEventArgs e)
-        {
-            if (InvokeRequired)
-                Invoke(new Action<NewBarAddedEventArgs>(addNewBar), e);
-            else
-                addNewBar(e);
-        }
-
-        private void addNewBar(NewBarAddedEventArgs e)
-        {
-            addNewDataPoint(Series[0], e.LastLeg, e.LastLeg.LastBar);
-            Invalidate();
-        }
-
-        private void LegAnalyzer_AnalyzerPopulated(object sender, AnalyzerPopulatedEventArgs e)
-        {
-            drawBars();
-            //Invalidate();
         }
 
         public void Reset()
         {
             foreach (var series in Series)
             {
-                //if (series.Points.Count > 0)
-                    series.Points.Clear();
+                series.Points.Clear();
             }
+
             LegAnalyzer.Reset();
+
+            addTickDelegate = delegate { };
         }
         //Maybe rename to Draw
         private void drawBars()
@@ -101,23 +53,81 @@ namespace WindowsFormsApp.Custom_Views
             {
                 foreach (var bar in leg.BarList)
                 {
-                    addNewDataPoint(Series[0], leg, bar);
+                    addNewDataPoint(bar);
                 }
             }
         }
 
-        private void addNewDataPoint(Series chartSeries, Leg leg, Bar bar)
+        private void addNewDataPoint(Bar bar)
         {
             string labelString = isTimeFrameIntraday() ? bar.DateTime.ToShortTimeString() : bar.DateTime.ToLongDateString();
+            Color c;
+            if (bar.Direction > BarDirection.Balance)
+                c = Color.Green;
+            else if (bar.Direction < BarDirection.Balance)
+                c = Color.DarkRed;
+            else
+                c = Color.DarkGray;
             DataPoint dp = new DataPoint
             {
                 AxisLabel = labelString,
                 XValue = bar.DateTime.ToOADate(),
                 YValues = new double[] { bar.High, bar.Low, bar.Open, bar.Close },
-                Color = leg.Direction == LegDirection.Up ? Color.Green : Color.DarkRed
+                Color = c
             };
-            chartSeries.Points.Add(dp);
-            //chartSeries.Points.Last().YValues[3] = ;
+
+            Series[0].Points.Add(dp);
+        }
+
+        public void AddBarList(IEnumerable<Bar> barList)
+        {
+            LegAnalyzer.AddBarList(barList);
+            drawBars();
+
+            addTickDelegate = addTick;
+        }
+
+        public void AddBar(Bar bar)
+        {
+            if (this.InvokeRequired)
+                Invoke(new Action<Bar>(AddBar), bar);
+            else
+                this.addBar(bar);
+        }
+        private void addBar(Bar bar)
+        {
+            LegAnalyzer.AddBar(bar);
+            addNewDataPoint(bar);
+            Invalidate();
+        }
+
+        public void AddTick(double price, int volume, DateTime dateTime)
+        {
+            addTickDelegate(price, volume, dateTime);
+        }
+        private void addTick(double price, int volume, DateTime dateTime)
+        {
+            if (this.InvokeRequired)
+                Invoke(new Action<double, int, DateTime>(addTickSafe), price, volume, dateTime);
+            else
+                this.addTickSafe(price, volume, dateTime);
+        }
+        
+        private void addTickSafe(double price, int volume, DateTime dateTime)
+        {            
+            LegAnalyzer.UpdateLastBar(price, volume);
+
+            DataPoint dp = Series[0].Points.Last();
+
+            if (dp.YValues[3] != price)
+            {
+                //dp.YValues[3] = price;
+                Series[0].Points.Remove(dp);
+                this.addNewDataPoint(LegAnalyzer.LastBar);
+                //Series[0].Points.Add(dp);
+                this.ChartAreas[0].RecalculateAxesScale();
+                Invalidate();
+            }
         }
 
         private bool isTimeFrameIntraday()
@@ -141,18 +151,11 @@ namespace WindowsFormsApp.Custom_Views
                         break;
                     }
                 }
-
-                float x1 = (float)ChartAreas[0].AxisX.ValueToPixelPosition(pointIndex + 1);
-                float x2 = (float)ChartAreas[0].AxisX.ValueToPixelPosition(Series[0].Points.Count - 1) + 20;
-                var y = (float)ChartAreas[0].AxisY2.ValueToPixelPosition(r.Price);
-                g.DrawLine(new Pen(Color.White, 1), x1, y, x2, y);
-
-                var font = new Font(FontFamily.GenericSerif, 8);
-                SolidBrush drawBrush = new SolidBrush(Color.White);
-                g.DrawString("" + r.Price, font, drawBrush, x2 + 7, y - 10);
             }
+        }
 
-            //draw close value
+        private void drawClose(Graphics g)
+        {
             float diff = (float)ChartAreas[0].AxisX.ValueToPixelPosition(Series[0].Points.Count - 1) - Right;
 
             float xCoord = Right - 60;
@@ -160,7 +163,6 @@ namespace WindowsFormsApp.Custom_Views
             var f = new Font(FontFamily.GenericSerif, 8);
             SolidBrush db = new SolidBrush(Color.White);
             g.DrawString("" + LegAnalyzer.Close, f, db, xCoord, yCoord - 10);
-            
         }
 
         protected override void OnPaint(PaintEventArgs pe)
@@ -173,7 +175,12 @@ namespace WindowsFormsApp.Custom_Views
             base.OnPostPaint(e);
 
             if (Series[0].Points.Count > 0)
-                drawRefLines(e.ChartGraphics.Graphics);
+            {
+                //drawRefLines(e.ChartGraphics.Graphics);
+                drawClose(e.ChartGraphics.Graphics);
+            }
         }
+
+
     }
 }

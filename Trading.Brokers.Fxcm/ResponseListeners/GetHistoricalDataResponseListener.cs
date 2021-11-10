@@ -17,10 +17,6 @@ namespace Trading.Brokers.Fxcm
 
         public string Error { get; private set; }
 
-        /// <summary>
-        /// ctor
-        /// </summary>
-        /// <param name="session"></param>
         public GetHistoricalDataResponseListener(O2GSession session)
         {
             requestId = string.Empty;

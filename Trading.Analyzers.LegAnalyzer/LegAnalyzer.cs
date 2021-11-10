@@ -10,7 +10,6 @@ namespace Trading.Analyzers.LegAnalyzer
     public partial class LegAnalyzer
     {
         #region Properties
-        //public Resolution Resolution { get; set; }
         public Bar LastBar => LastLeg.LastBar;
         public Leg LastLeg => LegList.Last();
         public double Close => LastBar.Close;
@@ -25,25 +24,29 @@ namespace Trading.Analyzers.LegAnalyzer
 
         //public List<Pattern> PatternsList { get; } = new List<Pattern>();
         
-
+        private Action<Bar> addBarDelegate;
+        private Action<double, int> updateLastBarDelegate = delegate { };
         public List<Reference> RefList { get; } = new List<Reference>();
         #endregion
 
         public LegAnalyzer()
         {
-            addBar = addFirstBar;
+            addBarDelegate = addFirstBar;
         }
 
         public void AddBarList(IEnumerable<Bar> barList)
         {
             for (int i = 0; i < barList.Count(); i++)
             {
-                addBar(barList.ElementAt(i));
+                addBarDelegate(barList.ElementAt(i));
             }
-            _onAnalyzerPopulated(this, new AnalyzerPopulatedEventArgs { LegList = this.LegList });
+        }
+        public void AddBar(Bar newBar)
+        {
+            addBarDelegate(newBar);
         }
 
-        private Action<Bar> addBar;
+
         private void addFirstBar(Bar newBar)
         {
             var d = newBar;
@@ -51,9 +54,10 @@ namespace Trading.Analyzers.LegAnalyzer
             d.PreviousBar = new Bar(d.Open, d.Open, d.Open, d.Open, d.Volume, d.DateTime);
             LegList.Add(newLeg);
 
-            addBar = addBarContinued;
+            addBarDelegate = addBar;
+            updateLastBarDelegate = updateLastBar;
         }
-        private void addBarContinued(Bar newBar)
+        private void addBar(Bar newBar)
         {
             newBar.PreviousBar = LastBar;
             if (!LastLeg.AddBar(newBar))
@@ -116,6 +120,15 @@ namespace Trading.Analyzers.LegAnalyzer
             //}
         }
 
+        public void UpdateLastBar(double price, int volume)
+        {
+            updateLastBarDelegate(price, volume);
+        }
+        private void updateLastBar(double price, int volume)
+        {
+            LastBar.Update(price, volume);
+        }
+
         private void createReferenceForLowOfThisBar(Bar bar)
         {
             createReference(bar.Low, bar.DateTime, bar);
@@ -130,45 +143,12 @@ namespace Trading.Analyzers.LegAnalyzer
             RefList.Add(new Reference { Price = price, DateTime = dateTime, Owner = owner });
         }
 
-        public void AddBar(Bar newBar)
-        {
-            addBar(newBar);
-            _onNewBarAdded(this, new NewBarAddedEventArgs { LastLeg = LastLeg });
-        }
-
-
-        public void UpdateLastBar(Bar updatedBar)
-        {
-            BarUpdateStatus updateEnum;
-            bool isUpdateTickWithinLastBar = updatedBar.High > LastBar.High || updatedBar.Low < LastBar.Low;
-            bool isCloseSame = updatedBar.Close == LastBar.Close;
-            var oldDir = LastBar.Direction;
-            LastBar.Update(updatedBar);
-            if (LastBar.Direction != oldDir)
-            {
-                var savedLastBar = LastBar;
-                LastLeg.BarList.Remove(LastBar);
-                if (LastLeg.BarCount == 0)
-                    LegList.Remove(LastLeg);
-                if (LegList.Count == 0)
-                    addBar = this.addFirstBar;
-                addBar(savedLastBar);
-                updateEnum = BarUpdateStatus.TypeChanged;
-            }
-            else if (!isUpdateTickWithinLastBar)
-                updateEnum = BarUpdateStatus.Expanded;
-            else if (!isCloseSame)
-                updateEnum = BarUpdateStatus.CloseUpdated;
-            else
-                updateEnum = BarUpdateStatus.NoPriceChange;
-
-            _onLastBarUpdated(this, new BarUpdateEventArgs { LastBar = LastBar, UpdateEnum = updateEnum });
-        }
 
         public void Reset()
         {
             this.LegList.Clear();
-            addBar = this.addFirstBar;
+            addBarDelegate = this.addFirstBar;
+            updateLastBarDelegate = delegate { };
         }
 
         //private void addReferenceForHighOfThisBar(Bar bar)

@@ -33,7 +33,7 @@
   <ItemGroup>
     <Reference Include="fxcore2, Version=1.5.0.0, Culture=neutral, PublicKeyToken=440355e023152e83, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Trading 2.0\Trading.Brokers.Fxcm\bin\Debug\New folder\fxcore2.dll</HintPath>
+      <HintPath>..\..\Trading 2.0\Trading.Brokers.Fxcm\bin\Debug\fxcore2.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

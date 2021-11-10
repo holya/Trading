@@ -32,7 +32,7 @@ namespace WindowsFormsApp
         //});
         IDataManager dataManager;
         
-        List<HlocLAForm> chartFormList = new List<HlocLAForm>();
+        List<IChartView> chartFormList = new List<IChartView>();
 
         InstrumentsManager symbolsManager = new InstrumentsManager();
 
@@ -57,7 +57,7 @@ namespace WindowsFormsApp
                 Environment.Exit(1);
             }
 
-            this.update_sessionStatusButton();
+            this.UpdateSessionStatusButton();
 
 
             string isOnline = dataManager.IsOnline ? "Online" : "Offline";
@@ -70,43 +70,71 @@ namespace WindowsFormsApp
             //{
             //    SizeType = SizeType.AutoSize
             //});
-            this.tableLayoutPanel_chartForm.ColumnCount = 4;
+            //this.tableLayoutPanel_chartForm.RowCount = 2;
+            //tableLayoutPanel_chartForm.ColumnStyles.Clear();
+            //tableLayoutPanel_chartForm.RowStyles.Clear();
+            //tableLayoutPanel_chartForm.ColumnCount = 0;
+            //tableLayoutPanel_chartForm.RowCount = 0;
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Monthly, 1), DateTime.UtcNow.AddMonths(-24), DateTime.UtcNow);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Monthly, 1), DateTime.UtcNow.AddMonths(-24), DateTime.Now.AddMonths(1), 0, 0);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), DateTime.UtcNow.AddMonths(-6), DateTime.UtcNow);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Weekly, 1), DateTime.UtcNow.AddMonths(-2), DateTime.Now.AddDays(7), 0, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), DateTime.UtcNow.AddDays(-30), DateTime.UtcNow);
 
-            addNewChartFormToRightPanel(new Resolution(TimeFrame.Daily, 1), DateTime.Now.AddMonths(-1), DateTime.Now.AddDays(2), 1, 0);
-            var f = new OhlcChartForm(this.dataManager, new Resolution(TimeFrame.Hourly, 1));
-            f.Dock = DockStyle.Fill;
-            tableLayoutPanel_chartForm.Controls.Add(f, 0, 0);
-            f.Show();
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 4), DateTime.UtcNow.AddDays(-6), DateTime.Now.AddHours(12), 1, 1);
+            addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 4), DateTime.UtcNow.AddDays(-6), DateTime.Now.AddHours(12));
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddHours(-24), DateTime.Now.AddHours(12), 2, 0);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Hourly, 1), DateTime.UtcNow.AddHours(-24), DateTime.UtcNow);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-5), DateTime.Now.AddHours(12), 2, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 15), DateTime.UtcNow.AddHours(-5), DateTime.UtcNow);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-4), 3, 0);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 5), DateTime.UtcNow.AddHours(-2), DateTime.UtcNow);
 
-            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.Now.AddDays(-3), DateTime.Now,
-            //3, 1);
+            //addNewChartFormToRightPanel(new Resolution(TimeFrame.Minute, 1), DateTime.UtcNow.AddMinutes(-20), DateTime.UtcNow);
 
             //dataManager.SessionStatusChanged += DataManager_SessionStatusChanged;
-            dataManager.RealTimeDataUpdated += DataManager_RealTimeDataUpdated;
+            dataManager.RealTimeTickUpdated += DataManager_RealTimeTickUpdated;
+            dataManager.RealTimeNewBarAdded += DataManager_RealTimeNewBarAdded;
 
-           
+            this.logIn().GetAwaiter();
+        }
+
+        #region DataManager events implementations 
+        private void DataManager_RealTimeNewBarAdded(object sender, RTNewBarEventArgs e)
+        {
+            for (int i = 0; i < chartFormList.Count; i++)
+            {
+                var chart = chartFormList[i];
+
+                if(chart.Instrument.Name == e.Instrument.Name && (chart.Resolution.TimeFrame == e.Resolution.TimeFrame && chart.Resolution.Size == e.Resolution.Size))
+                {
+                    chart.AddBar(e.Bar);
+                }
+            }
+        }
+
+        private void DataManager_RealTimeTickUpdated(object sender, RTTickUpdateEventArgs e)
+        {
+            for (int i = 0; i < chartFormList.Count; i++)
+            {
+                var chart = chartFormList[i];
+                if (chart.Instrument.Name == e.Instrument.Name)
+                {
+                    chart.AddTick(e.Price, e.Volume, e.DateTime);
+                }
+            }
         }
 
         private void DataManager_SessionStatusChanged(object sender, SessionStatusChangedEventArgs e)
         {
             if (this.InvokeRequired)
-                Invoke(new Action(update_sessionStatusButton));
+                Invoke(new Action(UpdateSessionStatusButton));
             else
-                this.update_sessionStatusButton();
+                this.UpdateSessionStatusButton();
 
         }
-        private void update_sessionStatusButton()
+
+        #endregion
+        private void UpdateSessionStatusButton()
         {
             if (dataManager.IsOnline)
             {
@@ -135,30 +163,58 @@ namespace WindowsFormsApp
             //else
                 this.button_sessionStatus.Enabled = true;
 
-            this.update_sessionStatusButton();
+            this.UpdateSessionStatusButton();
         }
 
-        private void addNewChartFormToRightPanel(Resolution resolution, DateTime fromDateTime, DateTime toDateTime, int column, int row)
+        private void addNewChartFormToRightPanel(Resolution resolution, DateTime fromDateTime, DateTime toDateTime)
         {
-            HlocLAForm chartForm = this.createChartForm();
-            chartForm.Dock = DockStyle.Fill;
-            chartForm.Chart.Resolution = resolution;
-            chartForm.Chart.FromDateTime = fromDateTime;
-            chartForm.Chart.ToDateTime = toDateTime;
-            chartForm.SetTitle();
+            IChartView chartForm = this.createChartForm();
+            //chartForm.Dock = DockStyle.Fill;
+            chartForm.Resolution = resolution;
+            chartForm.FromDateTime = fromDateTime;
+            chartForm.ToDateTime = toDateTime;
+            //chartForm.SetTitle();
             //c.FormBorderStyle = FormBorderStyle.None;
             //chart.DoubleClick += chart_MouseDoubleClick;
-            chartForm.FormClosing += (sender, e) =>
+            //chartForm.FormClosing += (sender, e) =>
+            //{
+            //    if (e.CloseReason == CloseReason.UserClosing)
+            //    {
+            //        e.Cancel = true;
+            //        return;
+            //    }
+            //};
+
+            var tpl = tableLayoutPanel_chartForm;
+
+            int count = tpl.Controls.Count;
+
+            int column = count % 2 == 0 ? count / 2 : (count - 1) / 2;
+            int row = count % 2;
+
+            if (column > tableLayoutPanel_chartForm.ColumnCount)
             {
-                if (e.CloseReason == CloseReason.UserClosing)
-                {
-                    e.Cancel = true;
-                    return;
-                }
-            };
-            
-            tableLayoutPanel_chartForm.Controls.Add(chartForm, column, row);
-            chartForm.Show();
+                tableLayoutPanel_chartForm.ColumnCount = column;
+                //tpl.ColumnStyles.Add(new ColumnStyle { SizeType = SizeType.Percent, Width = 100 / (tpl.ColumnCount+2) });
+            }
+
+            if (row > tableLayoutPanel_chartForm.RowCount)
+            {
+                tableLayoutPanel_chartForm.RowCount = row;               
+                //tpl.RowStyles.Add(new RowStyle { SizeType = SizeType.Percent, Height = 100 / (tpl.RowCount+2) });
+            }
+
+
+            tableLayoutPanel_chartForm.Controls.Add((Control)chartForm, column, row);
+
+
+
+        }
+        private IChartView createChartForm()
+        {
+            var chartForm = new HlocLACustomChart(); //new NevChartUC(); //new HlocLAForm();
+            chartFormList.Add(chartForm);
+            return chartForm;
         }
 
         #region Symbols Data Grid
@@ -211,13 +267,20 @@ namespace WindowsFormsApp
 
         #endregion
 
+        private void unsubscribeCurrentSymbol(string symbol)
+        {
+            foreach (var item in chartFormList)
+            {
+                dataManager.UnsubscribeRealTime(item.Instrument, item.Resolution);
+            }
+        }
         private async void symbolLabel_Click(object sender, EventArgs e)
         {
             if (((Label)sender) == selectedSymbolLabel)
                 return;
             if (selectedSymbolLabel != null)
             {
-                dataManager.UnsubscribeRealTime(new Instrument { Name = selectedSymbolLabel.Text, Type = InstrumentType.Forex });
+                unsubscribeCurrentSymbol(selectedSymbolLabel.Text);
                 selectedSymbolLabel.BackColor = normalSymbolLabelColor;
             }
 
@@ -229,77 +292,29 @@ namespace WindowsFormsApp
 
             foreach (var c in chartFormList)
             {
-                c.Chart.DataPopulated = false;
-                c.Chart.Symbol = symbol;
-                var barList = await getHistoricalDataAsync(instrument, c.Chart.Resolution, c.Chart.FromDateTime, c.Chart.ToDateTime);
-                c.Chart.Reset();
-                c.Chart.LegAnalyzer.AddBarList(barList);
-                c.Chart.DataPopulated = true;
+                c.Instrument = instrument;
+                var barList = await getHistoricalDataAsync(instrument, c.Resolution, c.FromDateTime, c.ToDateTime);
+                c.Reset();
+                if (barList.Count < 1)
+                    break;
+                    
+                c.AddBarList(barList);
 
-                dataManager.SubscribeRealTime(instrument);
+                dataManager.SubscribeRealTime(instrument, c.Resolution);
             }
         }
 
-        private async Task<List<FxBar>> getHistoricalDataAsync(Instrument instrument, Resolution resolution, DateTime from, DateTime to)
+        private async Task<List<Bar>> getHistoricalDataAsync(Instrument instrument, Resolution resolution, DateTime from, DateTime to)
         {
             try
             {
-                var bars =  (await dataManager.GetHistoricalDataAsync(instrument, resolution, from, to)).Cast<FxBar>().ToList();
+                var bars =  (await dataManager.GetHistoricalDataAsync(instrument, resolution, from, to)).ToList();
                 return bars;
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
                 return null;
-            }
-        }
-
-        private void DataManager_RealTimeDataUpdated(object sender, RealTimeDataUpdatedEventArgs e)
-        {
-            var tuple = (Tuple<string, double, double, DateTime, int>) e.Data ;
-            for (int i = 0; i < chartFormList.Count; i++)
-            {
-                var chartForm = chartFormList[i];
-                var chart = chartForm.Chart;
-                if (chart.DataPopulated && chartForm.Chart.Symbol == tuple.Item1)
-                {
-                    FxBar b = (FxBar)chart.LegAnalyzer.LastBar;
-                    if (tuple.Item4 < b.EndDateTime)
-                    {
-                        FxBar newBar = new FxBar
-                        {
-                            Open = tuple.Item2,
-                            AskOpen = tuple.Item3,
-                            High = tuple.Item2,
-                            AskHigh = tuple.Item3,
-                            Low = tuple.Item2,
-                            AskLow = tuple.Item3,
-                            Close = tuple.Item2,
-                            AskClose = tuple.Item3
-                        };
-
-                        chart.LegAnalyzer.UpdateLastBar(newBar);
-                    }
-                    else
-                    {
-                        //var dt = Utilities.NormalizeBarDateTime_FXCM(tuple.Item4, chartForm.Chart.Resolution);
-
-                        FxBar newBar = new FxBar
-                        {
-                            Open = tuple.Item2,
-                            AskOpen = tuple.Item3,
-                            High = tuple.Item2,
-                            AskHigh = tuple.Item3,
-                            Low = tuple.Item2,
-                            AskLow = tuple.Item3,
-                            Close = tuple.Item2,
-                            AskClose = tuple.Item3,
-                            DateTime = tuple.Item4,// dt,
-                            EndDateTime = Utilities.GetEndDateTime(tuple.Item4/*dt*/, chart.Resolution)
-                        };
-                        chart.LegAnalyzer.AddBar(newBar);
-                    }
-                }
             }
         }
 
@@ -321,20 +336,14 @@ namespace WindowsFormsApp
 
                     var barList = await getHistoricalDataAsync(instrument, res, fromDate, toDate);
 
-                    HlocLAForm chartForm = createChartForm();
-                    chartForm.Chart.Resolution = res;
-                    chartForm.Chart.FromDateTime = fromDate;
-                    chartForm.SetTitle();
-                    chartForm.Show();
+                    IChartView chartForm = createChartForm();
+                    chartForm.Resolution = res;
+                    chartForm.FromDateTime = fromDate;
+                    chartForm.ToDateTime = toDate;
+                    //chartForm.SetTitle();
+                    //chartForm.Show();
                 }
             }
-        }
-
-        private HlocLAForm createChartForm()
-        {
-            var chartForm = new HlocLAForm();
-            chartFormList.Add(chartForm);
-            return chartForm;
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -349,6 +358,28 @@ namespace WindowsFormsApp
             else
                 await this.logIn();
 
+        }
+
+        private void splitContainer1_DoubleClick(object sender, EventArgs e)
+        {
+            if(this.splitContainer1.SplitterDistance <= 10)
+            {
+                this.splitContainer1.SplitterDistance = 170;
+                this.splitContainer1.BackColor = Control.DefaultBackColor;
+                ;
+                return;
+            }    
+
+            while(true)
+            {
+                this.splitContainer1.SplitterDistance -= 20;
+                if (this.splitContainer1.SplitterDistance <= 20)
+                {
+                    this.splitContainer1.SplitterDistance = 0;
+                    this.splitContainer1.BackColor = Color.Black;
+                    return;
+                }
+            }
         }
     }
 }

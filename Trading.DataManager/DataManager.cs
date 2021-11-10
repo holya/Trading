@@ -18,8 +18,9 @@ namespace Trading.DataManager
 {
     public class DataManager : IDataManager
     {
-        public event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged;
-        public event EventHandler<RTDataUpdateEventArgs> RealTimeDataUpdated;
+        public event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged = delegate { };
+        public event EventHandler<RTTickUpdateEventArgs> RealTimeTickUpdated = delegate { };
+        public event EventHandler<RTNewBarEventArgs> RealTimeNewBarAdded = delegate { };
 
         private readonly IDataBase repository;
         private readonly IDataProvider dataProvider;
@@ -33,7 +34,7 @@ namespace Trading.DataManager
 
             dataProvider.SessionStatusChanged += (object sender, SessionStatusChangedEventArgs e) =>
                 SessionStatusChanged?.Invoke(sender, e);
-            dataProvider.RealTimeDataUpdated += OnRealTimeDataUpdated;
+            dataProvider.RealTimeDataUpdated += OnDataProviderRealTimeDataUpdated;
         }
 
         #region IDataProvider implementations
@@ -48,38 +49,25 @@ namespace Trading.DataManager
         {
             dataProvider.SubscribeRealTime(instrument);
 
-            switch (resolution.TimeFrame)
-            {
-                case TimeFrame.Minute:
-                    break;
-                case TimeFrame.Hourly:
-                    break;
-                case TimeFrame.Daily:
-                    break;
-                case TimeFrame.Weekly:
-                    break;
-                case TimeFrame.Monthly:
-                    break;
-                case TimeFrame.Quarterly:
-                    break;
-                case TimeFrame.Yearly:
-                    break;
-                default:
-                    break;
-            }
-            RealTimeBars.TryAdd((instrument, resolution), DateTime.Now);
+            DateTime dt = Utilities.NormalizeAndGetEndDateTime(DateTime.UtcNow, resolution);
+
+            RealTimeBars.AddOrUpdate((instrument, resolution), dt, (newKy, newVal) => dt);
         }
 
-        public void UnsubscribeRealTime(Instrument instrument)
+        public void UnsubscribeRealTime(Instrument instrument, Resolution resolution)
         {
             dataProvider.UnsubscribeRealTime(instrument);
+
+            foreach (var item in RealTimeBars)
+                if (item.Key.Item1.Name == instrument.Name && item.Key.Item2.TimeFrame == resolution.TimeFrame)
+                    RealTimeBars.TryRemove(item.Key, out _);
         }
         public async Task<IEnumerable<Bar>> GetHistoricalDataAsync(Instrument instrument, Resolution resolution, 
             DateTime beginDate, DateTime endDate)
-        
         {
             var localData =(List<Bar>)await repository.ReadLocalDataAsync(instrument, resolution, beginDate, endDate);
 
+            /////// not good
             if (!IsOnline)
                 return localData;
 
@@ -89,6 +77,8 @@ namespace Trading.DataManager
                 await repository.WriteLocalDataAsync(instrument, resolution, localData);
                 return localData;
             }
+            /////////////
+            ///
 
             localData = (List<Bar>)await repository.ReadLocalDataAsync(instrument, resolution);
 
@@ -128,16 +118,28 @@ namespace Trading.DataManager
 
         #endregion
 
-        protected void OnRealTimeDataUpdated(object sender, RealTimeDataUpdatedEventArgs e)
+        protected void OnDataProviderRealTimeDataUpdated(object sender, RealTimeDataUpdatedEventArgs e)
         {
+            bool sent = false;
 
+            foreach (var item in RealTimeBars)
+            {
+                if (e.DateTime >= item.Value)
+                {
+                    var newDt = Utilities.GetEndDateTime(item.Value, item.Key.Item2);
 
-            //RealTimeDataUpdated?.Invoke(this, new RTDataUpdateEventArgs { })
+                    RealTimeBars.TryUpdate((item.Key), newDt, item.Value);
+
+                    RealTimeNewBarAdded?.Invoke(this, new RTNewBarEventArgs { Instrument = e.Instrument, Resolution = item.Key.Item2, Bar = new Bar(e.Price, e.Price, e.Price, e.Price, e.Volume, e.DateTime) });
+                }
+                else if (!sent)
+                {
+                    RealTimeTickUpdated?.Invoke(this, new RTTickUpdateEventArgs { Instrument = e.Instrument, Price = e.Price, Volume = e.Volume, DateTime = e.DateTime });
+                    sent = true;
+                }
+            }
         }
 
-        public void Dispose()
-        {
-            dataProvider.Logout();
-        }
+        public void Dispose( ) => dataProvider.Logout();
     }
 }

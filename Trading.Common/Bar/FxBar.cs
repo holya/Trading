@@ -27,7 +27,7 @@ namespace Trading.Common
 
         public void Update(FxBar bar)
         {
-            base.Update(bar);
+            //base.Update(bar);
 
             AskOpen = bar.AskOpen;
             AskHigh = bar.AskHigh;

@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 using Trading.Common;
 namespace Trading.DataManager.Common
 {
-    public class RTDataUpdateEventArgs : EventArgs
+    public class RTNewBarEventArgs : EventArgs
     {
         public Instrument Instrument;
         public Resolution Resolution;
-        public double Price;
-        public DateTime DateTime;
-        public bool IsNewBar;
+        public Bar Bar;
     }
 }

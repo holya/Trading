@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Trading.Analyzers.Common
 {
-    public enum BarUpdateStatus
+    public enum BarUpdateStatusEnum
     {
-        NoPriceChange,
-        CloseUpdated,
+        Unchanged,
+        CloseChanged,
         Expanded,
         TypeChanged
     }

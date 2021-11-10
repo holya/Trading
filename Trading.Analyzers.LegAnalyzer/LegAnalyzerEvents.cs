@@ -7,8 +7,8 @@ namespace Trading.Analyzers.LegAnalyzer
 {
     //public enum LastbarUpdateEventEnum
     //{
-    //    NoPriceChange,
-    //    CloseUpdated,
+    //    Unchanged,
+    //    CloseChanged,
     //    Expanded,
     //    TypeChanged
     //}
@@ -45,6 +45,6 @@ namespace Trading.Analyzers.LegAnalyzer
     public class BarUpdateEventArgs: EventArgs
     {
         public Bar LastBar { get; set; }
-        public BarUpdateStatus UpdateEnum { get; set; }
+        //public BarUpdateStatusEnum UpdateEnum { get; set; }
     }
 }

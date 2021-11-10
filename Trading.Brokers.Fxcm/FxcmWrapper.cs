@@ -94,9 +94,12 @@ namespace Trading.Brokers.Fxcm
 
         public void Logout()
         {
-            session.logout();
-            sessionStatusResponseListener.WaitEvents();
-            session.unsubscribeSessionStatus(sessionStatusResponseListener);
+            if (this.session.getSessionStatus() == O2GSessionStatusCode.Connected)
+            {
+                session.logout();
+                sessionStatusResponseListener.WaitEvents();
+                session.unsubscribeSessionStatus(sessionStatusResponseListener);
+            }
         }
 
         private void Session_SessionStatusChanged(object sender, SessionStatusEventArgs e)
@@ -222,10 +225,6 @@ namespace Trading.Brokers.Fxcm
                                 High = reader.getBidHigh(i),
                                 Low = reader.getBidLow(i),
                                 Close = reader.getBidClose(i),
-                                //AskOpen = reader.getAskOpen(i),
-                                //AskHigh = reader.getAskHigh(i),
-                                //AskLow = reader.getAskLow(i),
-                                //AskClose = reader.getAskClose(i),
                                 Volume = reader.getVolume(i),
                                 DateTime = reader.getDate(i)
                             });
@@ -248,8 +247,8 @@ namespace Trading.Brokers.Fxcm
                 var instrument = otr.Instrument.Contains('/') ? this.deNormalizeSymbol(otr.Instrument) : otr.Instrument;
                 if (realTimeInstrumentsList.Contains(instrument))
                     RealTimeDataUpdated?.Invoke(this, 
-                        new RealTimeDataUpdatedEventArgs { Instrument = new Instrument{ Name = "", Type = InstrumentType.Forex},
-                         Price = otr.Bid, Volume = otr.Volume, DateTime = otr.Time });
+                        new RealTimeDataUpdatedEventArgs(new Instrument{ Name = instrument, Type = InstrumentType.Forex},
+                         otr.Bid, otr.Volume, otr.Time));
                         //instrument, otr.Bid, otr.Ask, otr.Volume, otr.Time);
 
                 //RealTimeDataUpdated?.Invoke(this, new RealTimeDataUpdatedEventArgs { Data = new Tuple<string, double, double, int, DateTime>(instrument, otr.Bid, otr.Ask, otr.Volume, otr.Time) });

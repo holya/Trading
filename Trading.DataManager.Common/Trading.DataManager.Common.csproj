@@ -43,7 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="RTDataTypeEnum.cs" />
-    <Compile Include="RTDataUpdateEventArgs.cs" />
+    <Compile Include="RTNewBarEventArgs.cs" />
+    <Compile Include="RTTickUpdateEventArgs.cs" />
     <Compile Include="IDataManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

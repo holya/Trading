@@ -64,49 +64,6 @@ namespace Trading.Analyzers_Tests
 
 
 
-        [TestMethod]
-        public void UpdateLastBar__Turn_LastBar_To_DownBar_And_Create_New_DownLeg()
-        {
-            LegAnalyzer la = new LegAnalyzer();
-
-            List<Bar> barList = new List<Bar>();
-            barList.Add(Helper.GetUpBar());
-            barList.Add(Helper.GetUpBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
-            barList.Add(Helper.GetUpBar(barList.Last(), barList.Last().DateTime.AddDays(1)));
-
-            la.AddBarList(barList);
-
-            FxBar b = (FxBar)la.LastLeg.BarList[1];
-            FxBar nb = new FxBar
-            {
-                Open = b.Open,
-                AskOpen = b.AskOpen,
-                High = b.High - 5,
-                AskHigh = b.AskHigh - 5,
-                Low = b.Low - 5,
-                AskLow = b.AskLow - 5,
-                Close = b.Open - 3,
-                AskClose = b.AskOpen - 3,
-                DateTime = b.DateTime,
-                Volume = 100
-            };
-            la.UpdateLastBar(nb);
-
-            Assert.AreEqual(2, la.LegsCount);
-            Assert.AreEqual(LegDirection.Down, la.LastLeg.Direction);
-
-        }
-
-        [TestMethod]
-        public void AddBar__FirstLeg_FirstBar_TypeChanged()
-        {
-            LegAnalyzer la = new LegAnalyzer();
-
-            la.AddBar(new Bar(10, 20, 5, 12, 0, DateTime.Now));
-            la.UpdateLastBar(new Bar(10, 20, 5, 9, 0, DateTime.Now));
-
-            Assert.AreEqual(BarDirection.OutsideDown, la.LastBar.Direction);
-        }
 
         [TestMethod]
         public void OutsideUpBar_After_UpLeg_Should_Create_New_UpLeg()
